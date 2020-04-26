@@ -14,7 +14,10 @@ lazy val root = (project in file("."))
       sparkCore,
       sparkSql,
       deequ
-    )
+    ),
+    fork in Test := true,
+    parallelExecution in Test := false,
+    javaOptions ++= Seq("-Xms512M", "-Xmx2048M", "-XX:MaxPermSize=2048M", "-XX:+CMSClassUnloadingEnabled")
   )
 
 // See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
