@@ -33,9 +33,9 @@ object QCConstraint {
         val sumOfCol = ds.agg(sum(columnName)).as[T].first()
         val withinThreshold = threshold.isWithinThreshold(sumOfCol)
         if (withinThreshold)
-          RawConstraintResult(CheckStatus.Success, s"Sum of column $columnName was $sumOfCol, which was within the threshold $threshold")
+          RawConstraintResult(ConstraintStatus.Success, s"Sum of column $columnName was $sumOfCol, which was within the threshold $threshold")
         else
-          RawConstraintResult(CheckStatus.Error, s"Sum of column $columnName was $sumOfCol, which was outside the threshold $threshold")
+          RawConstraintResult(ConstraintStatus.Error, s"Sum of column $columnName was $sumOfCol, which was outside the threshold $threshold")
       }
     }
   }
@@ -80,4 +80,8 @@ object QCConstraint {
     override def description: String = check.description
   }
 
+}
+
+object ConstraintStatus extends Enumeration {
+  val Success, Warning, Error = Value
 }

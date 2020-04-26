@@ -7,7 +7,7 @@ import com.amazon.deequ.{VerificationRunBuilder, VerificationSuite}
 import org.apache.spark.sql.Dataset
 import qualitychecker.CheckResultDetails.{DeequCheckResultDetails, NoDetails}
 import qualitychecker.DeequHelpers.VerificationResultToQualityCheckResult
-import qualitychecker.constraint.ConstraintResult
+import qualitychecker.constraint.{ConstraintResult, ConstraintStatus}
 import qualitychecker.constraint.QCConstraint.DatasetComparisonConstraint.DatasetPair
 import qualitychecker.constraint.QCConstraint.{ArbitraryConstraint, DatasetComparisonConstraint, DeequQCConstraint, SingleDatasetConstraint}
 
@@ -41,7 +41,7 @@ object QualityChecks {
       new SingleDatasetQualityChecks[NoDetails.type] {
         def run(timestamp: Instant): QualityCheckResult[NoDetails.type] = {
           val constraintResults: Seq[ConstraintResult] = constraints.map(_.applyConstraint(dataset))
-          val overallCheckStatus = if (constraintResults.forall(_.status == CheckStatus.Success))
+          val overallCheckStatus = if (constraintResults.forall(_.status == ConstraintStatus.Success))
             CheckStatus.Success
           else
             CheckStatus.Error
@@ -78,7 +78,7 @@ object QualityChecks {
 
         override def run(timestamp: Instant): QualityCheckResult[NoDetails] = {
           val constraintResults: Seq[ConstraintResult] = constraints.map(_.applyConstraint(DatasetPair(datasetToCheck, datasetToCompareTo)))
-          val overallCheckStatus = if (constraintResults.forall(_.status == CheckStatus.Success))
+          val overallCheckStatus = if (constraintResults.forall(_.status == ConstraintStatus.Success))
             CheckStatus.Success
           else
             CheckStatus.Error
@@ -100,7 +100,7 @@ object QualityChecks {
       new ArbitraryQualityChecks[NoDetails] {
         override def run(timestamp: Instant): QualityCheckResult[NoDetails] = {
           val constraintResults: Seq[ConstraintResult] = constraints.map(_.applyConstraint)
-          val overallCheckStatus = if (constraintResults.forall(_.status == CheckStatus.Success))
+          val overallCheckStatus = if (constraintResults.forall(_.status == ConstraintStatus.Success))
             CheckStatus.Success
           else
             CheckStatus.Error

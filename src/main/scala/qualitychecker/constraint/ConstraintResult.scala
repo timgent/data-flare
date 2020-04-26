@@ -1,13 +1,11 @@
 package qualitychecker.constraint
 
-import qualitychecker.CheckStatus
-
-case class RawConstraintResult(status: CheckStatus.Value, resultDescription: String) {
+case class RawConstraintResult(status: ConstraintStatus.Value, resultDescription: String) {
   def toConstraintResult(constraint: QCConstraint) = ConstraintResult(status, resultDescription, constraint)
 }
 
 case class ConstraintResult(
-                           status: CheckStatus.Value,
+                           status: ConstraintStatus.Value,
                            resultDescription: String,
                            constraint: QCConstraint
                            )

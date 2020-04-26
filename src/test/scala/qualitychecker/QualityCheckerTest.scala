@@ -16,7 +16,7 @@ import qualitychecker.CheckResultDetails.NoDetails
 import qualitychecker.QualityChecks.{ArbitraryQualityChecks, DatasetComparisonQualityChecks, DeequQualityChecks, SingleDatasetQualityChecks}
 import qualitychecker.constraint.QCConstraint.DatasetComparisonConstraint.DatasetPair
 import qualitychecker.constraint.QCConstraint.{ArbitraryConstraint, DatasetComparisonConstraint, DeequQCConstraint, SingleDatasetConstraint}
-import qualitychecker.constraint.RawConstraintResult
+import qualitychecker.constraint.{ConstraintStatus, RawConstraintResult}
 import utils.TestDataClass
 
 import scala.util.Success
@@ -72,15 +72,15 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
         dataset =>
           val sumOfNumbers = dataset.agg(sum("number")).as[Long].collect.head
           if (sumOfNumbers > 2)
-            RawConstraintResult(CheckStatus.Success, "sumNumberCheck was successful!")
+            RawConstraintResult(ConstraintStatus.Success, "sumNumberCheck was successful!")
           else
-            RawConstraintResult(CheckStatus.Error, "sumNumberCheck was not successful :(")
+            RawConstraintResult(ConstraintStatus.Error, "sumNumberCheck was not successful :(")
       })
 
       val qualityChecks = List(SingleDatasetQualityChecks(testDataset, checkDescription, constraints))
 
       val qcResults: Seq[QualityCheckResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
-      val persistedQcResults: Seq[QualityCheckResult[NoDetails.type]] = qcResultsRepository.loadAll
+      val persistedQcResults: Seq[QualityCheckResult[NoDetails]] = qcResultsRepository.loadAll
 
       qcResults.size shouldBe 1
       qcResults.head.checkType shouldBe QcType.SingleDatasetQualityCheck
@@ -102,7 +102,7 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
 
       val constraint = DatasetComparisonConstraint("Table counts equal"){case DatasetPair(ds, dsToCompare) =>
         val countsAreEqual = ds.count == dsToCompare.count
-        val constraintStatus = if (countsAreEqual) CheckStatus.Success else CheckStatus.Error
+        val constraintStatus = if (countsAreEqual) ConstraintStatus.Success else ConstraintStatus.Error
         val resultDescription = if (countsAreEqual) "counts were equal" else "counts were not equal"
         RawConstraintResult(constraintStatus, resultDescription)
       }
@@ -134,9 +134,9 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
         val letterCountPostJoin = dataset1.join(dataset2, Seq("letter")).join(dataset3, Seq("letter")).select("letter").count
         val maxLetterCountPreJoin = List(dataset1.count, dataset2.count, dataset3.count).max
         if (letterCountPostJoin < maxLetterCountPreJoin)
-          RawConstraintResult(CheckStatus.Error, "Letters across the datasets were not the same")
+          RawConstraintResult(ConstraintStatus.Error, "Letters across the datasets were not the same")
         else
-          RawConstraintResult(CheckStatus.Success, "Datasets all contained the same letters")
+          RawConstraintResult(ConstraintStatus.Success, "Datasets all contained the same letters")
 
       }
       val qualityChecks = Seq(ArbitraryQualityChecks("table A, table B, and table C comparison", Seq(constraint)))
