@@ -3,10 +3,10 @@ package qualitychecker
 import java.time.Instant
 
 object QualityChecker {
-  def doQualityChecks(qualityChecks: Seq[QualityChecks[_]],
+  def doQualityChecks(qualityChecks: Seq[ChecksSuite[_]],
                       metricsRepository: QcResultsRepository,
-                      timestamp: Instant): Seq[QualityCheckResult[_]] = {
-    val qualityCheckResults: Seq[QualityCheckResult[_]] = qualityChecks.map(_.run(timestamp))
+                      timestamp: Instant): Seq[ChecksSuiteResult[_]] = {
+    val qualityCheckResults: Seq[ChecksSuiteResult[_]] = qualityChecks.map(_.run(timestamp))
     metricsRepository.save(qualityCheckResults)
     qualityCheckResults
   }

@@ -10,13 +10,14 @@ import com.amazon.deequ.repository.memory.InMemoryMetricsRepository
 import com.amazon.deequ.repository.{AnalysisResult, ResultKey}
 import com.holdenkarau.spark.testing.DatasetSuiteBase
 import org.apache.spark.sql.functions.sum
+import org.scalatest.Assertion
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import qualitychecker.CheckResultDetails.NoDetails
-import qualitychecker.QualityChecks.{ArbitraryQualityChecks, DatasetComparisonQualityChecks, DeequQualityChecks, SingleDatasetQualityChecks}
-import qualitychecker.constraint.QCConstraint.DatasetComparisonConstraint.DatasetPair
-import qualitychecker.constraint.QCConstraint.{ArbitraryConstraint, DatasetComparisonConstraint, DeequQCConstraint, SingleDatasetConstraint}
-import qualitychecker.constraint.{ConstraintStatus, RawConstraintResult}
+import qualitychecker.ChecksSuite.{ArbitraryChecksSuite, DatasetComparisonChecksSuite, DeequChecksSuite, SingleDatasetChecksSuite}
+import qualitychecker.checks.QCCheck.DatasetComparisonCheck.DatasetPair
+import qualitychecker.checks.QCCheck.{ArbitraryCheck, DatasetComparisonCheck, DeequQCCheck, SingleDatasetCheck}
+import qualitychecker.checks.{CheckResult, CheckStatus, RawCheckResult}
 import utils.TestDataClass
 
 import scala.util.Success
@@ -27,33 +28,54 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
 
   val now: Instant = Instant.now
 
-  "doQualityChecks" should { // TODO: Add in assertions on the details of results for each constraint
+  def checkResultAndPersistedResult(qcResult: ChecksSuiteResult[_], persistedQcResult: ChecksSuiteResult[NoDetails])(
+    checkType: QcType.Value,
+    timestamp: Instant,
+    checkSuiteDescription: String,
+    checkStatus: CheckSuiteStatus.Value,
+    resultDescription: String,
+    checkResults: Seq[CheckResult]
+  ): Unit = {
+    qcResult.checkType shouldBe checkType
+    qcResult.timestamp shouldBe timestamp
+    qcResult.checkSuiteDescription shouldBe checkSuiteDescription
+    qcResult.overallStatus shouldBe checkStatus
+    qcResult.resultDescription shouldBe resultDescription
+    qcResult.checkResults shouldBe checkResults
+    persistedQcResult.checkType shouldBe checkType
+    persistedQcResult.timestamp shouldBe timestamp
+    persistedQcResult.checkSuiteDescription shouldBe checkSuiteDescription
+    persistedQcResult.overallStatus shouldBe checkStatus
+    persistedQcResult.resultDescription shouldBe resultDescription
+    persistedQcResult.checkResults shouldBe checkResults
+  }
+
+  "doQualityChecks" should {
+
     "be able to do deequ quality checks and store check results and underlying metrics in a repository" in {
       val testDataset = List((1, "a"), (2, "b"), (3, "c")).map(TestDataClass.tupled).toDF
       val qcResultsRepository = new InMemoryQcResultsRepository
       val deequMetricsRepository: Option[InMemoryMetricsRepository] = Some(new InMemoryMetricsRepository)
 
+      val deequQcConstraint = DeequQCCheck(Check(CheckLevel.Error, "size check").hasSize(_ == 3))
       val qualityChecks = List(
-        DeequQualityChecks(testDataset, "sample deequ checks", Seq(DeequQCConstraint(
-          Check(CheckLevel.Error, "size check").hasSize(_ == 3)
-        )))(deequMetricsRepository)
+        DeequChecksSuite(testDataset, "sample deequ checks", Seq(deequQcConstraint))(deequMetricsRepository)
       )
 
-      val qcResults: Seq[QualityCheckResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
-      val persistedQcResults: Seq[QualityCheckResult[NoDetails.type]] = qcResultsRepository.loadAll
+      val qcResults: Seq[ChecksSuiteResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
+      val persistedQcResults: Seq[ChecksSuiteResult[NoDetails]] = qcResultsRepository.loadAll
       val persistedDeequMetrics: Seq[AnalysisResult] = deequMetricsRepository.get.load().get()
 
       qcResults.size shouldBe 1
-      qcResults.head.checkType shouldBe QcType.DeequQualityCheck
-      qcResults.head.timestamp shouldBe now
-      qcResults.head.checkDescription shouldBe "sample deequ checks"
-      qcResults.head.overallStatus shouldBe CheckStatus.Success
-
       persistedQcResults.size shouldBe 1
-      persistedQcResults.head.checkType shouldBe QcType.DeequQualityCheck
-      persistedQcResults.head.timestamp shouldBe now
-      persistedQcResults.head.checkDescription shouldBe "sample deequ checks"
-      persistedQcResults.head.overallStatus shouldBe CheckStatus.Success
+      checkResultAndPersistedResult(qcResults.head, persistedQcResults.head)(
+        checkType = QcType.DeequQualityCheck,
+        timestamp = now,
+        checkSuiteDescription = "sample deequ checks",
+        checkStatus = CheckSuiteStatus.Success,
+        resultDescription = "All Deequ checks were successful",
+        checkResults = Seq(CheckResult(CheckStatus.Success, "Deequ check was successful", deequQcConstraint))
+      )
 
       persistedDeequMetrics.size shouldBe 1
       persistedDeequMetrics.head.resultKey shouldBe ResultKey(now.toEpochMilli, Map.empty)
@@ -68,31 +90,24 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
       val qcResultsRepository = new InMemoryQcResultsRepository
       val checkDescription = "DB: X, table: Y"
 
-      val constraints = Seq(SingleDatasetConstraint("sumNumberCheck") {
-        dataset =>
-          val sumOfNumbers = dataset.agg(sum("number")).as[Long].collect.head
-          if (sumOfNumbers > 2)
-            RawConstraintResult(ConstraintStatus.Success, "sumNumberCheck was successful!")
-          else
-            RawConstraintResult(ConstraintStatus.Error, "sumNumberCheck was not successful :(")
-      })
+      val singleDatasetCheck = SingleDatasetCheck("someSingleDatasetCheck") {
+        dataset => RawCheckResult(CheckStatus.Error, "someSingleDatasetCheck was not successful")
+      }
+      val checks = Seq(singleDatasetCheck)
 
-      val qualityChecks = List(SingleDatasetQualityChecks(testDataset, checkDescription, constraints))
+      val qualityChecks = List(SingleDatasetChecksSuite(testDataset, checkDescription, checks))
 
-      val qcResults: Seq[QualityCheckResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
-      val persistedQcResults: Seq[QualityCheckResult[NoDetails]] = qcResultsRepository.loadAll
+      val qcResults: Seq[ChecksSuiteResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
+      val persistedQcResults: Seq[ChecksSuiteResult[NoDetails]] = qcResultsRepository.loadAll
 
-      qcResults.size shouldBe 1
-      qcResults.head.checkType shouldBe QcType.SingleDatasetQualityCheck
-      qcResults.head.timestamp shouldBe now
-      qcResults.head.checkDescription shouldBe checkDescription
-      qcResults.head.overallStatus shouldBe CheckStatus.Success
-
-      persistedQcResults.size shouldBe 1
-      persistedQcResults.head.checkType shouldBe QcType.SingleDatasetQualityCheck
-      persistedQcResults.head.timestamp shouldBe now
-      persistedQcResults.head.checkDescription shouldBe checkDescription
-      persistedQcResults.head.overallStatus shouldBe CheckStatus.Success
+      checkResultAndPersistedResult(qcResults.head, persistedQcResults.head)(
+        checkType = QcType.SingleDatasetQualityCheck,
+        timestamp = now,
+        checkSuiteDescription = "DB: X, table: Y",
+        checkStatus = CheckSuiteStatus.Error,
+        resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
+        checkResults = Seq(CheckResult(CheckStatus.Error, "someSingleDatasetCheck was not successful", singleDatasetCheck))
+      )
     }
 
     "be able to run custom 2 table checks and store results in a repository" in {
@@ -100,61 +115,55 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
       val datasetToCompare = List((1, "a"), (2, "b"), (3, "c"), (4, "d")).map(TestDataClass.tupled).toDS
       val qcResultsRepository = new InMemoryQcResultsRepository
 
-      val constraint = DatasetComparisonConstraint("Table counts equal"){case DatasetPair(ds, dsToCompare) =>
-        val countsAreEqual = ds.count == dsToCompare.count
-        val constraintStatus = if (countsAreEqual) ConstraintStatus.Success else ConstraintStatus.Error
-        val resultDescription = if (countsAreEqual) "counts were equal" else "counts were not equal"
-        RawConstraintResult(constraintStatus, resultDescription)
+      val datasetComparisonCheck = DatasetComparisonCheck("Table counts equal") { case DatasetPair(ds, dsToCompare) =>
+        RawCheckResult(CheckStatus.Error, "counts were not equal")
       }
-      val qualityChecks = Seq(DatasetComparisonQualityChecks(testDataset, datasetToCompare, "table A vs table B comparison", Seq(constraint)))
+      val qualityChecks = Seq(DatasetComparisonChecksSuite(testDataset, datasetToCompare, "table A vs table B comparison", Seq(datasetComparisonCheck)))
 
-      val qcResults: Seq[QualityCheckResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
-      val persistedQcResults: Seq[QualityCheckResult[NoDetails.type]] = qcResultsRepository.loadAll
+      val qcResults: Seq[ChecksSuiteResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
+      val persistedQcResults: Seq[ChecksSuiteResult[NoDetails]] = qcResultsRepository.loadAll
 
-      qcResults.size shouldBe 1
-      qcResults.head.checkType shouldBe QcType.DatasetComparisonQualityCheck
-      qcResults.head.timestamp shouldBe now
-      qcResults.head.checkDescription shouldBe "table A vs table B comparison"
-      qcResults.head.overallStatus shouldBe CheckStatus.Error
-
-      persistedQcResults.size shouldBe 1
-      persistedQcResults.head.checkType shouldBe QcType.DatasetComparisonQualityCheck
-      persistedQcResults.head.timestamp shouldBe now
-      persistedQcResults.head.checkDescription shouldBe "table A vs table B comparison"
-      persistedQcResults.head.overallStatus shouldBe CheckStatus.Error
+      checkResultAndPersistedResult(qcResults.head, persistedQcResults.head)(
+        checkType = QcType.DatasetComparisonQualityCheck,
+        timestamp = now,
+        checkSuiteDescription = "table A vs table B comparison",
+        checkStatus = CheckSuiteStatus.Error,
+        resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
+        checkResults = Seq(CheckResult(CheckStatus.Error, "counts were not equal", datasetComparisonCheck))
+      )
     }
 
     "be able to run completely arbitrary checks and store results in a repository" in {
-      val dataset1 = List((1, "a"), (2, "b"), (3, "c")).map(TestDataClass.tupled).toDS
-      val dataset2 = List((1, "a"), (2, "b"), (3, "c"), (4, "d")).map(TestDataClass.tupled).toDS
-      val dataset3 = List((1, "a"), (2, "b"), (3, "c"), (4, "d")).map(TestDataClass.tupled).toDS
       val qcResultsRepository = new InMemoryQcResultsRepository
 
-      val constraint = ArbitraryConstraint("datasets contain same letters"){
-        val letterCountPostJoin = dataset1.join(dataset2, Seq("letter")).join(dataset3, Seq("letter")).select("letter").count
-        val maxLetterCountPreJoin = List(dataset1.count, dataset2.count, dataset3.count).max
-        if (letterCountPostJoin < maxLetterCountPreJoin)
-          RawConstraintResult(ConstraintStatus.Error, "Letters across the datasets were not the same")
-        else
-          RawConstraintResult(ConstraintStatus.Success, "Datasets all contained the same letters")
-
+      val arbitraryCheck = ArbitraryCheck("some arbitrary check") {
+          RawCheckResult(CheckStatus.Error, "The arbitrary check failed!")
       }
-      val qualityChecks = Seq(ArbitraryQualityChecks("table A, table B, and table C comparison", Seq(constraint)))
+      val qualityChecks = Seq(ArbitraryChecksSuite("table A, table B, and table C comparison", Seq(arbitraryCheck)))
 
-      val qcResults: Seq[QualityCheckResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
-      val persistedQcResults: Seq[QualityCheckResult[NoDetails.type]] = qcResultsRepository.loadAll
+      val qcResults: Seq[ChecksSuiteResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
+      val persistedQcResults: Seq[ChecksSuiteResult[NoDetails]] = qcResultsRepository.loadAll
 
       qcResults.size shouldBe 1
       qcResults.head.checkType shouldBe QcType.ArbitraryQualityCheck
       qcResults.head.timestamp shouldBe now
-      qcResults.head.checkDescription shouldBe "table A, table B, and table C comparison"
-      qcResults.head.overallStatus shouldBe CheckStatus.Error
+      qcResults.head.checkSuiteDescription shouldBe "table A, table B, and table C comparison"
+      qcResults.head.overallStatus shouldBe CheckSuiteStatus.Error
 
       persistedQcResults.size shouldBe 1
       persistedQcResults.head.checkType shouldBe QcType.ArbitraryQualityCheck
       persistedQcResults.head.timestamp shouldBe now
-      persistedQcResults.head.checkDescription shouldBe "table A, table B, and table C comparison"
-      persistedQcResults.head.overallStatus shouldBe CheckStatus.Error
+      persistedQcResults.head.checkSuiteDescription shouldBe "table A, table B, and table C comparison"
+      persistedQcResults.head.overallStatus shouldBe CheckSuiteStatus.Error
+
+      checkResultAndPersistedResult(qcResults.head, persistedQcResults.head)(
+        checkType = QcType.ArbitraryQualityCheck,
+        timestamp = now,
+        checkSuiteDescription = "table A, table B, and table C comparison",
+        checkStatus = CheckSuiteStatus.Error,
+        resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
+        checkResults = Seq(CheckResult(CheckStatus.Error, "The arbitrary check failed!", arbitraryCheck))
+      )
     }
   }
 }

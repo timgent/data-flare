@@ -5,16 +5,16 @@ import qualitychecker.CheckResultDetails.NoDetails
 import scala.collection.mutable.ListBuffer
 
 trait QcResultsRepository {
-  def save(qcResults: Seq[QualityCheckResult[_]]): Unit
-  def loadAll: Seq[QualityCheckResult[NoDetails.type]]
+  def save(qcResults: Seq[ChecksSuiteResult[_]]): Unit
+  def loadAll: Seq[ChecksSuiteResult[NoDetails]]
 }
 
 class InMemoryQcResultsRepository extends QcResultsRepository {
-  val savedResults: ListBuffer[QualityCheckResult[CheckResultDetails.NoDetails.type]] = ListBuffer.empty
+  val savedResults: ListBuffer[ChecksSuiteResult[CheckResultDetails.NoDetails]] = ListBuffer.empty
 
-  override def save(qcResults: Seq[QualityCheckResult[_]]): Unit = {
+  override def save(qcResults: Seq[ChecksSuiteResult[_]]): Unit = {
     savedResults ++= qcResults.map(_.removeDetails)
   }
 
-  override def loadAll: Seq[QualityCheckResult[CheckResultDetails.NoDetails.type]] = savedResults
+  override def loadAll: Seq[ChecksSuiteResult[CheckResultDetails.NoDetails]] = savedResults
 }
