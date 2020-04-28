@@ -116,7 +116,7 @@ object ChecksSuite {
 
 
   case class DeequChecksSuite(dataset: Dataset[_], checkSuiteDescription: String, deequChecks: Seq[DeequQCCheck],
-                              checkTags: Map[String, String] = Map.empty
+                              checkTags: Map[String, String]
                                )(implicit deequMetricsRepository: DeequMetricsRepository)
     extends ChecksSuite[DeequCheckSuiteResultDetails] {
     override def qcType: QcType.Value = QcType.DeequQualityCheck
