@@ -37,6 +37,7 @@ object ChecksSuite {
     def apply(ds: Dataset[_],
               checkDesc: String,
               checks: Seq[SingleDatasetCheck],
+              checkTags: Map[String, String],
               checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus.Value = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
              ): SingleDatasetChecksSuite[NoDetails] = {
       new SingleDatasetChecksSuite[NoDetails] {
@@ -44,7 +45,7 @@ object ChecksSuite {
           val checkResults: Seq[CheckResult] = checks.map(_.applyCheck(dataset))
           val overallCheckStatus = checkResultCombiner(checkResults)
           ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
-            checkResults, timestamp, qcType, Map.empty, NoDetails)
+            checkResults, timestamp, qcType, checkTags, NoDetails)
         }
 
         override def dataset: Dataset[_] = ds
@@ -69,6 +70,7 @@ object ChecksSuite {
               dsToCompare: Dataset[_],
               checkDesc: String,
               checks: Seq[DatasetComparisonCheck],
+              checkTags: Map[String, String],
               checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus.Value = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
              ): DatasetComparisonChecksSuite[NoDetails] = {
       new DatasetComparisonChecksSuite[NoDetails] {
@@ -80,7 +82,7 @@ object ChecksSuite {
           val checkResults: Seq[CheckResult] = checks.map(_.applyCheck(DatasetPair(datasetToCheck, datasetToCompareTo)))
           val overallCheckStatus = checkResultCombiner(checkResults)
           ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
-            checkResults, timestamp, qcType, Map.empty, NoDetails)
+            checkResults, timestamp, qcType, checkTags, NoDetails)
         }
 
         override def checkSuiteDescription: String = checkDesc
@@ -95,6 +97,7 @@ object ChecksSuite {
   object ArbitraryChecksSuite {
     def apply(checkDesc: String,
               checks: Seq[ArbitraryCheck],
+              checkTags: Map[String, String],
               checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus.Value = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
              ): ArbitraryChecksSuite[NoDetails] =
       new ArbitraryChecksSuite[NoDetails] {
@@ -102,7 +105,7 @@ object ChecksSuite {
           val checkResults: Seq[CheckResult] = checks.map(_.applyCheck)
           val overallCheckStatus = checkResultCombiner(checkResults)
           ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
-            checkResults, timestamp, qcType, Map.empty, NoDetails)
+            checkResults, timestamp, qcType, checkTags, NoDetails)
         }
 
         override def checkSuiteDescription: String = checkDesc
@@ -113,7 +116,7 @@ object ChecksSuite {
 
 
   case class DeequChecksSuite(dataset: Dataset[_], checkSuiteDescription: String, deequChecks: Seq[DeequQCCheck],
-                              tags: Map[String, String] = Map.empty
+                              checkTags: Map[String, String] = Map.empty
                                )(implicit deequMetricsRepository: DeequMetricsRepository)
     extends ChecksSuite[DeequCheckSuiteResultDetails] {
     override def qcType: QcType.Value = QcType.DeequQualityCheck
@@ -126,7 +129,7 @@ object ChecksSuite {
 
       verificationSuite.addChecks(deequChecks.map(_.check))
         .run()
-        .toCheckSuiteResult(checkSuiteDescription, timestamp)
+        .toCheckSuiteResult(checkSuiteDescription, timestamp, checkTags)
     }
   }
 

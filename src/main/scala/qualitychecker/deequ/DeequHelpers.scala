@@ -10,7 +10,7 @@ import qualitychecker.{CheckSuiteStatus, ChecksSuiteResult, DeequCheckStatus, Qc
 
 object DeequHelpers {
   implicit class VerificationResultToQualityCheckResult(verificationResult: VerificationResult) {
-    def toCheckSuiteResult(description: String, timestamp: Instant): ChecksSuiteResult[DeequCheckSuiteResultDetails] = {
+    def toCheckSuiteResult(description: String, timestamp: Instant, checkTags: Map[String, String]): ChecksSuiteResult[DeequCheckSuiteResultDetails] = {
       val checkStatus = verificationResult.status match {
         case com.amazon.deequ.checks.CheckStatus.Success => CheckSuiteStatus.Success
         case com.amazon.deequ.checks.CheckStatus.Warning => CheckSuiteStatus.Warning

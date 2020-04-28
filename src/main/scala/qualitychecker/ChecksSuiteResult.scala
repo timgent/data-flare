@@ -7,16 +7,16 @@ import qualitychecker.checks.CheckResult
 
 case class ChecksSuiteResult[T <: CheckResultDetails](
                                                        overallStatus: CheckSuiteStatus.Value,
-                                                       checkSuiteDescription: String, // TODO: Just include the original check here instead?
+                                                       checkSuiteDescription: String,
                                                        resultDescription: String,
                                                        checkResults: Seq[CheckResult],
                                                        timestamp: Instant,
-                                                       checkType: QcType.Value, // TODO: Could remove if we include the original check instead
-                                                       checkProperties: Map[String, String], // TODO: Either remove or expose, currently it's always empty
+                                                       checkType: QcType.Value,
+                                                       checkTags: Map[String, String],
                                                        checkDetails: T // Currently only time it isn't "NoDetails" is for Deequ checks
                                                       ) {
   def removeDetails: ChecksSuiteResult[NoDetails] =
-    ChecksSuiteResult(overallStatus, checkSuiteDescription, resultDescription, checkResults, timestamp, checkType, checkProperties, NoDetails)
+    ChecksSuiteResult(overallStatus, checkSuiteDescription, resultDescription, checkResults, timestamp, checkType, checkTags, NoDetails)
 }
 
 case class SimpleQualityCheckResult()

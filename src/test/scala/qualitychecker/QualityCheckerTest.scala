@@ -2,6 +2,7 @@ package qualitychecker
 
 import java.time.Instant
 
+import utils.CommonFixtures._
 import com.amazon.deequ.analyzers.Size
 import com.amazon.deequ.analyzers.runners.AnalyzerContext
 import com.amazon.deequ.checks.{Check, CheckLevel}
@@ -34,7 +35,8 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
     checkSuiteDescription: String,
     checkStatus: CheckSuiteStatus.Value,
     resultDescription: String,
-    checkResults: Seq[CheckResult]
+    checkResults: Seq[CheckResult],
+    checkTags: Map[String, String]
   ): Unit = {
     qcResult.checkType shouldBe checkType
     qcResult.timestamp shouldBe timestamp
@@ -42,12 +44,14 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
     qcResult.overallStatus shouldBe checkStatus
     qcResult.resultDescription shouldBe resultDescription
     qcResult.checkResults shouldBe checkResults
+    qcResult.checkTags shouldBe checkTags
     persistedQcResult.checkType shouldBe checkType
     persistedQcResult.timestamp shouldBe timestamp
     persistedQcResult.checkSuiteDescription shouldBe checkSuiteDescription
     persistedQcResult.overallStatus shouldBe checkStatus
     persistedQcResult.resultDescription shouldBe resultDescription
     persistedQcResult.checkResults shouldBe checkResults
+    persistedQcResult.checkTags shouldBe checkTags
   }
 
   "doQualityChecks" should {
@@ -55,7 +59,7 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
     "be able to do deequ quality checks and store check results and underlying metrics in a repository" in {
       val testDataset = List((1, "a"), (2, "b"), (3, "c")).map(TestDataClass.tupled).toDF
       val qcResultsRepository = new InMemoryQcResultsRepository
-      val deequMetricsRepository: Option[InMemoryMetricsRepository] = Some(new InMemoryMetricsRepository)
+      val deequMetricsRepository: InMemoryMetricsRepository = new InMemoryMetricsRepository
 
       val deequQcConstraint = DeequQCCheck(Check(CheckLevel.Error, "size check").hasSize(_ == 3))
       val qualityChecks = List(
@@ -64,7 +68,7 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
 
       val qcResults: Seq[ChecksSuiteResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
       val persistedQcResults: Seq[ChecksSuiteResult[NoDetails]] = qcResultsRepository.loadAll
-      val persistedDeequMetrics: Seq[AnalysisResult] = deequMetricsRepository.get.load().get()
+      val persistedDeequMetrics: Seq[AnalysisResult] = deequMetricsRepository.load().get()
 
       qcResults.size shouldBe 1
       persistedQcResults.size shouldBe 1
@@ -74,7 +78,8 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
         checkSuiteDescription = "sample deequ checks",
         checkStatus = CheckSuiteStatus.Success,
         resultDescription = "All Deequ checks were successful",
-        checkResults = Seq(CheckResult(CheckStatus.Success, "Deequ check was successful", deequQcConstraint))
+        checkResults = Seq(CheckResult(CheckStatus.Success, "Deequ check was successful", deequQcConstraint)),
+        checkTags = someTags
       )
 
       persistedDeequMetrics.size shouldBe 1
@@ -95,7 +100,7 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
       }
       val checks = Seq(singleDatasetCheck)
 
-      val qualityChecks = List(SingleDatasetChecksSuite(testDataset, checkDescription, checks))
+      val qualityChecks = List(SingleDatasetChecksSuite(testDataset, checkDescription, checks, someTags))
 
       val qcResults: Seq[ChecksSuiteResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
       val persistedQcResults: Seq[ChecksSuiteResult[NoDetails]] = qcResultsRepository.loadAll
@@ -106,7 +111,8 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
         checkSuiteDescription = "DB: X, table: Y",
         checkStatus = CheckSuiteStatus.Error,
         resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
-        checkResults = Seq(CheckResult(CheckStatus.Error, "someSingleDatasetCheck was not successful", singleDatasetCheck))
+        checkResults = Seq(CheckResult(CheckStatus.Error, "someSingleDatasetCheck was not successful", singleDatasetCheck)),
+        checkTags = someTags
       )
     }
 
@@ -118,7 +124,7 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
       val datasetComparisonCheck = DatasetComparisonCheck("Table counts equal") { case DatasetPair(ds, dsToCompare) =>
         RawCheckResult(CheckStatus.Error, "counts were not equal")
       }
-      val qualityChecks = Seq(DatasetComparisonChecksSuite(testDataset, datasetToCompare, "table A vs table B comparison", Seq(datasetComparisonCheck)))
+      val qualityChecks = Seq(DatasetComparisonChecksSuite(testDataset, datasetToCompare, "table A vs table B comparison", Seq(datasetComparisonCheck), someTags))
 
       val qcResults: Seq[ChecksSuiteResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
       val persistedQcResults: Seq[ChecksSuiteResult[NoDetails]] = qcResultsRepository.loadAll
@@ -129,7 +135,8 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
         checkSuiteDescription = "table A vs table B comparison",
         checkStatus = CheckSuiteStatus.Error,
         resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
-        checkResults = Seq(CheckResult(CheckStatus.Error, "counts were not equal", datasetComparisonCheck))
+        checkResults = Seq(CheckResult(CheckStatus.Error, "counts were not equal", datasetComparisonCheck)),
+        checkTags = someTags
       )
     }
 
@@ -139,7 +146,7 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
       val arbitraryCheck = ArbitraryCheck("some arbitrary check") {
           RawCheckResult(CheckStatus.Error, "The arbitrary check failed!")
       }
-      val qualityChecks = Seq(ArbitraryChecksSuite("table A, table B, and table C comparison", Seq(arbitraryCheck)))
+      val qualityChecks = Seq(ArbitraryChecksSuite("table A, table B, and table C comparison", Seq(arbitraryCheck), someTags))
 
       val qcResults: Seq[ChecksSuiteResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
       val persistedQcResults: Seq[ChecksSuiteResult[NoDetails]] = qcResultsRepository.loadAll
@@ -162,7 +169,8 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
         checkSuiteDescription = "table A, table B, and table C comparison",
         checkStatus = CheckSuiteStatus.Error,
         resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
-        checkResults = Seq(CheckResult(CheckStatus.Error, "The arbitrary check failed!", arbitraryCheck))
+        checkResults = Seq(CheckResult(CheckStatus.Error, "The arbitrary check failed!", arbitraryCheck)),
+        checkTags = someTags
       )
     }
   }

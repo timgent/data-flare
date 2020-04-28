@@ -8,5 +8,5 @@ import qualitychecker.checks.{CheckStatus, RawCheckResult}
 object CommonFixtures {
   val now = Instant.now
   val someCheck = SingleDatasetCheck("some check")(_ => RawCheckResult(CheckStatus.Success, "successful"))
-
+  val someTags = Map("project" -> "project A")
 }
