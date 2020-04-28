@@ -1,4 +1,4 @@
-package qualitychecker
+package qualitychecker.deequ
 
 import java.time.Instant
 
@@ -6,6 +6,7 @@ import com.amazon.deequ.VerificationResult
 import qualitychecker.CheckResultDetails.DeequCheckSuiteResultDetails
 import qualitychecker.checks.QCCheck.DeequQCCheck
 import qualitychecker.checks.{CheckResult, CheckStatus}
+import qualitychecker.{CheckSuiteStatus, ChecksSuiteResult, DeequCheckStatus, QcType}
 
 object DeequHelpers {
   implicit class VerificationResultToQualityCheckResult(verificationResult: VerificationResult) {

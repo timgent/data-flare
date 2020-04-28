@@ -6,7 +6,7 @@ import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.{VerificationRunBuilder, VerificationSuite}
 import org.apache.spark.sql.Dataset
 import qualitychecker.CheckResultDetails.{DeequCheckSuiteResultDetails, NoDetails}
-import qualitychecker.DeequHelpers.VerificationResultToQualityCheckResult
+import qualitychecker.deequ.DeequHelpers.VerificationResultToQualityCheckResult
 import qualitychecker.checks.{CheckResult, CheckStatus}
 import qualitychecker.checks.QCCheck.DatasetComparisonCheck.DatasetPair
 import qualitychecker.checks.QCCheck.{ArbitraryCheck, DatasetComparisonCheck, DeequQCCheck, SingleDatasetCheck}
@@ -114,21 +114,17 @@ object ChecksSuite {
 
   case class DeequChecksSuite(dataset: Dataset[_], checkSuiteDescription: String, deequChecks: Seq[DeequQCCheck],
                               tags: Map[String, String] = Map.empty
-                               )(implicit deequMetricsRepository: Option[DeequMetricsRepository])
+                               )(implicit deequMetricsRepository: DeequMetricsRepository)
     extends ChecksSuite[DeequCheckSuiteResultDetails] {
     override def qcType: QcType.Value = QcType.DeequQualityCheck
 
     override def run(timestamp: Instant): ChecksSuiteResult[DeequCheckSuiteResultDetails] = {
-      // TODO: Just pass in a repository, and create a repository that doesn't do anything to give option of not storing results
-      def useRepoIfAvailable(verificationRunBuilder: VerificationRunBuilder): VerificationRunBuilder = deequMetricsRepository match {
-        case Some(repository) => verificationRunBuilder.useRepository(repository).saveOrAppendResult(ResultKey(timestamp.toEpochMilli))
-        case None => verificationRunBuilder
-      }
-
       val verificationSuite: VerificationRunBuilder = VerificationSuite()
         .onData(dataset.toDF)
+        .useRepository(deequMetricsRepository)
+        .saveOrAppendResult(ResultKey(timestamp.toEpochMilli))
 
-      useRepoIfAvailable(verificationSuite).addChecks(deequChecks.map(_.check))
+      verificationSuite.addChecks(deequChecks.map(_.check))
         .run()
         .toCheckSuiteResult(checkSuiteDescription, timestamp)
     }
