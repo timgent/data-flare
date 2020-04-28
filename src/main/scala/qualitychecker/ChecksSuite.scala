@@ -33,18 +33,16 @@ object ChecksSuite {
     def dataset: Dataset[_]
   }
 
-  // TODO: For combining check results we could pass in a FinalCheckResultStrategy and default to everything needing to pass?
   object SingleDatasetChecksSuite {
     def apply(ds: Dataset[_],
               checkDesc: String,
-              checks: Seq[SingleDatasetCheck]): SingleDatasetChecksSuite[NoDetails] = {
+              checks: Seq[SingleDatasetCheck],
+              checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus.Value = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
+             ): SingleDatasetChecksSuite[NoDetails] = {
       new SingleDatasetChecksSuite[NoDetails] {
         def run(timestamp: Instant): ChecksSuiteResult[NoDetails] = {
           val checkResults: Seq[CheckResult] = checks.map(_.applyCheck(dataset))
-          val overallCheckStatus = if (checkResults.forall(_.status == CheckStatus.Success))
-            CheckSuiteStatus.Success
-          else
-            CheckSuiteStatus.Error
+          val overallCheckStatus = checkResultCombiner(checkResults)
           ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
             checkResults, timestamp, qcType, Map.empty, NoDetails)
         }
@@ -70,7 +68,9 @@ object ChecksSuite {
     def apply(ds: Dataset[_],
               dsToCompare: Dataset[_],
               checkDesc: String,
-              checks: Seq[DatasetComparisonCheck]): DatasetComparisonChecksSuite[NoDetails] = {
+              checks: Seq[DatasetComparisonCheck],
+              checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus.Value = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
+             ): DatasetComparisonChecksSuite[NoDetails] = {
       new DatasetComparisonChecksSuite[NoDetails] {
         override def datasetToCheck: Dataset[_] = ds
 
@@ -78,10 +78,7 @@ object ChecksSuite {
 
         override def run(timestamp: Instant): ChecksSuiteResult[NoDetails] = {
           val checkResults: Seq[CheckResult] = checks.map(_.applyCheck(DatasetPair(datasetToCheck, datasetToCompareTo)))
-          val overallCheckStatus = if (checkResults.forall(_.status == CheckStatus.Success))
-            CheckSuiteStatus.Success
-          else
-            CheckSuiteStatus.Error
+          val overallCheckStatus = checkResultCombiner(checkResults)
           ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
             checkResults, timestamp, qcType, Map.empty, NoDetails)
         }
@@ -96,14 +93,14 @@ object ChecksSuite {
   trait ArbitraryChecksSuite[T <: CheckResultDetails] extends ChecksSuite[T]
 
   object ArbitraryChecksSuite {
-    def apply(checkDesc: String, checks: Seq[ArbitraryCheck]): ArbitraryChecksSuite[NoDetails] =
+    def apply(checkDesc: String,
+              checks: Seq[ArbitraryCheck],
+              checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus.Value = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
+             ): ArbitraryChecksSuite[NoDetails] =
       new ArbitraryChecksSuite[NoDetails] {
         override def run(timestamp: Instant): ChecksSuiteResult[NoDetails] = {
           val checkResults: Seq[CheckResult] = checks.map(_.applyCheck)
-          val overallCheckStatus = if (checkResults.forall(_.status == CheckStatus.Success))
-            CheckSuiteStatus.Success
-          else
-            CheckSuiteStatus.Error
+          val overallCheckStatus = checkResultCombiner(checkResults)
           ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
             checkResults, timestamp, qcType, Map.empty, NoDetails)
         }
