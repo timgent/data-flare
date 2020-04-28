@@ -1,0 +1,27 @@
+package qualitychecker
+
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import qualitychecker.ChecksSuiteResultStatusCalculator.getWorstCheckStatus
+import qualitychecker.checks.{CheckResult, CheckStatus}
+import utils.CommonFixtures._
+
+class ChecksSuiteResultStatusCalculatorTest extends AnyWordSpec with Matchers {
+  "getWorstCheckStatus" should {
+    val successfulCheckResult = CheckResult(CheckStatus.Success, "", someCheck)
+    val errorCheckResult = CheckResult(CheckStatus.Error, "", someCheck)
+    val warningCheckResult = CheckResult(CheckStatus.Warning, "", someCheck)
+    "Choose error status when there is at least one error" in {
+      getWorstCheckStatus(List(successfulCheckResult, errorCheckResult, warningCheckResult)) shouldBe CheckSuiteStatus.Error
+    }
+    "Choose warning status when there is at least one warning and no errors" in {
+      getWorstCheckStatus(List(successfulCheckResult, warningCheckResult)) shouldBe CheckSuiteStatus.Warning
+    }
+    "Choose success status when all checks were successful" in {
+      getWorstCheckStatus(List(successfulCheckResult)) shouldBe CheckSuiteStatus.Success
+    }
+    "Choose success status when there were no checks" in {
+      getWorstCheckStatus(List()) shouldBe CheckSuiteStatus.Success
+    }
+  }
+}
