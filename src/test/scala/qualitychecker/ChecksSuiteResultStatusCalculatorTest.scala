@@ -8,9 +8,9 @@ import utils.CommonFixtures._
 
 class ChecksSuiteResultStatusCalculatorTest extends AnyWordSpec with Matchers {
   "getWorstCheckStatus" should {
-    val successfulCheckResult = CheckResult(CheckStatus.Success, "", someCheck)
-    val errorCheckResult = CheckResult(CheckStatus.Error, "", someCheck)
-    val warningCheckResult = CheckResult(CheckStatus.Warning, "", someCheck)
+    val successfulCheckResult = CheckResult(CheckStatus.Success, "", someCheck.description)
+    val errorCheckResult = CheckResult(CheckStatus.Error, "", someCheck.description)
+    val warningCheckResult = CheckResult(CheckStatus.Warning, "", someCheck.description)
     "Choose error status when there is at least one error" in {
       getWorstCheckStatus(List(successfulCheckResult, errorCheckResult, warningCheckResult)) shouldBe CheckSuiteStatus.Error
     }

@@ -2,6 +2,8 @@ package qualitychecker
 
 import java.time.Instant
 
+import qualitychecker.repository.QcResultsRepository
+
 object QualityChecker {
   def doQualityChecks(qualityChecks: Seq[ChecksSuite[_]],
                       metricsRepository: QcResultsRepository,

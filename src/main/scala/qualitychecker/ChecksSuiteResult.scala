@@ -2,20 +2,21 @@ package qualitychecker
 
 import java.time.Instant
 
-import qualitychecker.CheckResultDetails.NoDetails
+import enumeratum._
+import qualitychecker.CheckResultDetails.{NoDetails, NoDetailsT}
 import qualitychecker.checks.CheckResult
 
 case class ChecksSuiteResult[T <: CheckResultDetails](
-                                                       overallStatus: CheckSuiteStatus.Value,
+                                                       overallStatus: CheckSuiteStatus,
                                                        checkSuiteDescription: String,
                                                        resultDescription: String,
                                                        checkResults: Seq[CheckResult],
                                                        timestamp: Instant,
-                                                       checkType: QcType.Value,
+                                                       checkType: QcType,
                                                        checkTags: Map[String, String],
                                                        checkDetails: T // Currently only time it isn't "NoDetails" is for Deequ checks
                                                       ) {
-  def removeDetails: ChecksSuiteResult[NoDetails] =
+  def removeDetails: ChecksSuiteResult[NoDetailsT] =
     ChecksSuiteResult(overallStatus, checkSuiteDescription, resultDescription, checkResults, timestamp, checkType, checkTags, NoDetails)
 }
 
@@ -29,9 +30,14 @@ object CheckResultDetails {
 
   case object NoDetails extends CheckResultDetails
 
-  type NoDetails = NoDetails.type
+  type NoDetailsT = NoDetails.type
 }
 
-object CheckSuiteStatus extends Enumeration {
-  val Success, Warning, Error = Value
+sealed trait CheckSuiteStatus extends EnumEntry
+
+object CheckSuiteStatus extends Enum[CheckSuiteStatus] {
+  val values = findValues
+  case object Success extends CheckSuiteStatus
+  case object Warning extends CheckSuiteStatus
+  case object Error extends CheckSuiteStatus
 }

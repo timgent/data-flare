@@ -1,5 +1,6 @@
 package qualitychecker.checks
 
+import enumeratum._
 import org.apache.spark.sql.functions.sum
 import org.apache.spark.sql.{Dataset, Encoder}
 import qualitychecker.DeequCheck
@@ -12,6 +13,8 @@ sealed trait QCCheck {
 
 object QCCheck {
 
+  class StoredQCCheck
+
   trait SingleDatasetCheck extends QCCheck {
     def description: String
 
@@ -23,13 +26,13 @@ object QCCheck {
       new SingleDatasetCheck {
         override def description: String = checkDescription
 
-        override def applyCheck(ds: Dataset[_]): CheckResult =
-          check(ds).toCheckResult(this)
+        override def applyCheck(ds: Dataset[_]): CheckResult = check(ds).withDescription(checkDescription)
       }
     }
 
     def sumOfValuesCheck[T: Encoder](columnName: String, threshold: AbsoluteThreshold[T]): SingleDatasetCheck = {
-      SingleDatasetCheck(s"Constraining sum of column $columnName to be within threshold $threshold") { ds =>
+      val checkDescription = s"Constraining sum of column $columnName to be within threshold $threshold"
+      SingleDatasetCheck(checkDescription) { ds =>
         val sumOfCol = ds.agg(sum(columnName)).as[T].first()
         val withinThreshold = threshold.isWithinThreshold(sumOfCol)
         if (withinThreshold)
@@ -56,7 +59,7 @@ object QCCheck {
         override def description: String = checkDescription
 
         override def applyCheck(dsPair: DatasetPair): CheckResult = {
-          check(dsPair).toCheckResult(this)
+          check(dsPair).withDescription(checkDescription)
         }
       }
     }
@@ -72,7 +75,7 @@ object QCCheck {
     def apply(checkDescription: String)(check: => RawCheckResult) = new ArbitraryCheck {
       override def description: String = checkDescription
 
-      override def applyCheck: CheckResult = check.toCheckResult(this)
+      override def applyCheck: CheckResult = check.withDescription(checkDescription)
     }
   }
 
@@ -82,6 +85,11 @@ object QCCheck {
 
 }
 
-object CheckStatus extends Enumeration {
-  val Success, Warning, Error = Value
+sealed trait CheckStatus extends EnumEntry
+
+object CheckStatus extends Enum[CheckStatus] {
+  val values = findValues
+  case object Success extends CheckStatus
+  case object Warning extends CheckStatus
+  case object Error extends CheckStatus
 }

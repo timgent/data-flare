@@ -13,7 +13,11 @@ lazy val root = (project in file("."))
       sparkTestingBase % Test,
       sparkCore,
       sparkSql,
-      deequ
+      deequ,
+      elastic4s,
+      elastic4sTestKit,
+      elastic4sCirceJson,
+      enumeratum
     ),
     fork in Test := true,
     parallelExecution in Test := false,

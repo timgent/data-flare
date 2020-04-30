@@ -1,11 +1,14 @@
 package qualitychecker.checks
 
-case class RawCheckResult(status: CheckStatus.Value, resultDescription: String) {
-  def toCheckResult(constraint: QCCheck) = CheckResult(status, resultDescription, constraint)
+case class RawCheckResult(
+                        status: CheckStatus,
+                        resultDescription: String
+                      ) {
+  def withDescription(checkDescription: String) = CheckResult(status, resultDescription, checkDescription)
 }
 
 case class CheckResult(
-                        status: CheckStatus.Value,
+                        status: CheckStatus,
                         resultDescription: String,
-                        check: QCCheck
+                        checkDescription: String
                       )

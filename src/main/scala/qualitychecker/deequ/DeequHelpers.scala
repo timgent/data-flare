@@ -27,7 +27,7 @@ object DeequHelpers {
           case com.amazon.deequ.checks.CheckStatus.Warning => "Deequ check produced a warning"
           case com.amazon.deequ.checks.CheckStatus.Error => "Deequ check produced an error"
         }
-        CheckResult(deequCheckResult.status.toCheckStatus, checkResultDescription, DeequQCCheck(deequCheck))
+        CheckResult(deequCheckResult.status.toCheckStatus, checkResultDescription, deequCheck.description)
       }.toSeq
       ChecksSuiteResult( // Do we want to add deequ constraint results to the checks suite result too? It's another level compared to what we have elsewhere. Could refactor to match deequ's way of doing things
         checkStatus,
@@ -36,7 +36,7 @@ object DeequHelpers {
         checkResults,
         timestamp,
         QcType.DeequQualityCheck,
-        Map.empty,
+        checkTags,
         DeequCheckSuiteResultDetails(verificationResult.checkResults)
       )
     }

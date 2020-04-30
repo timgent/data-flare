@@ -4,8 +4,9 @@ import java.time.Instant
 
 import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.{VerificationRunBuilder, VerificationSuite}
+import enumeratum._
 import org.apache.spark.sql.Dataset
-import qualitychecker.CheckResultDetails.{DeequCheckSuiteResultDetails, NoDetails}
+import qualitychecker.CheckResultDetails.{DeequCheckSuiteResultDetails, NoDetails, NoDetailsT}
 import qualitychecker.deequ.DeequHelpers.VerificationResultToQualityCheckResult
 import qualitychecker.checks.{CheckResult, CheckStatus}
 import qualitychecker.checks.QCCheck.DatasetComparisonCheck.DatasetPair
@@ -17,7 +18,7 @@ trait ChecksSuite[T <: CheckResultDetails] {
 
   def checkSuiteDescription: String
 
-  def qcType: QcType.Value
+  def qcType: QcType
 }
 
 object ChecksSuite {
@@ -38,10 +39,10 @@ object ChecksSuite {
               checkDesc: String,
               checks: Seq[SingleDatasetCheck],
               checkTags: Map[String, String],
-              checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus.Value = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
-             ): SingleDatasetChecksSuite[NoDetails] = {
-      new SingleDatasetChecksSuite[NoDetails] {
-        def run(timestamp: Instant): ChecksSuiteResult[NoDetails] = {
+              checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
+             ): SingleDatasetChecksSuite[NoDetailsT] = {
+      new SingleDatasetChecksSuite[NoDetailsT] {
+        def run(timestamp: Instant): ChecksSuiteResult[NoDetailsT] = {
           val checkResults: Seq[CheckResult] = checks.map(_.applyCheck(dataset))
           val overallCheckStatus = checkResultCombiner(checkResults)
           ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
@@ -52,12 +53,12 @@ object ChecksSuite {
 
         override def checkSuiteDescription: String = checkDesc
 
-        override def qcType: QcType.Value = QcType.SingleDatasetQualityCheck
+        override def qcType: QcType = QcType.SingleDatasetQualityCheck
       }
     }
   }
 
-  case class CheckSuiteResult(status: CheckSuiteStatus.Value, resultDescription: String)
+  case class CheckSuiteResult(status: CheckSuiteStatus, resultDescription: String)
 
   trait DatasetComparisonChecksSuite[T <: CheckResultDetails] extends ChecksSuite[T] {
     def datasetToCheck: Dataset[_]
@@ -71,14 +72,14 @@ object ChecksSuite {
               checkDesc: String,
               checks: Seq[DatasetComparisonCheck],
               checkTags: Map[String, String],
-              checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus.Value = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
-             ): DatasetComparisonChecksSuite[NoDetails] = {
-      new DatasetComparisonChecksSuite[NoDetails] {
+              checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
+             ): DatasetComparisonChecksSuite[NoDetailsT] = {
+      new DatasetComparisonChecksSuite[NoDetailsT] {
         override def datasetToCheck: Dataset[_] = ds
 
         override def datasetToCompareTo: Dataset[_] = dsToCompare
 
-        override def run(timestamp: Instant): ChecksSuiteResult[NoDetails] = {
+        override def run(timestamp: Instant): ChecksSuiteResult[NoDetailsT] = {
           val checkResults: Seq[CheckResult] = checks.map(_.applyCheck(DatasetPair(datasetToCheck, datasetToCompareTo)))
           val overallCheckStatus = checkResultCombiner(checkResults)
           ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
@@ -87,7 +88,7 @@ object ChecksSuite {
 
         override def checkSuiteDescription: String = checkDesc
 
-        override def qcType: QcType.Value = QcType.DatasetComparisonQualityCheck
+        override def qcType: QcType = QcType.DatasetComparisonQualityCheck
       }
     }
   }
@@ -98,10 +99,10 @@ object ChecksSuite {
     def apply(checkDesc: String,
               checks: Seq[ArbitraryCheck],
               checkTags: Map[String, String],
-              checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus.Value = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
-             ): ArbitraryChecksSuite[NoDetails] =
-      new ArbitraryChecksSuite[NoDetails] {
-        override def run(timestamp: Instant): ChecksSuiteResult[NoDetails] = {
+              checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
+             ): ArbitraryChecksSuite[NoDetailsT] =
+      new ArbitraryChecksSuite[NoDetailsT] {
+        override def run(timestamp: Instant): ChecksSuiteResult[NoDetailsT] = {
           val checkResults: Seq[CheckResult] = checks.map(_.applyCheck)
           val overallCheckStatus = checkResultCombiner(checkResults)
           ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
@@ -110,7 +111,7 @@ object ChecksSuite {
 
         override def checkSuiteDescription: String = checkDesc
 
-        override def qcType: QcType.Value = QcType.ArbitraryQualityCheck
+        override def qcType: QcType = QcType.ArbitraryQualityCheck
       }
   }
 
@@ -119,7 +120,7 @@ object ChecksSuite {
                               checkTags: Map[String, String]
                                )(implicit deequMetricsRepository: DeequMetricsRepository)
     extends ChecksSuite[DeequCheckSuiteResultDetails] {
-    override def qcType: QcType.Value = QcType.DeequQualityCheck
+    override def qcType: QcType = QcType.DeequQualityCheck
 
     override def run(timestamp: Instant): ChecksSuiteResult[DeequCheckSuiteResultDetails] = {
       val verificationSuite: VerificationRunBuilder = VerificationSuite()
@@ -135,6 +136,12 @@ object ChecksSuite {
 
 }
 
-object QcType extends Enumeration {
-  val DeequQualityCheck, SingleDatasetQualityCheck, DatasetComparisonQualityCheck, ArbitraryQualityCheck = Value
+sealed trait QcType extends EnumEntry
+
+object QcType extends Enum[QcType] {
+  val values = findValues
+  case object DeequQualityCheck extends QcType
+  case object SingleDatasetQualityCheck extends QcType
+  case object DatasetComparisonQualityCheck extends QcType
+  case object ArbitraryQualityCheck extends QcType
 }
