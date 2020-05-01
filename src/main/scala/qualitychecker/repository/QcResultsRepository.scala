@@ -1,28 +1,27 @@
 package qualitychecker.repository
 
-import qualitychecker.CheckResultDetails.NoDetailsT
-import qualitychecker.{CheckResultDetails, ChecksSuiteResult}
+import qualitychecker.ChecksSuiteResult
 
 import scala.collection.mutable.ListBuffer
 
 trait QcResultsRepository {
-  def save(qcResults: Seq[ChecksSuiteResult[_]]): Unit
-  def loadAll: Seq[ChecksSuiteResult[NoDetailsT]]
+  def save(qcResults: Seq[ChecksSuiteResult]): Unit
+  def loadAll: Seq[ChecksSuiteResult]
 }
 
 class InMemoryQcResultsRepository extends QcResultsRepository {
-  val savedResults: ListBuffer[ChecksSuiteResult[CheckResultDetails.NoDetailsT]] = ListBuffer.empty
+  val savedResults: ListBuffer[ChecksSuiteResult] = ListBuffer.empty
 
-  override def save(qcResults: Seq[ChecksSuiteResult[_]]): Unit = {
+  override def save(qcResults: Seq[ChecksSuiteResult]): Unit = {
     savedResults ++= qcResults.map(_.removeDetails)
   }
 
-  override def loadAll: Seq[ChecksSuiteResult[CheckResultDetails.NoDetailsT]] = savedResults
+  override def loadAll: Seq[ChecksSuiteResult] = savedResults
 }
 
 class NullQcResultsRepository extends QcResultsRepository {
-  override def save(qcResults: Seq[ChecksSuiteResult[_]]): Unit = {}
+  override def save(qcResults: Seq[ChecksSuiteResult]): Unit = {}
 
-  override def loadAll: Seq[ChecksSuiteResult[NoDetailsT]] = Seq.empty
+  override def loadAll: Seq[ChecksSuiteResult] = Seq.empty
 }
 

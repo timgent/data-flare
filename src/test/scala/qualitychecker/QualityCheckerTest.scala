@@ -11,7 +11,6 @@ import com.amazon.deequ.repository.{AnalysisResult, ResultKey}
 import com.holdenkarau.spark.testing.DatasetSuiteBase
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import qualitychecker.CheckResultDetails.NoDetailsT
 import qualitychecker.ChecksSuite.{ArbitraryChecksSuite, DatasetComparisonChecksSuite, DeequChecksSuite, SingleDatasetChecksSuite}
 import qualitychecker.checks.QCCheck.DatasetComparisonCheck.DatasetPair
 import qualitychecker.checks.QCCheck.{ArbitraryCheck, DatasetComparisonCheck, DeequQCCheck, SingleDatasetCheck}
@@ -28,7 +27,7 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
 
   val now: Instant = Instant.now
 
-  def checkResultAndPersistedResult(qcResult: ChecksSuiteResult[_], persistedQcResult: ChecksSuiteResult[NoDetailsT])(
+  def checkResultAndPersistedResult(qcResult: ChecksSuiteResult, persistedQcResult: ChecksSuiteResult)(
     checkType: QcType,
     timestamp: Instant,
     checkSuiteDescription: String,
@@ -65,8 +64,8 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
         DeequChecksSuite(testDataset, "sample deequ checks", Seq(deequQcConstraint), someTags)(deequMetricsRepository)
       )
 
-      val qcResults: Seq[ChecksSuiteResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
-      val persistedQcResults: Seq[ChecksSuiteResult[NoDetailsT]] = qcResultsRepository.loadAll
+      val qcResults: Seq[ChecksSuiteResult] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
+      val persistedQcResults: Seq[ChecksSuiteResult] = qcResultsRepository.loadAll
       val persistedDeequMetrics: Seq[AnalysisResult] = deequMetricsRepository.load().get()
 
       qcResults.size shouldBe 1
@@ -101,8 +100,8 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
 
       val qualityChecks = List(SingleDatasetChecksSuite(testDataset, checkDescription, checks, someTags))
 
-      val qcResults: Seq[ChecksSuiteResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
-      val persistedQcResults: Seq[ChecksSuiteResult[NoDetailsT]] = qcResultsRepository.loadAll
+      val qcResults: Seq[ChecksSuiteResult] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
+      val persistedQcResults: Seq[ChecksSuiteResult] = qcResultsRepository.loadAll
 
       checkResultAndPersistedResult(qcResults.head, persistedQcResults.head)(
         checkType = QcType.SingleDatasetQualityCheck,
@@ -125,8 +124,8 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
       }
       val qualityChecks = Seq(DatasetComparisonChecksSuite(testDataset, datasetToCompare, "table A vs table B comparison", Seq(datasetComparisonCheck), someTags))
 
-      val qcResults: Seq[ChecksSuiteResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
-      val persistedQcResults: Seq[ChecksSuiteResult[NoDetailsT]] = qcResultsRepository.loadAll
+      val qcResults: Seq[ChecksSuiteResult] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
+      val persistedQcResults: Seq[ChecksSuiteResult] = qcResultsRepository.loadAll
 
       checkResultAndPersistedResult(qcResults.head, persistedQcResults.head)(
         checkType = QcType.DatasetComparisonQualityCheck,
@@ -147,8 +146,8 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
       }
       val qualityChecks = Seq(ArbitraryChecksSuite("table A, table B, and table C comparison", Seq(arbitraryCheck), someTags))
 
-      val qcResults: Seq[ChecksSuiteResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
-      val persistedQcResults: Seq[ChecksSuiteResult[NoDetailsT]] = qcResultsRepository.loadAll
+      val qcResults: Seq[ChecksSuiteResult] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
+      val persistedQcResults: Seq[ChecksSuiteResult] = qcResultsRepository.loadAll
 
       qcResults.size shouldBe 1
       qcResults.head.checkType shouldBe QcType.ArbitraryQualityCheck

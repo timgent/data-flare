@@ -3,14 +3,12 @@ package qualitychecker.deequ
 import java.time.Instant
 
 import com.amazon.deequ.VerificationResult
-import qualitychecker.CheckResultDetails.DeequCheckSuiteResultDetails
-import qualitychecker.checks.QCCheck.DeequQCCheck
 import qualitychecker.checks.{CheckResult, CheckStatus}
 import qualitychecker.{CheckSuiteStatus, ChecksSuiteResult, DeequCheckStatus, QcType}
 
 object DeequHelpers {
   implicit class VerificationResultToQualityCheckResult(verificationResult: VerificationResult) {
-    def toCheckSuiteResult(description: String, timestamp: Instant, checkTags: Map[String, String]): ChecksSuiteResult[DeequCheckSuiteResultDetails] = {
+    def toCheckSuiteResult(description: String, timestamp: Instant, checkTags: Map[String, String]): ChecksSuiteResult = {
       val checkStatus = verificationResult.status match {
         case com.amazon.deequ.checks.CheckStatus.Success => CheckSuiteStatus.Success
         case com.amazon.deequ.checks.CheckStatus.Warning => CheckSuiteStatus.Warning
@@ -36,8 +34,7 @@ object DeequHelpers {
         checkResults,
         timestamp,
         QcType.DeequQualityCheck,
-        checkTags,
-        DeequCheckSuiteResultDetails(verificationResult.checkResults)
+        checkTags
       )
     }
   }

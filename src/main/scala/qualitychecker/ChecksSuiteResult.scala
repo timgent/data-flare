@@ -3,35 +3,22 @@ package qualitychecker
 import java.time.Instant
 
 import enumeratum._
-import qualitychecker.CheckResultDetails.{NoDetails, NoDetailsT}
 import qualitychecker.checks.CheckResult
 
-case class ChecksSuiteResult[T <: CheckResultDetails](
+case class ChecksSuiteResult(
                                                        overallStatus: CheckSuiteStatus,
                                                        checkSuiteDescription: String,
                                                        resultDescription: String,
                                                        checkResults: Seq[CheckResult],
                                                        timestamp: Instant,
                                                        checkType: QcType,
-                                                       checkTags: Map[String, String],
-                                                       checkDetails: T // Currently only time it isn't "NoDetails" is for Deequ checks
+                                                       checkTags: Map[String, String]
                                                       ) {
-  def removeDetails: ChecksSuiteResult[NoDetailsT] =
-    ChecksSuiteResult(overallStatus, checkSuiteDescription, resultDescription, checkResults, timestamp, checkType, checkTags, NoDetails)
+  def removeDetails: ChecksSuiteResult =
+    ChecksSuiteResult(overallStatus, checkSuiteDescription, resultDescription, checkResults, timestamp, checkType, checkTags)
 }
 
 case class SimpleQualityCheckResult()
-
-trait CheckResultDetails
-
-object CheckResultDetails {
-
-  case class DeequCheckSuiteResultDetails(checkResults: Map[DeequCheck, DeequCheckResult]) extends CheckResultDetails
-
-  case object NoDetails extends CheckResultDetails
-
-  type NoDetailsT = NoDetails.type
-}
 
 sealed trait CheckSuiteStatus extends EnumEntry
 
