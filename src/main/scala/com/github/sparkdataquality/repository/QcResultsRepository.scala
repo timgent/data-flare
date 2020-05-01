@@ -1,6 +1,6 @@
-package qualitychecker.repository
+package com.github.sparkdataquality.repository
 
-import qualitychecker.ChecksSuiteResult
+import com.github.sparkdataquality.ChecksSuiteResult
 
 import scala.collection.mutable.ListBuffer
 

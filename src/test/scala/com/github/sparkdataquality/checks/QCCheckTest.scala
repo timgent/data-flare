@@ -1,11 +1,11 @@
-package qualitychecker.checks
+package com.github.sparkdataquality.checks
 
 import com.holdenkarau.spark.testing.DatasetSuiteBase
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import qualitychecker.checks.QCCheck.SingleDatasetCheck
-import qualitychecker.thresholds.AbsoluteThreshold
-import utils.TestDataClass
+import com.github.sparkdataquality.checks.QCCheck.SingleDatasetCheck
+import com.github.sparkdataquality.thresholds.AbsoluteThreshold
+import com.github.sparkdataquality.utils.TestDataClass
 
 class QCCheckTest extends AnyWordSpec with DatasetSuiteBase with Matchers {
 

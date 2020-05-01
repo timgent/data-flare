@@ -1,9 +1,9 @@
-package qualitychecker
+package com.github.sparkdataquality
 
 import java.time.Instant
 
 import enumeratum._
-import qualitychecker.checks.CheckResult
+import com.github.sparkdataquality.checks.CheckResult
 
 case class ChecksSuiteResult(
                                                        overallStatus: CheckSuiteStatus,

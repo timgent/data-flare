@@ -1,10 +1,10 @@
-package qualitychecker
+package com.github.sparkdataquality
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import qualitychecker.ChecksSuiteResultStatusCalculator.getWorstCheckStatus
-import qualitychecker.checks.{CheckResult, CheckStatus}
-import utils.CommonFixtures._
+import com.github.sparkdataquality.ChecksSuiteResultStatusCalculator.getWorstCheckStatus
+import com.github.sparkdataquality.checks.{CheckResult, CheckStatus}
+import com.github.sparkdataquality.utils.CommonFixtures._
 
 class ChecksSuiteResultStatusCalculatorTest extends AnyWordSpec with Matchers {
   "getWorstCheckStatus" should {

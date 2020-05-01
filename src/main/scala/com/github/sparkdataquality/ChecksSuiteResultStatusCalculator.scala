@@ -1,6 +1,6 @@
-package qualitychecker
+package com.github.sparkdataquality
 
-import qualitychecker.checks.{CheckResult, CheckStatus}
+import com.github.sparkdataquality.checks.{CheckResult, CheckStatus}
 
 object ChecksSuiteResultStatusCalculator {
   def getWorstCheckStatus(checkResults: Seq[CheckResult]): CheckSuiteStatus = {

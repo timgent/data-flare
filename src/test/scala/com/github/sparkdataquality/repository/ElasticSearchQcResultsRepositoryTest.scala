@@ -1,12 +1,12 @@
-package qualitychecker.repository
+package com.github.sparkdataquality.repository
 
 import com.sksamuel.elastic4s.testkit.DockerTests
 import org.scalatest.concurrent.Eventually
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import qualitychecker.checks.{CheckResult, CheckStatus}
-import qualitychecker.{CheckSuiteStatus, ChecksSuiteResult, QcType}
-import utils.CommonFixtures._
+import com.github.sparkdataquality.checks.{CheckResult, CheckStatus}
+import com.github.sparkdataquality.{CheckSuiteStatus, ChecksSuiteResult, QcType}
+import com.github.sparkdataquality.utils.CommonFixtures._
 
 import scala.concurrent.duration._
 

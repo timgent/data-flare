@@ -1,4 +1,4 @@
-package qualitychecker.deequ
+package com.github.sparkdataquality.deequ
 
 import com.amazon.deequ.analyzers.Analyzer
 import com.amazon.deequ.analyzers.runners.AnalyzerContext

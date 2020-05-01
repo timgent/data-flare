@@ -1,7 +1,7 @@
-package utils
+package com.github.sparkdataquality.utils
 
-import qualitychecker.DeequCheckStatus
-import qualitychecker.checks.CheckStatus
+import com.github.sparkdataquality.checks.CheckStatus
+import com.github.sparkdataquality.sparkdataquality.DeequCheckStatus
 
 object DeequUtils {
   implicit class DeequCheckStatusEnricher(checkStatus: DeequCheckStatus) {

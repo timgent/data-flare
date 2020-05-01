@@ -1,8 +1,8 @@
-package qualitychecker
+package com.github.sparkdataquality
 
 import java.time.Instant
 
-import qualitychecker.repository.QcResultsRepository
+import com.github.sparkdataquality.repository.QcResultsRepository
 
 object QualityChecker {
   def doQualityChecks(qualityChecks: Seq[ChecksSuite],

@@ -1,4 +1,4 @@
-package qualitychecker
+package com.github.sparkdataquality
 
 import java.time.Instant
 
@@ -11,13 +11,13 @@ import com.amazon.deequ.repository.{AnalysisResult, ResultKey}
 import com.holdenkarau.spark.testing.DatasetSuiteBase
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import qualitychecker.ChecksSuite.{ArbitraryChecksSuite, DatasetComparisonChecksSuite, DeequChecksSuite, SingleDatasetChecksSuite}
-import qualitychecker.checks.QCCheck.DatasetComparisonCheck.DatasetPair
-import qualitychecker.checks.QCCheck.{ArbitraryCheck, DatasetComparisonCheck, DeequQCCheck, SingleDatasetCheck}
-import qualitychecker.checks.{CheckResult, CheckStatus, RawCheckResult}
-import qualitychecker.repository.InMemoryQcResultsRepository
-import utils.CommonFixtures._
-import utils.TestDataClass
+import com.github.sparkdataquality.ChecksSuite.{ArbitraryChecksSuite, DatasetComparisonChecksSuite, DeequChecksSuite, SingleDatasetChecksSuite}
+import com.github.sparkdataquality.checks.QCCheck.DatasetComparisonCheck.DatasetPair
+import com.github.sparkdataquality.checks.QCCheck.{ArbitraryCheck, DatasetComparisonCheck, DeequQCCheck, SingleDatasetCheck}
+import com.github.sparkdataquality.checks.{CheckResult, CheckStatus, RawCheckResult}
+import com.github.sparkdataquality.repository.InMemoryQcResultsRepository
+import com.github.sparkdataquality.utils.CommonFixtures._
+import com.github.sparkdataquality.utils.TestDataClass
 
 import scala.util.Success
 

@@ -1,4 +1,4 @@
-package qualitychecker.checks
+package com.github.sparkdataquality.checks
 
 case class RawCheckResult(
                         status: CheckStatus,

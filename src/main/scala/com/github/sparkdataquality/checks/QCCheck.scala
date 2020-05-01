@@ -1,11 +1,11 @@
-package qualitychecker.checks
+package com.github.sparkdataquality.checks
 
+import com.github.sparkdataquality.checks.QCCheck.DatasetComparisonCheck.DatasetPair
+import com.github.sparkdataquality.sparkdataquality.DeequCheck
+import com.github.sparkdataquality.thresholds.AbsoluteThreshold
 import enumeratum._
 import org.apache.spark.sql.functions.sum
 import org.apache.spark.sql.{Dataset, Encoder}
-import qualitychecker.DeequCheck
-import qualitychecker.checks.QCCheck.DatasetComparisonCheck.DatasetPair
-import qualitychecker.thresholds.AbsoluteThreshold
 
 sealed trait QCCheck {
   def description: String

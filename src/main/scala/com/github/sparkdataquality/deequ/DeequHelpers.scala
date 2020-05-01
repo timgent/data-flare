@@ -1,10 +1,11 @@
-package qualitychecker.deequ
+package com.github.sparkdataquality.deequ
 
 import java.time.Instant
 
 import com.amazon.deequ.VerificationResult
-import qualitychecker.checks.{CheckResult, CheckStatus}
-import qualitychecker.{CheckSuiteStatus, ChecksSuiteResult, DeequCheckStatus, QcType}
+import com.github.sparkdataquality.checks.{CheckResult, CheckStatus}
+import com.github.sparkdataquality.sparkdataquality.DeequCheckStatus
+import com.github.sparkdataquality.{CheckSuiteStatus, ChecksSuiteResult, QcType}
 
 object DeequHelpers {
   implicit class VerificationResultToQualityCheckResult(verificationResult: VerificationResult) {
@@ -15,8 +16,8 @@ object DeequHelpers {
         case com.amazon.deequ.checks.CheckStatus.Error => CheckSuiteStatus.Error
       }
       val checkSuiteResultDescription = checkStatus match {
-        case qualitychecker.CheckSuiteStatus.Success => "All Deequ checks were successful"
-        case qualitychecker.CheckSuiteStatus.Warning => "Deequ checks returned a warning"
+        case CheckSuiteStatus.Success => "All Deequ checks were successful"
+        case CheckSuiteStatus.Warning => "Deequ checks returned a warning"
         case CheckSuiteStatus.Error => "Deequ checks returned an error"
       }
       val checkResults = verificationResult.checkResults.map{ case (deequCheck, deequCheckResult) =>
