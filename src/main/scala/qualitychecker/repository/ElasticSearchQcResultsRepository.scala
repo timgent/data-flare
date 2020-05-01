@@ -1,26 +1,30 @@
 package qualitychecker.repository
 
-import java.time.Instant
-
-import com.sksamuel.elastic4s.{ElasticClient, ElasticDsl, ElasticProperties, Index}
-import com.sksamuel.elastic4s.http.JavaClient
-import qualitychecker.CheckResultDetails.NoDetailsT
-import qualitychecker.{CheckResultDetails, CheckSuiteStatus, ChecksSuiteResult, QcType}
-import io.circe.generic.auto._
+import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.circe._
 import com.sksamuel.elastic4s.http.JavaClient
-import com.sksamuel.elastic4s.ElasticDsl._
-import qualitychecker.checks.CheckResult
+import com.sksamuel.elastic4s.{ElasticClient, ElasticProperties, Index}
+import io.circe.generic.auto._
+import qualitychecker.ChecksSuiteResult
 
 class ElasticSearchQcResultsRepository(client: ElasticClient, index: Index) extends QcResultsRepository {
 
-  override def save(qcResults: Seq[ChecksSuiteResult[_]]): Unit = {
+  // TODO: Change repository methods to be asynchronous
+  override def save(qcResults: Seq[ChecksSuiteResult]): Unit = {
     client.execute {
-      indexInto(index).doc(qcResults.head)
-    }
+      bulk (
+        qcResults.map(indexInto(index).doc(_))
+      )
+    }.await
   }
 
-  override def loadAll: Seq[ChecksSuiteResult[NoDetailsT]] = ???
+  // TODO: Change repository methods to be asynchronous
+  override def loadAll: Seq[ChecksSuiteResult] = {
+    val resp = client.execute {
+      search(index) query matchAllQuery
+    }.await
+    resp.result.hits.hits.map(_.to[ChecksSuiteResult])
+  }
 }
 
 object ElasticSearchQcResultsRepository {
@@ -30,15 +34,3 @@ object ElasticSearchQcResultsRepository {
     new ElasticSearchQcResultsRepository(client, index)
   }
 }
-
-case class Test(a: String)
-
-case class Moo[T <: CheckResultDetails](
-                                         overallStatus: CheckSuiteStatus,
-                                         checkSuiteDescription: String,
-                                         resultDescription: String,
-                                         checkResults: Seq[CheckResult],
-                                         timestamp: Instant,
-                                         checkType: QcType,
-                                         checkTags: Map[String, String]
-                                       )
