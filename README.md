@@ -84,3 +84,6 @@ val arbitraryCheck = ArbitraryCheck("some arbitrary check") {
 }
 val qualityChecks = Seq(ArbitraryChecksSuite("table A, table B, and table C comparison", Seq(arbitraryCheck), someTags))
 ```
+
+## Published with SBT Sonatype
+https://github.com/xerial/sbt-sonatype
