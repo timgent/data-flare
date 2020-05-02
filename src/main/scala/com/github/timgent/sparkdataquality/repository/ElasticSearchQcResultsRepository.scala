@@ -1,11 +1,11 @@
-package com.github.sparkdataquality.repository
+package com.github.timgent.sparkdataquality.repository
 
+import com.github.timgent.sparkdataquality.ChecksSuiteResult
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.circe._
 import com.sksamuel.elastic4s.http.JavaClient
 import com.sksamuel.elastic4s.{ElasticClient, ElasticProperties, Index}
 import io.circe.generic.auto._
-import com.github.sparkdataquality.ChecksSuiteResult
 
 class ElasticSearchQcResultsRepository(client: ElasticClient, index: Index) extends QcResultsRepository {
 

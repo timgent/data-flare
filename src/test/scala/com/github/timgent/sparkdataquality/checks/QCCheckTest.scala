@@ -1,11 +1,11 @@
-package com.github.sparkdataquality.checks
+package com.github.timgent.sparkdataquality.checks
 
+import com.github.timgent.sparkdataquality.checks.QCCheck.SingleDatasetCheck.sumOfValuesCheck
+import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
+import com.github.timgent.sparkdataquality.utils.TestDataClass
 import com.holdenkarau.spark.testing.DatasetSuiteBase
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import com.github.sparkdataquality.checks.QCCheck.SingleDatasetCheck
-import com.github.sparkdataquality.thresholds.AbsoluteThreshold
-import com.github.sparkdataquality.utils.TestDataClass
 
 class QCCheckTest extends AnyWordSpec with DatasetSuiteBase with Matchers {
 
@@ -19,8 +19,6 @@ class QCCheckTest extends AnyWordSpec with DatasetSuiteBase with Matchers {
       s"Sum of column number was 6, which was within the threshold $threshold"
     else
       s"Sum of column number was 6, which was outside the threshold $threshold"
-
-    import SingleDatasetCheck.sumOfValuesCheck
     "pass the qc check" when {
       "sum of values is above a lower bound" in {
         val threshold = AbsoluteThreshold(Some(5L), None)

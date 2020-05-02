@@ -1,3 +1,3 @@
-package com.github.sparkdataquality.utils
+package com.github.timgent.sparkdataquality.utils
 
 case class TestDataClass(number: Int, letter: String)

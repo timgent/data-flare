@@ -1,12 +1,15 @@
-package com.github.sparkdataquality.repository
+package com.github.timgent.sparkdataquality.repository
 
+import com.github.timgent.sparkdataquality
+import com.github.timgent.sparkdataquality.CheckSuiteStatus.{Error, Success}
+import com.github.timgent.sparkdataquality.QcType.{DatasetComparisonQualityCheck, SingleDatasetQualityCheck}
+import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
+import com.github.timgent.sparkdataquality.utils.CommonFixtures._
+import com.github.timgent.sparkdataquality.{CheckSuiteStatus, ChecksSuiteResult, QcType}
 import com.sksamuel.elastic4s.testkit.DockerTests
 import org.scalatest.concurrent.Eventually
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import com.github.sparkdataquality.checks.{CheckResult, CheckStatus}
-import com.github.sparkdataquality.{CheckSuiteStatus, ChecksSuiteResult, QcType}
-import com.github.sparkdataquality.utils.CommonFixtures._
 
 import scala.concurrent.duration._
 
@@ -28,11 +31,11 @@ class ElasticSearchQcResultsRepositoryTest extends AnyWordSpec with Matchers wit
       val checkResultB1Success = generateRawCheckResult("B1", CheckStatus.Error)
       val checkResultB2Success = generateRawCheckResult("B2", CheckStatus.Error)
       val initialResultsToInsert: Seq[ChecksSuiteResult] = Seq(
-        ChecksSuiteResult(CheckSuiteStatus.Success, "checkSuiteA", "resultA", Seq(checkResultA1, checkResultA2), now, QcType.SingleDatasetQualityCheck, someTags),
-        ChecksSuiteResult(CheckSuiteStatus.Error, "checkSuiteB", "resultB", Seq(checkResultB1, checkResultB2), now, QcType.DatasetComparisonQualityCheck, someTags)
+        sparkdataquality.ChecksSuiteResult(Success, "checkSuiteA", "resultA", Seq(checkResultA1, checkResultA2), now, SingleDatasetQualityCheck, someTags),
+        sparkdataquality.ChecksSuiteResult(Error, "checkSuiteB", "resultB", Seq(checkResultB1, checkResultB2), now, DatasetComparisonQualityCheck, someTags)
       )
       val moreResultsToInsert: Seq[ChecksSuiteResult] = Seq(
-        ChecksSuiteResult(CheckSuiteStatus.Success, "checkSuiteB", "resultB", Seq(checkResultB1Success, checkResultB2Success),
+        sparkdataquality.ChecksSuiteResult(CheckSuiteStatus.Success, "checkSuiteB", "resultB", Seq(checkResultB1Success, checkResultB2Success),
           now.plusSeconds(10), QcType.DatasetComparisonQualityCheck, someTags)
       )
       def storedResults: Seq[ChecksSuiteResult] = repo.loadAll

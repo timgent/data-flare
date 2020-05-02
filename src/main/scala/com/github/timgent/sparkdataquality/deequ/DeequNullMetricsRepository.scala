@@ -1,4 +1,4 @@
-package com.github.sparkdataquality.deequ
+package com.github.timgent.sparkdataquality.deequ
 
 import com.amazon.deequ.analyzers.Analyzer
 import com.amazon.deequ.analyzers.runners.AnalyzerContext

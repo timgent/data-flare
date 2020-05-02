@@ -1,6 +1,6 @@
-package com.github.sparkdataquality
+package com.github.timgent.sparkdataquality
 
-import com.github.sparkdataquality.checks.{CheckResult, CheckStatus}
+import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
 
 object ChecksSuiteResultStatusCalculator {
   def getWorstCheckStatus(checkResults: Seq[CheckResult]): CheckSuiteStatus = {

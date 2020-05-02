@@ -1,4 +1,4 @@
-package com.github.sparkdataquality.thresholds
+package com.github.timgent.sparkdataquality.thresholds
 
 case class AbsoluteThreshold[T: Ordering](lowerBound: Option[T], upperBound: Option[T]) {
   def isWithinThreshold(itemToCompare: T): Boolean = {

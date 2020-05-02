@@ -1,14 +1,14 @@
-package com.github.sparkdataquality
+package com.github.timgent.sparkdataquality
 
 import java.time.Instant
 
 import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.{VerificationRunBuilder, VerificationSuite}
-import com.github.sparkdataquality.checks.QCCheck.DatasetComparisonCheck.DatasetPair
-import com.github.sparkdataquality.checks.QCCheck.{ArbitraryCheck, DatasetComparisonCheck, DeequQCCheck, SingleDatasetCheck}
-import com.github.sparkdataquality.checks.{CheckResult, CheckStatus}
-import com.github.sparkdataquality.deequ.DeequHelpers.VerificationResultToQualityCheckResult
-import com.github.sparkdataquality.sparkdataquality.DeequMetricsRepository
+import com.github.timgent.sparkdataquality.checks.QCCheck.DatasetComparisonCheck.DatasetPair
+import com.github.timgent.sparkdataquality.checks.QCCheck.{ArbitraryCheck, DatasetComparisonCheck, DeequQCCheck, SingleDatasetCheck}
+import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
+import com.github.timgent.sparkdataquality.deequ.DeequHelpers.VerificationResultToQualityCheckResult
+import com.github.timgent.sparkdataquality.sparkdataquality.DeequMetricsRepository
 import enumeratum._
 import org.apache.spark.sql.Dataset
 

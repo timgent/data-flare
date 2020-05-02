@@ -1,6 +1,6 @@
-package com.github.sparkdataquality.repository
+package com.github.timgent.sparkdataquality.repository
 
-import com.github.sparkdataquality.ChecksSuiteResult
+import com.github.timgent.sparkdataquality.ChecksSuiteResult
 
 import scala.collection.mutable.ListBuffer
 

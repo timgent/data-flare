@@ -1,9 +1,9 @@
-package com.github.sparkdataquality
+package com.github.timgent.sparkdataquality
 
 import java.time.Instant
 
+import com.github.timgent.sparkdataquality.checks.CheckResult
 import enumeratum._
-import com.github.sparkdataquality.checks.CheckResult
 
 case class ChecksSuiteResult(
                                                        overallStatus: CheckSuiteStatus,

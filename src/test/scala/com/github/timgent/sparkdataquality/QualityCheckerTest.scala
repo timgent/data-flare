@@ -1,4 +1,4 @@
-package com.github.sparkdataquality
+package com.github.timgent.sparkdataquality
 
 import java.time.Instant
 
@@ -8,16 +8,16 @@ import com.amazon.deequ.checks.{Check, CheckLevel}
 import com.amazon.deequ.metrics.{DoubleMetric, Entity}
 import com.amazon.deequ.repository.memory.InMemoryMetricsRepository
 import com.amazon.deequ.repository.{AnalysisResult, ResultKey}
+import com.github.timgent.sparkdataquality.ChecksSuite.{ArbitraryChecksSuite, DatasetComparisonChecksSuite, DeequChecksSuite, SingleDatasetChecksSuite}
+import com.github.timgent.sparkdataquality.checks.QCCheck.DatasetComparisonCheck.DatasetPair
+import com.github.timgent.sparkdataquality.checks.QCCheck.{ArbitraryCheck, DatasetComparisonCheck, DeequQCCheck, SingleDatasetCheck}
+import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, RawCheckResult}
+import com.github.timgent.sparkdataquality.repository.InMemoryQcResultsRepository
+import com.github.timgent.sparkdataquality.utils.CommonFixtures._
+import com.github.timgent.sparkdataquality.utils.TestDataClass
 import com.holdenkarau.spark.testing.DatasetSuiteBase
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import com.github.sparkdataquality.ChecksSuite.{ArbitraryChecksSuite, DatasetComparisonChecksSuite, DeequChecksSuite, SingleDatasetChecksSuite}
-import com.github.sparkdataquality.checks.QCCheck.DatasetComparisonCheck.DatasetPair
-import com.github.sparkdataquality.checks.QCCheck.{ArbitraryCheck, DatasetComparisonCheck, DeequQCCheck, SingleDatasetCheck}
-import com.github.sparkdataquality.checks.{CheckResult, CheckStatus, RawCheckResult}
-import com.github.sparkdataquality.repository.InMemoryQcResultsRepository
-import com.github.sparkdataquality.utils.CommonFixtures._
-import com.github.sparkdataquality.utils.TestDataClass
 
 import scala.util.Success
 
@@ -142,7 +142,7 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
       val qcResultsRepository = new InMemoryQcResultsRepository
 
       val arbitraryCheck = ArbitraryCheck("some arbitrary check") {
-          RawCheckResult(CheckStatus.Error, "The arbitrary check failed!")
+        RawCheckResult(CheckStatus.Error, "The arbitrary check failed!")
       }
       val qualityChecks = Seq(ArbitraryChecksSuite("table A, table B, and table C comparison", Seq(arbitraryCheck), someTags))
 

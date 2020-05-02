@@ -1,4 +1,4 @@
-package com.github.sparkdataquality.checks
+package com.github.timgent.sparkdataquality.checks
 
 case class RawCheckResult(
                         status: CheckStatus,

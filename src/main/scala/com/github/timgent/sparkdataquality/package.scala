@@ -1,4 +1,4 @@
-package com.github
+package com.github.timgent
 
 import com.amazon.deequ.checks.{Check, CheckResult, CheckStatus}
 import com.amazon.deequ.constraints.Constraint

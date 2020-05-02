@@ -1,8 +1,8 @@
-package com.github.sparkdataquality.checks
+package com.github.timgent.sparkdataquality.checks
 
-import com.github.sparkdataquality.checks.QCCheck.DatasetComparisonCheck.DatasetPair
-import com.github.sparkdataquality.sparkdataquality.DeequCheck
-import com.github.sparkdataquality.thresholds.AbsoluteThreshold
+import com.github.timgent.sparkdataquality.checks.QCCheck.DatasetComparisonCheck.DatasetPair
+import com.github.timgent.sparkdataquality.sparkdataquality.DeequCheck
+import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 import enumeratum._
 import org.apache.spark.sql.functions.sum
 import org.apache.spark.sql.{Dataset, Encoder}
