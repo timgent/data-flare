@@ -13,8 +13,6 @@ sealed trait QCCheck {
 
 object QCCheck {
 
-  class StoredQCCheck
-
   trait SingleDatasetCheck extends QCCheck {
     def description: String
 

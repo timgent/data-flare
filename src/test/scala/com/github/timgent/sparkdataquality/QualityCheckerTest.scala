@@ -8,10 +8,10 @@ import com.amazon.deequ.checks.{Check, CheckLevel}
 import com.amazon.deequ.metrics.{DoubleMetric, Entity}
 import com.amazon.deequ.repository.memory.InMemoryMetricsRepository
 import com.amazon.deequ.repository.{AnalysisResult, ResultKey}
-import com.github.timgent.sparkdataquality.ChecksSuite.{ArbitraryChecksSuite, DatasetComparisonChecksSuite, DeequChecksSuite, SingleDatasetChecksSuite}
 import com.github.timgent.sparkdataquality.checks.QCCheck.DatasetComparisonCheck.DatasetPair
 import com.github.timgent.sparkdataquality.checks.QCCheck.{ArbitraryCheck, DatasetComparisonCheck, DeequQCCheck, SingleDatasetCheck}
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, RawCheckResult}
+import com.github.timgent.sparkdataquality.checkssuite._
 import com.github.timgent.sparkdataquality.repository.InMemoryQcResultsRepository
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
 import com.github.timgent.sparkdataquality.utils.TestDataClass
@@ -64,7 +64,7 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
         DeequChecksSuite(testDataset, "sample deequ checks", Seq(deequQcConstraint), someTags)(deequMetricsRepository)
       )
 
-      val qcResults: Seq[ChecksSuiteResult] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
+      val qcResults: Seq[ChecksSuiteResult] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).results
       val persistedQcResults: Seq[ChecksSuiteResult] = qcResultsRepository.loadAll
       val persistedDeequMetrics: Seq[AnalysisResult] = deequMetricsRepository.load().get()
 
@@ -100,7 +100,7 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
 
       val qualityChecks = List(SingleDatasetChecksSuite(testDataset, checkDescription, checks, someTags))
 
-      val qcResults: Seq[ChecksSuiteResult] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
+      val qcResults: Seq[ChecksSuiteResult] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).results
       val persistedQcResults: Seq[ChecksSuiteResult] = qcResultsRepository.loadAll
 
       checkResultAndPersistedResult(qcResults.head, persistedQcResults.head)(
@@ -124,7 +124,7 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
       }
       val qualityChecks = Seq(DatasetComparisonChecksSuite(testDataset, datasetToCompare, "table A vs table B comparison", Seq(datasetComparisonCheck), someTags))
 
-      val qcResults: Seq[ChecksSuiteResult] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
+      val qcResults: Seq[ChecksSuiteResult] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).results
       val persistedQcResults: Seq[ChecksSuiteResult] = qcResultsRepository.loadAll
 
       checkResultAndPersistedResult(qcResults.head, persistedQcResults.head)(
@@ -146,7 +146,7 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
       }
       val qualityChecks = Seq(ArbitraryChecksSuite("table A, table B, and table C comparison", Seq(arbitraryCheck), someTags))
 
-      val qcResults: Seq[ChecksSuiteResult] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
+      val qcResults: Seq[ChecksSuiteResult] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).results
       val persistedQcResults: Seq[ChecksSuiteResult] = qcResultsRepository.loadAll
 
       qcResults.size shouldBe 1

@@ -1,6 +1,6 @@
 package com.github.timgent.sparkdataquality.repository
 
-import com.github.timgent.sparkdataquality.ChecksSuiteResult
+import com.github.timgent.sparkdataquality.checkssuite.ChecksSuiteResult
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.circe._
 import com.sksamuel.elastic4s.http.JavaClient

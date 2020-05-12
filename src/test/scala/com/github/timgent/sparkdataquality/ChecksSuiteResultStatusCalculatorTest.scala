@@ -1,8 +1,9 @@
 package com.github.timgent.sparkdataquality
 
-import com.github.timgent.sparkdataquality.ChecksSuiteResultStatusCalculator.getWorstCheckStatus
+import com.github.timgent.sparkdataquality.checkssuite.ChecksSuiteResultStatusCalculator.getWorstCheckStatus
 import com.github.timgent.sparkdataquality.checks.CheckStatus.Success
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
+import com.github.timgent.sparkdataquality.checkssuite.CheckSuiteStatus
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec

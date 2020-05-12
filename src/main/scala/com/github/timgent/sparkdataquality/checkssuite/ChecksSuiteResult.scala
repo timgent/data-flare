@@ -1,4 +1,4 @@
-package com.github.timgent.sparkdataquality
+package com.github.timgent.sparkdataquality.checkssuite
 
 import java.time.Instant
 
@@ -28,3 +28,5 @@ object CheckSuiteStatus extends Enum[CheckSuiteStatus] {
   case object Warning extends CheckSuiteStatus
   case object Error extends CheckSuiteStatus
 }
+
+case class ChecksSuitesResults(results: Seq[ChecksSuiteResult])
