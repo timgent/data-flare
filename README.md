@@ -17,7 +17,11 @@ you can perform aligns with the `ChecksSuite` above:
     * `ArbitraryCheck` - a completely arbitrary check
 
 # Getting started
-This library hasn't yet been published sorry! Once it has the following will help you get started.
+Add the following to your dependencies:
+```
+libraryDependencies += "com.github.timgent" % "spark-data-quality_2.11" % "0.1.2"
+```
+For other build systems like maven, and to check the latest version go to https://search.maven.org/artifact/com.github.timgent/spark-data-quality_2.11
 
 ## ChecksSuites
 ChecksSuites let you perform a number of checks of a particular type. Some examples follow:
