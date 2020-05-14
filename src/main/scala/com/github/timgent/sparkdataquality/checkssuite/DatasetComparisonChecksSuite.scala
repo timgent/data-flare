@@ -21,8 +21,8 @@ object DatasetComparisonChecksSuite {
             checks: Seq[DatasetComparisonCheck],
             checkTags: Map[String, String],
             checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
-           ): MetricsBasedChecksSuite = {
-    new MetricsBasedChecksSuite {
+           ): DatasetComparisonChecksSuite = {
+    new DatasetComparisonChecksSuite {
       override def datasetToCheck: Dataset[_] = ds
 
       override def datasetToCompareTo: Dataset[_] = dsToCompare

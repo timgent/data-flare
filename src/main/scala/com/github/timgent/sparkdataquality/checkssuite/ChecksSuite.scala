@@ -31,4 +31,5 @@ object QcType extends Enum[QcType] {
   case object SingleDatasetQualityCheck extends QcType
   case object DatasetComparisonQualityCheck extends QcType
   case object ArbitraryQualityCheck extends QcType
+  case object MetricsBasedQualityCheck extends QcType
 }

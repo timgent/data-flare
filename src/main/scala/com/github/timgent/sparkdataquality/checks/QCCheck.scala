@@ -1,11 +1,18 @@
 package com.github.timgent.sparkdataquality.checks
 
 import com.github.timgent.sparkdataquality.checks.QCCheck.DatasetComparisonCheck.DatasetPair
+import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{SimpleMetricCalculator, SizeMetricCalculator}
+import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.SizeMetricDescriptor
+import com.github.timgent.sparkdataquality.metrics.{MetricCalculator, MetricDescriptor, MetricFilter, MetricValue}
 import com.github.timgent.sparkdataquality.sparkdataquality.DeequCheck
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 import enumeratum._
+import javassist.bytecode.stackmap.TypeTag
 import org.apache.spark.sql.functions.sum
 import org.apache.spark.sql.{Dataset, Encoder}
+
+import scala.reflect.ClassTag
+import scala.util.{Failure, Success, Try}
 
 sealed trait QCCheck {
   def description: String
@@ -74,6 +81,42 @@ object QCCheck {
       override def description: String = checkDescription
 
       override def applyCheck: CheckResult = check.withDescription(checkDescription)
+    }
+  }
+
+  trait MetricsBasedCheck[MV <: MetricValue, MC <: MetricCalculator] extends QCCheck {
+    def metricDescriptor: MetricDescriptor
+
+    def applyCheck(metric: MV): CheckResult
+
+    final def applyCheckOnMetrics(metrics: Map[MetricDescriptor, MetricValue])(implicit typeTag: ClassTag[MV]): CheckResult = {
+      val metricOfInterestOpt: Option[MetricValue] =
+        metrics.get(metricDescriptor).map(metricValue => metricValue)
+      metricOfInterestOpt match {
+        case Some(metric) =>
+          metric match {
+            case metric: MV => applyCheck(metric)
+            case _ => CheckResult(CheckStatus.Error, "Found metric of the wrong type for this check. Please report this error - this should not occur", description)
+          }
+        case None => CheckResult(CheckStatus.Error, "Failed to find corresponding metric for this check. Please report this error - this should not occur", description)
+      }
+    }
+  }
+
+  object MetricsBasedCheck {
+    case class SizeCheck(threshold: AbsoluteThreshold[Long], filter: MetricFilter) extends MetricsBasedCheck[MetricValue.LongMetric, SizeMetricCalculator] {
+      override def applyCheck(metric: MetricValue.LongMetric): CheckResult = {
+        val sizeIsWithinThreshold = threshold.isWithinThreshold(metric.value)
+        if (sizeIsWithinThreshold) {
+          CheckResult(CheckStatus.Success, s"Size of ${metric.value} was within the range $threshold", description)
+        } else {
+          CheckResult(CheckStatus.Error, s"Size of ${metric.value} was outside the range $threshold", description)
+        }
+      }
+
+      override def description: String = s"SizeCheck with filter: ${filter.filterDescription}"
+
+      override def metricDescriptor: MetricDescriptor = SizeMetricDescriptor(filter)
     }
   }
 
