@@ -87,14 +87,15 @@ object QCCheck {
   trait MetricsBasedCheck[MV <: MetricValue, MC <: MetricCalculator] extends QCCheck {
     def metricDescriptor: MetricDescriptor
 
-    def applyCheck(metric: MV): CheckResult
+    protected def applyCheck(metric: MV): CheckResult
 
-    final def applyCheckOnMetrics(metrics: Map[MetricDescriptor, MetricValue])(implicit typeTag: ClassTag[MV]): CheckResult = {
+    // typeTag required here to enable match of metric on type MV. Without class tag this type check would be fruitless
+    final def applyCheckOnMetrics(metrics: Map[MetricDescriptor, MetricValue])(implicit classTag: ClassTag[MV]): CheckResult = {
       val metricOfInterestOpt: Option[MetricValue] =
         metrics.get(metricDescriptor).map(metricValue => metricValue)
       metricOfInterestOpt match {
         case Some(metric) =>
-          metric match {
+          metric match { // TODO: Look into heterogenous maps to avoid this type test - https://github.com/milessabin/shapeless/wiki/Feature-overview:-shapeless-1.2.4#heterogenous-maps
             case metric: MV => applyCheck(metric)
             case _ => CheckResult(CheckStatus.Error, "Found metric of the wrong type for this check. Please report this error - this should not occur", description)
           }
@@ -105,7 +106,7 @@ object QCCheck {
 
   object MetricsBasedCheck {
     case class SizeCheck(threshold: AbsoluteThreshold[Long], filter: MetricFilter) extends MetricsBasedCheck[MetricValue.LongMetric, SizeMetricCalculator] {
-      override def applyCheck(metric: MetricValue.LongMetric): CheckResult = {
+      override protected def applyCheck(metric: MetricValue.LongMetric): CheckResult = {
         val sizeIsWithinThreshold = threshold.isWithinThreshold(metric.value)
         if (sizeIsWithinThreshold) {
           CheckResult(CheckStatus.Success, s"Size of ${metric.value} was within the range $threshold", description)

@@ -87,12 +87,14 @@ class QCCheckTest extends AnyWordSpec with DatasetSuiteBase with Matchers {
 
   "MetricsBasedCheck.SizeCheck" should {
     "pass a check where the size is within the threshold" in {
-      val result: CheckResult = SizeCheck(AbsoluteThreshold(Some(0), Some(3)), MetricFilter.noFilter).applyCheck(LongMetric(2))
+      val check = SizeCheck(AbsoluteThreshold(Some(0), Some(3)), MetricFilter.noFilter)
+      val result: CheckResult = check.applyCheckOnMetrics(Map(check.metricDescriptor -> LongMetric(2)))
       result shouldBe CheckResult(CheckStatus.Success, "Size of 2 was within the range between 0 and 3", "SizeCheck with filter: no filter")
     }
 
     "fail a check where the size is outside the threshold" in {
-      val result: CheckResult = SizeCheck(AbsoluteThreshold(Some(0), Some(3)), MetricFilter(lit(false), "someFilter")).applyCheck(LongMetric(4))
+      val check = SizeCheck(AbsoluteThreshold(Some(0), Some(3)), MetricFilter(lit(false), "someFilter"))
+      val result: CheckResult = check.applyCheckOnMetrics(Map(check.metricDescriptor -> LongMetric(4)))
       result shouldBe CheckResult(CheckStatus.Error, "Size of 4 was outside the range between 0 and 3", "SizeCheck with filter: someFilter")
     }
   }

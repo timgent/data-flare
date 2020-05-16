@@ -31,9 +31,3 @@ case class MetricsBasedChecksSuite(dataset: Dataset[_],
 
   override def qcType: QcType = QcType.MetricsBasedQualityCheck
 }
-
-//object MetricsBasedChecksSuite {
-//  def apply(dataset: Dataset[_], checks: Seq[MetricsBasedCheck[_]], checkSuiteDescription: String): MetricsBasedChecksSuite = {
-//    ???
-//  }
-//}
