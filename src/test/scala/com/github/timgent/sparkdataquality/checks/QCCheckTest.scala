@@ -1,8 +1,9 @@
 package com.github.timgent.sparkdataquality.checks
 
-import com.github.timgent.sparkdataquality.checks.QCCheck.MetricsBasedCheck.SizeCheck
+import com.github.timgent.sparkdataquality.checks.QCCheck.DualMetricBasedCheck
+import com.github.timgent.sparkdataquality.checks.QCCheck.SingleMetricBasedCheck.SizeCheck
 import com.github.timgent.sparkdataquality.checks.QCCheck.SingleDatasetCheck.sumOfValuesCheck
-import com.github.timgent.sparkdataquality.metrics.MetricFilter
+import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 import com.github.timgent.sparkdataquality.utils.CommonFixtures.NumberString
@@ -64,7 +65,37 @@ class QCCheckTest extends AnyWordSpec with DatasetSuiteBase with Matchers {
 
   }
 
-  "MetricsBasedCheck for any check type" should {
+  "DualMetricBasedCheck" should {
+    val simpleSizeMetric = MetricDescriptor.SizeMetricDescriptor()
+    val dualMetricBasedCheck = DualMetricBasedCheck[LongMetric](simpleSizeMetric,
+      simpleSizeMetric, MetricComparator.metricsAreEqual, "size comparison")
+    "pass the check when the required metrics are provided in the metrics map and they meet the comparator criteria" in {
+      val checkResult: CheckResult = dualMetricBasedCheck.applyCheckOnMetrics(Map(simpleSizeMetric -> LongMetric(2L)),
+        Map(simpleSizeMetric -> LongMetric(2L)))
+      checkResult shouldBe CheckResult(CheckStatus.Success, "metric comparison passed", "size comparison")
+    }
+
+    "fail the check when the required metrics are provided in the metrics map but they do not meet the comparator criteria" in {
+      val checkResult: CheckResult = dualMetricBasedCheck.applyCheckOnMetrics(Map(simpleSizeMetric -> LongMetric(2L)),
+        Map(simpleSizeMetric -> LongMetric(3L)))
+      checkResult shouldBe CheckResult(CheckStatus.Error, "metric comparison failed", "size comparison")
+    }
+
+    "fail when the required metrics are not provided in the metrics map" in {
+      val result: CheckResult = dualMetricBasedCheck.applyCheckOnMetrics(Map.empty, Map.empty)
+      result.status shouldBe CheckStatus.Error
+      result.resultDescription shouldBe "Failed to find corresponding metric for this check. Please report this error - this should not occur"
+    }
+
+    "fail when the required metrics are the wrong type" in {
+      val result: CheckResult = dualMetricBasedCheck.applyCheckOnMetrics(Map(simpleSizeMetric -> DoubleMetric(2)),
+        Map(simpleSizeMetric -> DoubleMetric(2)))
+      result.status shouldBe CheckStatus.Error
+      result.resultDescription shouldBe "Found metric of the wrong type for this check. Please report this error - this should not occur"
+    }
+  }
+
+  "SingleMetricBasedCheck for any check type" should {
     val simpleSizeCheck = SizeCheck(AbsoluteThreshold(Some(0), Some(3)), MetricFilter.noFilter)
 
     "apply the check when the required metric is provided in the metrics map" in {

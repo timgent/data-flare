@@ -1,8 +1,6 @@
 package com.github.timgent.sparkdataquality.metrics
 
-import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{SimpleMetricCalculator, SizeMetricCalculator}
-import org.apache.spark.sql.Column
-import org.apache.spark.sql.functions.lit
+import com.github.timgent.sparkdataquality.metrics.MetricCalculator.SizeMetricCalculator
 /**
  * Describes the metric being calculated
  */
@@ -15,9 +13,8 @@ object MetricDescriptor {
   trait Filterable {
     def filter: MetricFilter
   }
-  case class SizeMetricDescriptor(filter: MetricFilter) extends MetricDescriptor with Filterable {
+  case class SizeMetricDescriptor(filter: MetricFilter = MetricFilter.noFilter) extends MetricDescriptor with Filterable {
     override def metricCalculator: SizeMetricCalculator = SizeMetricCalculator(filter)
-
     override type MC = SizeMetricCalculator
   }
 }

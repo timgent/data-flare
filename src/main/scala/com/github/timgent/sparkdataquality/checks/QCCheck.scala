@@ -3,7 +3,8 @@ package com.github.timgent.sparkdataquality.checks
 import com.github.timgent.sparkdataquality.checks.QCCheck.DatasetComparisonCheck.DatasetPair
 import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{SimpleMetricCalculator, SizeMetricCalculator}
 import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.SizeMetricDescriptor
-import com.github.timgent.sparkdataquality.metrics.{MetricCalculator, MetricDescriptor, MetricFilter, MetricValue}
+import com.github.timgent.sparkdataquality.metrics.MetricValue.DoubleMetric
+import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricCalculator, MetricComparator, MetricDescriptor, MetricFilter, MetricValue}
 import com.github.timgent.sparkdataquality.sparkdataquality.DeequCheck
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 import enumeratum._
@@ -77,14 +78,48 @@ object QCCheck {
   }
 
   object ArbitraryCheck {
-    def apply(checkDescription: String)(check: => RawCheckResult) = new ArbitraryCheck {
+    def apply(checkDescription: String)(check: => RawCheckResult): ArbitraryCheck = new ArbitraryCheck {
       override def description: String = checkDescription
 
       override def applyCheck: CheckResult = check.withDescription(checkDescription)
     }
   }
 
-  trait MetricsBasedCheck[MV <: MetricValue, MC <: MetricCalculator] extends QCCheck {
+  trait MetricsBasedCheck extends QCCheck {
+    protected final def metricTypeErrorResult: CheckResult =
+      CheckResult(CheckStatus.Error, "Found metric of the wrong type for this check. Please report this error - this should not occur", description)
+    protected final def metricNotPresentErrorResult: CheckResult =
+      CheckResult(CheckStatus.Error, "Failed to find corresponding metric for this check. Please report this error - this should not occur", description)
+  }
+
+  final case class DualMetricBasedCheck[MV <: MetricValue](dsAMetricDescriptor: MetricDescriptor,
+                                                           dsBMetricDescriptor: MetricDescriptor,
+                                                           metricComparator: (MV, MV) => Boolean,
+                                                           description: String
+                                                          ) extends MetricsBasedCheck {
+
+    private def getCheckResult(checkPassed: Boolean): CheckResult = {
+      if (checkPassed)
+        CheckResult(CheckStatus.Success, "metric comparison passed", description)
+      else
+        CheckResult(CheckStatus.Error, "metric comparison failed", description)
+    }
+
+    def applyCheckOnMetrics(dsAMetrics: Map[MetricDescriptor, MetricValue],
+                            dsBMetrics: Map[MetricDescriptor, MetricValue])(implicit classTag: ClassTag[MV]): CheckResult = {
+      val dsAMetricOpt: Option[MetricValue] = dsAMetrics.get(dsAMetricDescriptor)
+      val dsBMetricOpt: Option[MetricValue] = dsBMetrics.get(dsBMetricDescriptor)
+      (dsAMetricOpt, dsBMetricOpt) match {
+        case (Some(dsAMetric), Some(dsBMetric)) => (dsAMetric, dsBMetric) match {
+          case (dsAMetric: MV, dsBMetric: MV) => getCheckResult(metricComparator(dsAMetric, dsBMetric))
+          case _ =>   metricTypeErrorResult
+        }
+        case _ => metricNotPresentErrorResult
+      }
+    }
+  }
+
+  trait SingleMetricBasedCheck[MV <: MetricValue] extends MetricsBasedCheck {
     def metricDescriptor: MetricDescriptor
 
     protected def applyCheck(metric: MV): CheckResult
@@ -97,15 +132,16 @@ object QCCheck {
         case Some(metric) =>
           metric match { // TODO: Look into heterogenous maps to avoid this type test - https://github.com/milessabin/shapeless/wiki/Feature-overview:-shapeless-1.2.4#heterogenous-maps
             case metric: MV => applyCheck(metric)
-            case _ => CheckResult(CheckStatus.Error, "Found metric of the wrong type for this check. Please report this error - this should not occur", description)
+            case _ => metricTypeErrorResult
           }
-        case None => CheckResult(CheckStatus.Error, "Failed to find corresponding metric for this check. Please report this error - this should not occur", description)
+        case None => metricNotPresentErrorResult
       }
     }
   }
 
-  object MetricsBasedCheck {
-    case class SizeCheck(threshold: AbsoluteThreshold[Long], filter: MetricFilter) extends MetricsBasedCheck[MetricValue.LongMetric, SizeMetricCalculator] {
+  object SingleMetricBasedCheck {
+
+    case class SizeCheck(threshold: AbsoluteThreshold[Long], filter: MetricFilter) extends SingleMetricBasedCheck[MetricValue.LongMetric] {
       override protected def applyCheck(metric: MetricValue.LongMetric): CheckResult = {
         val sizeIsWithinThreshold = threshold.isWithinThreshold(metric.value)
         if (sizeIsWithinThreshold) {
@@ -119,6 +155,7 @@ object QCCheck {
 
       override def metricDescriptor: MetricDescriptor = SizeMetricDescriptor(filter)
     }
+
   }
 
   case class DeequQCCheck(check: DeequCheck) extends QCCheck {
@@ -131,7 +168,11 @@ sealed trait CheckStatus extends EnumEntry
 
 object CheckStatus extends Enum[CheckStatus] {
   val values = findValues
+
   case object Success extends CheckStatus
+
   case object Warning extends CheckStatus
+
   case object Error extends CheckStatus
+
 }

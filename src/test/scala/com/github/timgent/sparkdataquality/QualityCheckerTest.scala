@@ -98,7 +98,7 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
       }
       val checks = Seq(singleDatasetCheck)
 
-      val qualityChecks = List(SingleDatasetChecksSuite(testDataset, checkDescription, checks, someTags))
+      val qualityChecks = List(SingleDatasetChecksSuite(testDataset, datasourceDescription, checkDescription, checks, someTags))
 
       val qcResults: Seq[ChecksSuiteResult] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).results
       val persistedQcResults: Seq[ChecksSuiteResult] = qcResultsRepository.loadAll
@@ -109,7 +109,7 @@ class QualityCheckerTest extends AnyWordSpec with DatasetSuiteBase with Matchers
         checkSuiteDescription = "DB: X, table: Y",
         checkStatus = CheckSuiteStatus.Error,
         resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
-        checkResults = Seq(CheckResult(CheckStatus.Error, "someSingleDatasetCheck was not successful", singleDatasetCheck.description)),
+        checkResults = Seq(CheckResult(CheckStatus.Error, "someSingleDatasetCheck was not successful", singleDatasetCheck.description, Some(datasourceDescription))),
         checkTags = someTags
       )
     }
