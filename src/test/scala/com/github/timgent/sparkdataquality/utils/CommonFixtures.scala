@@ -10,4 +10,6 @@ object CommonFixtures {
   val now = Instant.now
   val someCheck = SingleDatasetCheck("some check")(_ => RawCheckResult(Success, "successful"))
   val someTags = Map("project" -> "project A")
+
+  case class NumberString(number: Int, str: String)
 }

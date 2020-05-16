@@ -1,4 +1,4 @@
-package com.github.timgent.sparkdataquality
+package com.github.timgent.sparkdataquality.checkssuite
 
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
 
