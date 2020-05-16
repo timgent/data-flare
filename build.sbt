@@ -18,13 +18,14 @@ lazy val root = (project in file("."))
       elastic4s,
       elastic4sTestKit,
       elastic4sCirceJson,
-      enumeratum
+      enumeratum,
+      cats
     ),
     fork in Test := true,
     parallelExecution in Test := false,
     javaOptions ++= Seq("-Xms512M", "-Xmx2048M", "-XX:MaxPermSize=2048M", "-XX:+CMSClassUnloadingEnabled")
   )
-
+scalacOptions += "-Ypartial-unification"
 developers := List(Developer("timgent", "Tim Gent", "tim.gent@gmail.com", url("https://github.com/timgent")))
 scmInfo := Some(ScmInfo(
   url("https://github.com/timgent/spark-data-quality.git"),

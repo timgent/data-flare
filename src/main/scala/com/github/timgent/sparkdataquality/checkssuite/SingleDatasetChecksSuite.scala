@@ -9,6 +9,7 @@ import org.apache.spark.sql.Dataset
 
 object SingleDatasetChecksSuite {
   def apply(ds: Dataset[_],
+            datasourceDescription: String,
             checkDesc: String,
             checks: Seq[SingleDatasetCheck],
             checkTags: Map[String, String],
@@ -16,7 +17,7 @@ object SingleDatasetChecksSuite {
            ): SingleDatasetChecksSuite = {
     new SingleDatasetChecksSuite {
       def run(timestamp: Instant): ChecksSuiteResult = {
-        val checkResults: Seq[CheckResult] = checks.map(_.applyCheck(dataset))
+        val checkResults: Seq[CheckResult] = checks.map(_.applyCheck(dataset).withDatasourceDescription(datasourceDescription))
         val overallCheckStatus = checkResultCombiner(checkResults)
         ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
           checkResults, timestamp, qcType, checkTags)

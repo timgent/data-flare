@@ -8,7 +8,8 @@ private case class DescriptorWithColumnNumber[MC <: MetricCalculator](descriptor
 
 object MetricsCalculator {
 
-  def calculateMetrics(ds: Dataset[_], metricDescriptors: Seq[MetricDescriptor]): Map[MetricDescriptor, MetricValue] = {
+  def calculateMetrics(ds: Dataset[_],
+                       metricDescriptors: Seq[MetricDescriptor]): Map[MetricDescriptor, MetricValue] = {
     val distinctDescriptors = metricDescriptors.distinct
 
     val simpleDescriptors: Seq[DescriptorWithColumnNumber[SimpleMetricCalculator]] = distinctDescriptors.flatMap{ descriptor =>
