@@ -6,6 +6,8 @@ import com.github.timgent.sparkdataquality.checks.CheckResult
 import com.github.timgent.sparkdataquality.checks.QCCheck.ArbitraryCheck
 import com.github.timgent.sparkdataquality.checkssuite.ChecksSuite.getOverallCheckResultDescription
 
+import scala.concurrent.{ExecutionContext, Future}
+
 trait ArbitraryChecksSuite extends ChecksSuite
 
 object ArbitraryChecksSuite {
@@ -15,11 +17,12 @@ object ArbitraryChecksSuite {
             checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
            ): ArbitraryChecksSuite =
     new ArbitraryChecksSuite {
-      override def run(timestamp: Instant): ChecksSuiteResult = {
+      override def run(timestamp: Instant)(implicit ec: ExecutionContext): Future[ChecksSuiteResult] = {
         val checkResults: Seq[CheckResult] = checks.map(_.applyCheck)
         val overallCheckStatus = checkResultCombiner(checkResults)
-        ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
+        val result = ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
           checkResults, timestamp, qcType, checkTags)
+        Future.successful(result)
       }
 
       override def checkSuiteDescription: String = checkDesc
