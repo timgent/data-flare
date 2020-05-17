@@ -7,28 +7,29 @@ import com.sksamuel.elastic4s.http.JavaClient
 import com.sksamuel.elastic4s.{ElasticClient, ElasticProperties, Index}
 import io.circe.generic.auto._
 
-class ElasticSearchQcResultsRepository(client: ElasticClient, index: Index) extends QcResultsRepository {
+import scala.concurrent.{ExecutionContext, Future}
 
-  // TODO: Change repository methods to be asynchronous
-  override def save(qcResults: Seq[ChecksSuiteResult]): Unit = {
+class ElasticSearchQcResultsRepository(client: ElasticClient,
+                                       index: Index)(implicit ec: ExecutionContext) extends QcResultsRepository {
+
+  override def save(qcResults: List[ChecksSuiteResult]): Future[Unit] = {
     client.execute {
       bulk (
         qcResults.map(indexInto(index).doc(_))
       )
-    }.await
+    }.map(_ => {})
   }
 
-  // TODO: Change repository methods to be asynchronous
-  override def loadAll: Seq[ChecksSuiteResult] = {
+  override def loadAll: Future[List[ChecksSuiteResult]] = {
     val resp = client.execute {
       search(index) query matchAllQuery
-    }.await
-    resp.result.hits.hits.map(_.to[ChecksSuiteResult])
+    }
+    resp.map(_.result.hits.hits.map(_.to[ChecksSuiteResult]).toList)
   }
 }
 
 object ElasticSearchQcResultsRepository {
-  def apply(hosts: Seq[String], index: Index): ElasticSearchQcResultsRepository = {
+  def apply(hosts: Seq[String], index: Index)(implicit ec: ExecutionContext): ElasticSearchQcResultsRepository = {
     val hostList = hosts.reduceLeft(_ + "," + _)
     val client: ElasticClient = ElasticClient(JavaClient(ElasticProperties(hostList)))
     new ElasticSearchQcResultsRepository(client, index)

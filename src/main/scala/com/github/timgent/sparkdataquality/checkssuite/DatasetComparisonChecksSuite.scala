@@ -8,6 +8,8 @@ import com.github.timgent.sparkdataquality.checks.QCCheck.DatasetComparisonCheck
 import com.github.timgent.sparkdataquality.checkssuite.ChecksSuite.getOverallCheckResultDescription
 import org.apache.spark.sql.Dataset
 
+import scala.concurrent.{ExecutionContext, Future}
+
 trait DatasetComparisonChecksSuite extends ChecksSuite {
   def datasetToCheck: Dataset[_]
 
@@ -27,11 +29,12 @@ object DatasetComparisonChecksSuite {
 
       override def datasetToCompareTo: Dataset[_] = dsToCompare
 
-      override def run(timestamp: Instant): ChecksSuiteResult = {
+      override def run(timestamp: Instant)(implicit ec: ExecutionContext): Future[ChecksSuiteResult] = {
         val checkResults: Seq[CheckResult] = checks.map(_.applyCheck(DatasetPair(datasetToCheck, datasetToCompareTo)))
         val overallCheckStatus = checkResultCombiner(checkResults)
-        ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
+        val checkSuiteResult = ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
           checkResults, timestamp, qcType, checkTags)
+        Future.successful(checkSuiteResult)
       }
 
       override def checkSuiteDescription: String = checkDesc

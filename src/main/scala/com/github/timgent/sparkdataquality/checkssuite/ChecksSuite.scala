@@ -5,9 +5,11 @@ import java.time.Instant
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
 import enumeratum._
 
+import scala.concurrent.{ExecutionContext, Future}
+
 
 trait ChecksSuite {
-  def run(timestamp: Instant): ChecksSuiteResult
+  def run(timestamp: Instant)(implicit ec: ExecutionContext): Future[ChecksSuiteResult]
 
   def checkSuiteDescription: String
 
