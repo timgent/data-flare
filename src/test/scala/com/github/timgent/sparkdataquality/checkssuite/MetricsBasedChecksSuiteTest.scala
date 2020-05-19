@@ -153,13 +153,15 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
       val inMemoryMetricsPersister = new InMemoryMetricsPersister
       val metricsBasedChecksSuite = MetricsBasedChecksSuite(checkSuiteDescription, someTags, singleDatasetChecks,
         Seq(dualDatasetChecks), inMemoryMetricsPersister)
-      metricsBasedChecksSuite.run(now)
 
-      inMemoryMetricsPersister.getAllMetrics shouldBe Map(
+      for {
+        _ <- metricsBasedChecksSuite.run(now)
+        storedMetrics <- inMemoryMetricsPersister.loadAll
+      } yield storedMetrics shouldBe Map(
         now -> Map(
-          DatasetDescription("dsA") -> Map(simpleSizeMetric -> LongMetric(3L)),
-          DatasetDescription("dsB") -> Map(simpleSizeMetric -> LongMetric(2L)),
-          DatasetDescription("dsC") -> Map(simpleSizeMetric -> LongMetric(1L))
+          DatasetDescription("dsA") -> Map(simpleSizeMetric.toSimpleMetricDescriptor -> LongMetric(3L)),
+          DatasetDescription("dsB") -> Map(simpleSizeMetric.toSimpleMetricDescriptor -> LongMetric(2L)),
+          DatasetDescription("dsC") -> Map(simpleSizeMetric.toSimpleMetricDescriptor -> LongMetric(1L))
         )
       )
     }
