@@ -67,8 +67,10 @@ case class MetricsBasedChecksSuite(checkSuiteDescription: String,
       (describedDataset, metricValues)
     }
 
-    val storedMetricsFut = metricsPersister
-      .storeMetrics(timestamp, calculatedMetrics.map{case (describedDataset, metrics) => (describedDataset.description, metrics)})
+    val metricsToSave = calculatedMetrics.map { case (describedDataset, metrics) =>
+      (describedDataset.description, metrics.map{ case (descriptor, value) => (descriptor.toSimpleMetricDescriptor, value)})
+    }
+    val storedMetricsFut = metricsPersister.save(timestamp, metricsToSave)
 
     for {
       _ <- storedMetricsFut
