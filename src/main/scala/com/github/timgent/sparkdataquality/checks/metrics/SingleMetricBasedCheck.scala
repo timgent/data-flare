@@ -1,7 +1,7 @@
 package com.github.timgent.sparkdataquality.checks.metrics
 
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{ComplianceMetricDescriptor, SizeMetricDescriptor}
+import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{ComplianceMetricDescriptor, DistinctValuesMetricDescriptor, SizeMetricDescriptor}
 import com.github.timgent.sparkdataquality.metrics.{ComplianceFn, MetricDescriptor, MetricFilter, MetricValue}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 
@@ -29,15 +29,22 @@ trait SingleMetricBasedCheck[MV <: MetricValue] extends MetricsBasedCheck {
 
 object SingleMetricBasedCheck {
 
-  case class SizeCheck(threshold: AbsoluteThreshold[Long], filter: MetricFilter) extends SingleMetricBasedCheck[MetricValue.LongMetric] {
-    override protected def applyCheck(metric: MetricValue.LongMetric): CheckResult = {
-      val sizeIsWithinThreshold = threshold.isWithinThreshold(metric.value)
-      if (sizeIsWithinThreshold) {
-        CheckResult(CheckStatus.Success, s"Size of ${metric.value} was within the range $threshold", description)
+  sealed trait ThresholdBasedCheck[MV <: MetricValue] extends SingleMetricBasedCheck[MV] {
+    def checkShortName: String
+
+    def threshold: AbsoluteThreshold[MV#T]
+
+    def applyCheck(metric: MV): CheckResult = {
+      if (threshold.isWithinThreshold(metric.value)) {
+        CheckResult(CheckStatus.Success, s"$checkShortName of ${metric.value} was within the range $threshold", description)
       } else {
-        CheckResult(CheckStatus.Error, s"Size of ${metric.value} was outside the range $threshold", description)
+        CheckResult(CheckStatus.Error, s"$checkShortName of ${metric.value} was outside the range $threshold", description)
       }
     }
+  }
+
+  case class SizeCheck(threshold: AbsoluteThreshold[Long], filter: MetricFilter) extends ThresholdBasedCheck[MetricValue.LongMetric] {
+    override def checkShortName: String = "Size"
 
     override def description: String = s"SizeCheck with filter: ${filter.filterDescription}"
 
@@ -45,19 +52,24 @@ object SingleMetricBasedCheck {
   }
 
   case class ComplianceCheck(threshold: AbsoluteThreshold[Double], complianceFn: ComplianceFn,
-                             filter: MetricFilter = MetricFilter.noFilter) extends SingleMetricBasedCheck[MetricValue.DoubleMetric] {
-    override protected def applyCheck(metric: MetricValue.DoubleMetric): CheckResult = {
-      val complianceIsWithinThreshold = threshold.isWithinThreshold(metric.value)
-      if (complianceIsWithinThreshold) {
-        CheckResult(CheckStatus.Success, s"Compliance of ${metric.value} was within the range $threshold", description)
-      } else {
-        CheckResult(CheckStatus.Error, s"Compliance of ${metric.value} was outside the range $threshold", description)
-      }
-    }
+                             filter: MetricFilter = MetricFilter.noFilter) extends ThresholdBasedCheck[MetricValue.DoubleMetric] {
+
+    override def checkShortName: String = "Compliance"
 
     override def description: String = s"ComplianceCheck with filter: ${filter.filterDescription}"
 
     override def metricDescriptor: MetricDescriptor = ComplianceMetricDescriptor(complianceFn, filter)
+  }
+
+  case class DistinctValuesCheck(threshold: AbsoluteThreshold[Long],
+                                 onColumns: List[String],
+                                 filter: MetricFilter = MetricFilter.noFilter) extends ThresholdBasedCheck[MetricValue.LongMetric] {
+
+    override def checkShortName: String = "DistinctValues"
+
+    override def description: String = s"DistinctValuesCheck with filter: ${filter.filterDescription}"
+
+    override def metricDescriptor: MetricDescriptor = DistinctValuesMetricDescriptor(onColumns, filter)
   }
 
 }

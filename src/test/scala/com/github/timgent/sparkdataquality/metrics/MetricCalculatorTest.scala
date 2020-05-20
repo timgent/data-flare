@@ -1,6 +1,6 @@
 package com.github.timgent.sparkdataquality.metrics
 
-import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{ComplianceMetricCalculator, SimpleMetricCalculator, SizeMetricCalculator}
+import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{ComplianceMetricCalculator, DistinctValuesMetricCalculator, SimpleMetricCalculator, SizeMetricCalculator}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
 import com.holdenkarau.spark.testing.DatasetSuiteBase
@@ -57,11 +57,11 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
         MetricFilter.noFilter), DoubleMetric(0.4))
     }
 
-    "apply the provided filter to count the size of matching rows in a DataFrame" in {
+    "apply the provided filter before calculating the compliance in a DataFrame" in {
       testMetricAggFunction(ds,
-        ComplianceMetricCalculator(ComplianceFn(col("number") >= 7, "Number >= 7"),
-          MetricFilter(col("number") >= 6, "number >= 6")),
-        DoubleMetric(0.8))
+        ComplianceMetricCalculator(ComplianceFn(col("number") <= 9, "Number <= 9"),
+          MetricFilter(col("number") >= 9, "number >= 9")),
+        DoubleMetric(0.5))
     }
 
     "return a failure when an invalid filter is given" in { // TODO: Implement error handling for bad metrics
@@ -70,6 +70,38 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
 
     "return a failure when an invalid compliance fn is given" in { // TODO: Implement error handling for bad metrics
       pending
+    }
+  }
+
+  "DistinctValuesMetricCalculator" should {
+    lazy val ds = Seq(
+      NumberString(1, "a"),
+      NumberString(2, "b"),
+      NumberString(3, "c"),
+      NumberString(3, "d"),
+      NumberString(3, "d") // not distinct
+    ).toDS
+
+    "calculate the number of distinct values for a set of columns correctly" in {
+      testMetricAggFunction(ds, DistinctValuesMetricCalculator(List("number", "str"),
+        MetricFilter.noFilter), LongMetric(4))
+    }
+
+    "apply the provided filter before calculating the compliance in a DataFrame" in {
+      testMetricAggFunction(ds, DistinctValuesMetricCalculator(List("number", "str"),
+        MetricFilter(col("str") =!= "c", "string not equal to c")), LongMetric(3))
+    }
+
+    "return a failure when an invalid filter is given" in { // TODO: Implement error handling for bad metrics
+      pending
+    }
+
+    "return a failure when an invalid column is given" in { // TODO: Implement error handling for bad metrics
+      pending
+    }
+
+    "return a failure when an empty list of columns is given" in {
+      ???
     }
   }
 }

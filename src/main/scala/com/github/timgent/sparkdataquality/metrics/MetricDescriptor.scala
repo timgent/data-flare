@@ -1,6 +1,6 @@
 package com.github.timgent.sparkdataquality.metrics
 
-import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{ComplianceMetricCalculator, SizeMetricCalculator}
+import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{ComplianceMetricCalculator, DistinctValuesMetricCalculator, SizeMetricCalculator}
 /**
  * Describes the metric being calculated
  */
@@ -28,6 +28,14 @@ object MetricDescriptor {
       SimpleMetricDescriptor("Compliance", Some(filter.filterDescription), Some(complianceFn.description))
     override type MC = ComplianceMetricCalculator
   }
+
+  case class DistinctValuesMetricDescriptor(onColumns: List[String],
+                                        filter: MetricFilter = MetricFilter.noFilter) extends MetricDescriptor with Filterable {
+    override def metricCalculator: DistinctValuesMetricCalculator = DistinctValuesMetricCalculator(onColumns, filter)
+    override def toSimpleMetricDescriptor: SimpleMetricDescriptor =
+      SimpleMetricDescriptor("Compliance", Some(filter.filterDescription), onColumns = Some(onColumns))
+    override type MC = DistinctValuesMetricCalculator
+  }
 }
 
 /**
@@ -35,6 +43,7 @@ object MetricDescriptor {
  */
 private [sparkdataquality] case class SimpleMetricDescriptor(metricName: String,
                                                              filterDescription: Option[String] = None,
-                                                             complianceDescription: Option[String] = None)
+                                                             complianceDescription: Option[String] = None,
+                                                             onColumns: Option[List[String]] = None)
 
 
