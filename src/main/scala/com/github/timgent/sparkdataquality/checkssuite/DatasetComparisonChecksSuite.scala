@@ -2,9 +2,8 @@ package com.github.timgent.sparkdataquality.checkssuite
 
 import java.time.Instant
 
-import com.github.timgent.sparkdataquality.checks.CheckResult
-import com.github.timgent.sparkdataquality.checks.QCCheck.DatasetComparisonCheck
-import com.github.timgent.sparkdataquality.checks.QCCheck.DatasetComparisonCheck.DatasetPair
+import com.github.timgent.sparkdataquality.checks.DatasetComparisonCheck.DatasetPair
+import com.github.timgent.sparkdataquality.checks.{CheckResult, DatasetComparisonCheck}
 import com.github.timgent.sparkdataquality.checkssuite.ChecksSuite.getOverallCheckResultDescription
 import org.apache.spark.sql.Dataset
 

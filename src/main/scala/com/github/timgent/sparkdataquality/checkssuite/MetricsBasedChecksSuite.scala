@@ -2,12 +2,12 @@ package com.github.timgent.sparkdataquality.checkssuite
 
 import java.time.Instant
 
-import com.github.timgent.sparkdataquality.checks.CheckResult
-import com.github.timgent.sparkdataquality.checks.QCCheck.{DualMetricBasedCheck, SingleMetricBasedCheck}
-import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricDescriptor, MetricValue, MetricsCalculator}
-import org.apache.spark.sql.Dataset
 import cats.implicits._
+import com.github.timgent.sparkdataquality.checks.CheckResult
+import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
+import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricDescriptor, MetricValue, MetricsCalculator}
 import com.github.timgent.sparkdataquality.repository.{MetricsPersister, NullMetricsPersister}
+import org.apache.spark.sql.Dataset
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -20,7 +20,8 @@ object DescribedDataset {
 
 case class SingleDatasetMetricChecks(describedDataset: DescribedDataset, checks: Seq[SingleMetricBasedCheck[_]])
 
-case class DualDatasetMetricChecks(describedDatasetA: DescribedDataset, describedDatasetB: DescribedDataset, checks: Seq[DualMetricBasedCheck[_]])
+case class DualDatasetMetricChecks(describedDatasetA: DescribedDataset, describedDatasetB: DescribedDataset,
+                                   checks: Seq[DualMetricBasedCheck[_]])
 
 case class MetricsBasedChecksSuite(checkSuiteDescription: String,
                                    tags: Map[String, String],

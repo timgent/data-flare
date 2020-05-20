@@ -4,7 +4,7 @@ import java.time.Instant
 
 import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.{VerificationRunBuilder, VerificationSuite}
-import com.github.timgent.sparkdataquality.checks.QCCheck.DeequQCCheck
+import com.github.timgent.sparkdataquality.checks.DeequQCCheck
 import com.github.timgent.sparkdataquality.deequ.DeequHelpers.VerificationResultToQualityCheckResult
 import com.github.timgent.sparkdataquality.sparkdataquality.DeequMetricsRepository
 import org.apache.spark.sql.Dataset

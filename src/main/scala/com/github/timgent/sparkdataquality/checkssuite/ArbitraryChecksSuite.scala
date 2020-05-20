@@ -2,8 +2,7 @@ package com.github.timgent.sparkdataquality.checkssuite
 
 import java.time.Instant
 
-import com.github.timgent.sparkdataquality.checks.CheckResult
-import com.github.timgent.sparkdataquality.checks.QCCheck.ArbitraryCheck
+import com.github.timgent.sparkdataquality.checks.{ArbitraryCheck, CheckResult}
 import com.github.timgent.sparkdataquality.checkssuite.ChecksSuite.getOverallCheckResultDescription
 
 import scala.concurrent.{ExecutionContext, Future}

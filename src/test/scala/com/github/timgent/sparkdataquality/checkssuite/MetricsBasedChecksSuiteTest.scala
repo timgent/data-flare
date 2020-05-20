@@ -1,6 +1,6 @@
 package com.github.timgent.sparkdataquality.checkssuite
 
-import com.github.timgent.sparkdataquality.checks.QCCheck.{DualMetricBasedCheck, SingleMetricBasedCheck}
+import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
 import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricComparator, MetricDescriptor, MetricFilter}

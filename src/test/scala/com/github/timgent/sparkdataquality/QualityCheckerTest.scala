@@ -8,9 +8,8 @@ import com.amazon.deequ.checks.{Check, CheckLevel}
 import com.amazon.deequ.metrics.{DoubleMetric, Entity}
 import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.repository.memory.InMemoryMetricsRepository
-import com.github.timgent.sparkdataquality.checks.QCCheck.DatasetComparisonCheck.DatasetPair
-import com.github.timgent.sparkdataquality.checks.QCCheck.{ArbitraryCheck, DatasetComparisonCheck, DeequQCCheck, SingleDatasetCheck}
-import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, RawCheckResult}
+import com.github.timgent.sparkdataquality.checks.DatasetComparisonCheck.DatasetPair
+import com.github.timgent.sparkdataquality.checks.{ArbitraryCheck, CheckResult, CheckStatus, DatasetComparisonCheck, DeequQCCheck, RawCheckResult, SingleDatasetCheck}
 import com.github.timgent.sparkdataquality.checkssuite._
 import com.github.timgent.sparkdataquality.repository.InMemoryQcResultsRepository
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._

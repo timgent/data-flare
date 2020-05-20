@@ -3,8 +3,7 @@ package com.github.timgent.sparkdataquality.utils
 import java.time.Instant
 
 import com.github.timgent.sparkdataquality.checks.CheckStatus.Success
-import com.github.timgent.sparkdataquality.checks.QCCheck.SingleDatasetCheck
-import com.github.timgent.sparkdataquality.checks.RawCheckResult
+import com.github.timgent.sparkdataquality.checks.{RawCheckResult, SingleDatasetCheck}
 
 object CommonFixtures {
   val now = Instant.now
