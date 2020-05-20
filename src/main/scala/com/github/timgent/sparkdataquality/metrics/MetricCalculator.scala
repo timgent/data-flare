@@ -1,6 +1,6 @@
 package com.github.timgent.sparkdataquality.metrics
 
-import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
+import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{Column, Row}
 
@@ -25,5 +25,14 @@ object MetricCalculator {
       sum(when(filter.filter, 1).otherwise(0))
     }
     override def wrapMetricValue(metricValue: Long): LongMetric = LongMetric(metricValue)
+  }
+
+  case class ComplianceMetricCalculator(complianceFn: ComplianceFn, filter: MetricFilter) extends SimpleMetricCalculator {
+    override type MetricType = DoubleMetric
+    override def aggFunction: Column = {
+      sum(when(filter.filter and complianceFn.definition, 1).otherwise(0)) /
+        sum(when(filter.filter, 1).otherwise(0))
+    }
+    override def wrapMetricValue(metricValue: Double): DoubleMetric = DoubleMetric(metricValue)
   }
 }

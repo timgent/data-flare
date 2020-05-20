@@ -1,8 +1,8 @@
 package com.github.timgent.sparkdataquality.checks.metrics
 
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.SizeMetricDescriptor
-import com.github.timgent.sparkdataquality.metrics.{MetricDescriptor, MetricFilter, MetricValue}
+import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{ComplianceMetricDescriptor, SizeMetricDescriptor}
+import com.github.timgent.sparkdataquality.metrics.{ComplianceFn, MetricDescriptor, MetricFilter, MetricValue}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 
 import scala.reflect.ClassTag
@@ -42,6 +42,22 @@ object SingleMetricBasedCheck {
     override def description: String = s"SizeCheck with filter: ${filter.filterDescription}"
 
     override def metricDescriptor: MetricDescriptor = SizeMetricDescriptor(filter)
+  }
+
+  case class ComplianceCheck(threshold: AbsoluteThreshold[Double], complianceFn: ComplianceFn,
+                             filter: MetricFilter = MetricFilter.noFilter) extends SingleMetricBasedCheck[MetricValue.DoubleMetric] {
+    override protected def applyCheck(metric: MetricValue.DoubleMetric): CheckResult = {
+      val complianceIsWithinThreshold = threshold.isWithinThreshold(metric.value)
+      if (complianceIsWithinThreshold) {
+        CheckResult(CheckStatus.Success, s"Compliance of ${metric.value} was within the range $threshold", description)
+      } else {
+        CheckResult(CheckStatus.Error, s"Compliance of ${metric.value} was outside the range $threshold", description)
+      }
+    }
+
+    override def description: String = s"ComplianceCheck with filter: ${filter.filterDescription}"
+
+    override def metricDescriptor: MetricDescriptor = ComplianceMetricDescriptor(complianceFn, filter)
   }
 
 }

@@ -1,17 +1,18 @@
 package com.github.timgent.sparkdataquality.checks.metrics
 
-import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.SizeCheck
+import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.{ComplianceCheck, SizeCheck}
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
+import com.github.timgent.sparkdataquality.utils.CommonFixtures._
 import com.holdenkarau.spark.testing.DatasetSuiteBase
 import org.apache.spark.sql.functions.lit
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Matchers {
-  
+
   "DualMetricBasedCheck" should {
     val simpleSizeMetric = MetricDescriptor.SizeMetricDescriptor()
     val dualMetricBasedCheck = DualMetricBasedCheck[LongMetric](simpleSizeMetric,
@@ -74,6 +75,22 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
       val check = SizeCheck(AbsoluteThreshold(Some(0), Some(3)), MetricFilter(lit(false), "someFilter"))
       val result: CheckResult = check.applyCheckOnMetrics(Map(check.metricDescriptor -> LongMetric(4)))
       result shouldBe CheckResult(CheckStatus.Error, "Size of 4 was outside the range between 0 and 3", "SizeCheck with filter: someFilter")
+    }
+  }
+
+  "MetricsBasedCheck.ComplianceCheck" should {
+    "pass a check where the compliance rate is within the threshold" in {
+      val check = ComplianceCheck(AbsoluteThreshold(Some(0.9), Some(1)), someComplianceFn, MetricFilter.noFilter)
+      val result: CheckResult = check.applyCheckOnMetrics(Map(check.metricDescriptor -> DoubleMetric(0.9)))
+      result shouldBe CheckResult(CheckStatus.Success, "Compliance of 0.9 was within the range between 0.9 and 1.0",
+        "ComplianceCheck with filter: no filter")
+    }
+
+    "fail a check where the compliance rate is outside the threshold" in {
+      val check = ComplianceCheck(AbsoluteThreshold(Some(0.9), Some(1)), someComplianceFn, MetricFilter.noFilter)
+      val result: CheckResult = check.applyCheckOnMetrics(Map(check.metricDescriptor -> DoubleMetric(0.8)))
+      result shouldBe CheckResult(CheckStatus.Error, "Compliance of 0.8 was outside the range between 0.9 and 1.0",
+        "ComplianceCheck with filter: no filter")
     }
   }
 }
