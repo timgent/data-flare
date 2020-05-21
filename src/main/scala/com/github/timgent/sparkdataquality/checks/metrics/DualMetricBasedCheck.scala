@@ -5,6 +5,14 @@ import com.github.timgent.sparkdataquality.metrics.{MetricDescriptor, MetricValu
 
 import scala.reflect.ClassTag
 
+/**
+ * A check based on a metric for one dataset compared to a metric on another dataset
+ * @param dsAMetricDescriptor - the metric to be used on dataset a
+ * @param dsBMetricDescriptor - the metric to be used on dataset b
+ * @param metricComparator - comparison function for the metrics which determines if the check passes
+ * @param description - description of the check
+ * @tparam MV
+ */
 final case class DualMetricBasedCheck[MV <: MetricValue](dsAMetricDescriptor: MetricDescriptor,
                                                          dsBMetricDescriptor: MetricDescriptor,
                                                          metricComparator: (MV, MV) => Boolean,

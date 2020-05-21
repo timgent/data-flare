@@ -35,5 +35,9 @@ object SingleDatasetChecksSuite {
 }
 
 trait SingleDatasetChecksSuite extends ChecksSuite {
+  /**
+   * The dataset for checks to be done on
+   * @return
+   */
   def dataset: Dataset[_]
 }

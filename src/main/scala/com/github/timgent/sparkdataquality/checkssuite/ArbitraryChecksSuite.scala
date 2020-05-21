@@ -7,6 +7,9 @@ import com.github.timgent.sparkdataquality.checkssuite.ChecksSuite.getOverallChe
 
 import scala.concurrent.{ExecutionContext, Future}
 
+/**
+ * A Checks Suite for Arbitrary Checks
+ */
 trait ArbitraryChecksSuite extends ChecksSuite
 
 object ArbitraryChecksSuite {

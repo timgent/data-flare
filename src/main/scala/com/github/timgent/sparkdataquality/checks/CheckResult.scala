@@ -2,13 +2,25 @@ package com.github.timgent.sparkdataquality.checks
 
 import com.github.timgent.sparkdataquality.metrics.DatasetDescription
 
-case class RawCheckResult(
+/**
+ * Check result without additional information about datasource and check description
+ * @param status - status of the check
+ * @param resultDescription - description of the check result
+ */
+private [sparkdataquality] case class RawCheckResult(
                         status: CheckStatus,
                         resultDescription: String
                       ) {
   def withDescription(checkDescription: String) = CheckResult(status, resultDescription, checkDescription)
 }
 
+/**
+ * The result of a check
+ * @param status - status of the check
+ * @param resultDescription - description of the check result
+ * @param checkDescription - description of the check
+ * @param datasourceDescription - optional description of the datasource used in the check
+ */
 case class CheckResult(
                         status: CheckStatus,
                         resultDescription: String,

@@ -101,7 +101,7 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
     }
 
     "return a failure when an empty list of columns is given" in {
-      ???
+      pending
     }
   }
 }

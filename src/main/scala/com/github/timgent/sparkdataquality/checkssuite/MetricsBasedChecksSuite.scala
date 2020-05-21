@@ -11,6 +11,11 @@ import org.apache.spark.sql.Dataset
 
 import scala.concurrent.{ExecutionContext, Future}
 
+/**
+ * A dataset with description
+ * @param dataset - the dataset
+ * @param description - description of the dataset
+ */
 case class DescribedDataset(dataset: Dataset[_], description: DatasetDescription)
 
 object DescribedDataset {
@@ -18,11 +23,32 @@ object DescribedDataset {
     DescribedDataset(dataset, DatasetDescription(datasetDescription))
 }
 
+/**
+ * List of SingleMetricBasedChecks to be run on a single dataset
+ * @param describedDataset - the dataset the checks are being run on
+ * @param checks - a list of checks to be run
+ */
 case class SingleDatasetMetricChecks(describedDataset: DescribedDataset, checks: Seq[SingleMetricBasedCheck[_]])
 
+/**
+ * List of DualMetricBasedChecks to be run on a pair of datasets
+ * @param describedDatasetA - the first dataset that is part of the comparison
+ * @param describedDatasetB - the second dataset that is part of the comparison
+ * @param checks - the checks to be done on the datasets
+ */
 case class DualDatasetMetricChecks(describedDatasetA: DescribedDataset, describedDatasetB: DescribedDataset,
                                    checks: Seq[DualMetricBasedCheck[_]])
 
+/**
+ * A ChecksSuite that can run checks based on metrics (which are computed more efficiently than arbitrary checks).
+ * @param checkSuiteDescription - Description of the CheckSuite
+ * @param tags - the tags associated with the CheckSuite
+ * @param seqSingleDatasetMetricsChecks - checks to be performed on individual datasets
+ * @param seqDualDatasetMetricChecks - checks to be performed on pairs of datasets
+ * @param metricsPersister - responsible for persisting metrics
+ * @param checkResultCombiner - determines how overall CheckSuiteStatus will be calculated given the results of
+ *                            individual checks
+ */
 case class MetricsBasedChecksSuite(checkSuiteDescription: String,
                                    tags: Map[String, String],
                                    seqSingleDatasetMetricsChecks: Seq[SingleDatasetMetricChecks] = Seq.empty,

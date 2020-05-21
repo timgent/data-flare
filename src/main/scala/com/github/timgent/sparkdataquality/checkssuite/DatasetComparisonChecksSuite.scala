@@ -10,8 +10,16 @@ import org.apache.spark.sql.Dataset
 import scala.concurrent.{ExecutionContext, Future}
 
 trait DatasetComparisonChecksSuite extends ChecksSuite {
+  /**
+   * The dataset to run the check on
+   * @return
+   */
   def datasetToCheck: Dataset[_]
 
+  /**
+   * The dataset to compare to
+   * @return
+   */
   def datasetToCompareTo: Dataset[_]
 }
 

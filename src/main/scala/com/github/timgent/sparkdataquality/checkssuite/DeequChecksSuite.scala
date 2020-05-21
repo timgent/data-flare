@@ -11,6 +11,14 @@ import org.apache.spark.sql.Dataset
 
 import scala.concurrent.{ExecutionContext, Future}
 
+/**
+ * A CheckSuite for running deequ checks
+ * @param dataset the dataset for checks to be run on
+ * @param checkSuiteDescription the description of the overall checksuite
+ * @param deequChecks the list of deequ checks to run
+ * @param checkTags the tags associated with this CheckSuite
+ * @param deequMetricsRepository the DeequMetricsRepository that metrics will be persisted to
+ */
 case class DeequChecksSuite(dataset: Dataset[_], checkSuiteDescription: String, deequChecks: Seq[DeequQCCheck],
                             checkTags: Map[String, String]
                            )(implicit deequMetricsRepository: DeequMetricsRepository)

@@ -4,13 +4,13 @@ import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, Lo
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{Column, Row}
 
-sealed trait MetricCalculator {
+private[sparkdataquality] sealed trait MetricCalculator {
   type MetricType <: MetricValue
 
   def wrapMetricValue(metricValue: MetricType#T): MetricType
 }
 
-object MetricCalculator {
+private[sparkdataquality] object MetricCalculator {
 
   /**
    * MetricCalculator that calculates metrics based on a simple aggregation function on the whole dataset

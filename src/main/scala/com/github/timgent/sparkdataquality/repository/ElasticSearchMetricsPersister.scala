@@ -29,6 +29,12 @@ private object EsMetricsDocument {
   }
 }
 
+/**
+ *
+ * @param client elastic4s ElasticSearch client
+ * @param index the name of the index to save metrics to
+ * @param ec the execution context
+ */
 class ElasticSearchMetricsPersister(client: ElasticClient,
                                     index: Index)(implicit ec: ExecutionContext) extends MetricsPersister {
   override def save(timestamp: Instant,

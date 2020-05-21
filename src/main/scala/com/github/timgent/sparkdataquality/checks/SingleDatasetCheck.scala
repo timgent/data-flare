@@ -4,6 +4,9 @@ import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 import org.apache.spark.sql.{Dataset, Encoder}
 import org.apache.spark.sql.functions.sum
 
+/**
+ * A check to be done on a single dataset
+ */
 trait SingleDatasetCheck extends QCCheck {
   def description: String
 

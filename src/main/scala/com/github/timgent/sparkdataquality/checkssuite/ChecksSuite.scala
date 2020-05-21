@@ -7,12 +7,28 @@ import enumeratum._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
+/**
+ * Defines a suite of checks to be done
+ */
 trait ChecksSuite {
+  /**
+   * Run all checks in the ChecksSuite
+   * @param timestamp - time the checks are being run
+   * @param ec - execution context
+   * @return
+   */
   def run(timestamp: Instant)(implicit ec: ExecutionContext): Future[ChecksSuiteResult]
 
+  /**
+   * Description of the check suite
+   * @return
+   */
   def checkSuiteDescription: String
 
+  /**
+   * The type of the check suite
+   * @return
+   */
   def qcType: QcType
 }
 
@@ -25,9 +41,9 @@ object ChecksSuite {
   }
 }
 
-sealed trait QcType extends EnumEntry
+private [sparkdataquality] sealed trait QcType extends EnumEntry
 
-object QcType extends Enum[QcType] {
+private [sparkdataquality] object QcType extends Enum[QcType] {
   val values = findValues
   case object DeequQualityCheck extends QcType
   case object SingleDatasetQualityCheck extends QcType

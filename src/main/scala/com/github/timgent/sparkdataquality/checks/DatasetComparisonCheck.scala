@@ -3,6 +3,9 @@ package com.github.timgent.sparkdataquality.checks
 import com.github.timgent.sparkdataquality.checks.DatasetComparisonCheck.DatasetPair
 import org.apache.spark.sql.Dataset
 
+/**
+ * Check for comparing a pair of datasets
+ */
 trait DatasetComparisonCheck extends QCCheck {
   def description: String
 

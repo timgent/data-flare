@@ -40,6 +40,47 @@ Then define your checks (see following sections). Finally run your checks.
 val qcResults: Seq[ChecksSuiteResult[_]] = QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now)
 ```
 
+### Running metric based checks without deequ
+We've built in some metric based checks directly to this library due to some limitations with deequ. In time we hope
+to cover the majority of functionality deequ provides. Currently with the build in metrics checks you can:
+
+* Efficiently calculate a few types of metrics on your datasets
+* Perform checks on the values of those metrics, either checking they are within a certain range on a single dataset,
+or comparing the metric values between datasets
+* Store metrics using a MetricsPersister. Currently there is an InMemoryMetricsPersister or an 
+ElasticSearchMetricsPersister. The advantage of the ElasticSearch persister is that once your metrics are in 
+ElasticSearch you can easily use Kibana to graph them over time and set up dashboards to track your metrics
+
+#### Setting up your metrics repository
+```
+val client = ElasticClient(JavaClient(ElasticProperties(s"http://${sys.env.getOrElse("ES_HOST", "127.0.0.1")}:${sys.env.getOrElse("ES_PORT", "9200")}")))
+val metricsPersister = new ElasticSearchMetricsPersister(client, "myMetricsIndex")
+```
+
+#### Performing metric based checks
+When you define a MetricsBasedChecksSuite you pass both metric checks for individual datasets as well as metric checks
+across pairs of datasets. Combining both types of checks in a single ChecksSuite allows us to be more efficient - for
+example re-using metrics that are used for multiple checks.
+
+Example (assuming you have 3 datasets in scope, dsA, dsB, and dsC):
+```
+val sizeMetric = MetricDescriptor.SizeMetricDescriptor()
+val dualMetricChecks = Seq(
+    DualMetricBasedCheck(sizeMetric, sizeMetric, MetricComparator.metricsAreEqual, "check size metrics are equal")
+)
+val dualDatasetChecks = Seq(DualDatasetMetricChecks(
+    DescribedDataset(dsA, "dsA"),
+    DescribedDataset(dsB, "dsB"),
+    dualMetricChecks
+))
+val singleDatasetChecks: Seq[SingleDatasetMetricChecks] = Seq(SingleDatasetMetricChecks(
+    DescribedDataset(dsC, "dsC"),
+    Seq(SingleMetricBasedCheck.SizeCheck(AbsoluteThreshold(Some(2), Some(2))))
+))
+val metricsBasedChecksSuite = MetricsBasedChecksSuite("checkSuiteDescription", someTags, singleDatasetChecks,
+        dualDatasetChecks, new InMemoryMetricsPersister)
+```
+
 ### Running checks using deequ
 
 #### Setting up a metrics repository for deequ metrics

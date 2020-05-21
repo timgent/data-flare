@@ -9,6 +9,12 @@ import io.circe.generic.auto._
 
 import scala.concurrent.{ExecutionContext, Future}
 
+/**
+ * An ElasticSearch repository for saving QC results to
+ * @param client - an elastic4s ElasticSearch client
+ * @param index - the name of the index to save QC results to
+ * @param ec - the execution context
+ */
 class ElasticSearchQcResultsRepository(client: ElasticClient,
                                        index: Index)(implicit ec: ExecutionContext) extends QcResultsRepository {
 

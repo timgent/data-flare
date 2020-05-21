@@ -1,12 +1,11 @@
 package com.github.timgent.sparkdataquality.metrics
 
 import com.github.timgent.sparkdataquality.metrics.MetricCalculator.SimpleMetricCalculator
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.SizeMetricDescriptor
 import org.apache.spark.sql.{DataFrame, Dataset}
 
 private case class DescriptorWithColumnNumber[MC <: MetricCalculator](descriptor: MetricDescriptor, calculator: MC, colNum: Int)
 
-object MetricsCalculator {
+private [sparkdataquality] object MetricsCalculator {
 
   def calculateMetrics(ds: Dataset[_],
                        metricDescriptors: Seq[MetricDescriptor]): Map[MetricDescriptor, MetricValue] = {

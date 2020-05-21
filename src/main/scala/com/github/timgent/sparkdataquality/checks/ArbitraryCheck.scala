@@ -1,5 +1,8 @@
 package com.github.timgent.sparkdataquality.checks
 
+/**
+ * Arbitrary check - could provide any function to do this type of check
+ */
 trait ArbitraryCheck extends QCCheck {
   def description: String
 
