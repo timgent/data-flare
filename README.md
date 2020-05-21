@@ -4,6 +4,8 @@ is of high quality.
 
 # Key Concepts
 * A `ChecksSuite` is a suite of checks that perform a given types of checks. The available ChecksSuites currently are:
+    * `MetricsBasedChecksSuite` - Allows you to run checks using efficiently calculated metrics on single datasets or
+    between pairs of datasets
     * `DeequChecksSuite` - Allows you to run [deequ](https://github.com/awslabs/deequ/tree/master/src/main/scala/com/amazon/deequ) 
     checks on a single DataFrame
     * `SingleDatasetChecksSuite` - Allows you to run arbitrary checks on a single DataFrame
@@ -11,6 +13,8 @@ is of high quality.
     * `ArbitraryChecksSuite` - Allows you to run any arbitrary checks, even across a number of DataFrames
 * A checks suite is made up of a number of `QCCheck`s. QCChecks define a check to do on the data. The types of `QCCheck`s
 you can perform aligns with the `ChecksSuite` above:
+    * `SingleMetricBasedCheck` - a metric based check performed on a single dataset
+    * `DualDatasetMetricChecks` - a metric based check performed on a pair of datasets
     * `DeequQCCheck` - wrapper for deequ's `Check` type
     * `SingleDatasetCheck` - a check performed on a single dataset
     * `DatasetComparisonCheck` - a check performed across 2 datasets
