@@ -13,10 +13,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * A dataset with description
- * @param dataset - the dataset
+ * @param ds - the dataset
  * @param description - description of the dataset
  */
-case class DescribedDataset(dataset: Dataset[_], description: DatasetDescription)
+case class DescribedDataset(ds: Dataset[_], description: DatasetDescription)
 
 object DescribedDataset {
   def apply(dataset: Dataset[_], datasetDescription: String): DescribedDataset =
@@ -28,7 +28,9 @@ object DescribedDataset {
  * @param describedDataset - the dataset the checks are being run on
  * @param checks - a list of checks to be run
  */
-case class SingleDatasetMetricChecks(describedDataset: DescribedDataset, checks: Seq[SingleMetricBasedCheck[_]])
+case class SingleDatasetMetricChecks(describedDataset: DescribedDataset, checks: Seq[SingleMetricBasedCheck[_]] = Seq.empty) {
+  def withChecks(checks: Seq[SingleMetricBasedCheck[_]]) = this.copy(checks = this.checks ++ checks)
+}
 
 /**
  * List of DualMetricBasedChecks to be run on a pair of datasets
@@ -65,20 +67,20 @@ case class MetricsBasedChecksSuite(checkSuiteDescription: String,
     val singleDatasetMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] = (for {
       singleDatasetMetricChecks <- seqSingleDatasetMetricsChecks
       describedDataset: DescribedDataset = singleDatasetMetricChecks.describedDataset
-      metricDescriptors = singleDatasetMetricChecks.checks.map(_.metricDescriptor).distinct.toList
-    } yield (describedDataset, metricDescriptors)).toMap
+      metricDescriptors = singleDatasetMetricChecks.checks.map(_.metricDescriptor).toList
+    } yield (describedDataset, metricDescriptors)).groupBy(_._1).mapValues(_.flatMap(_._2).toList)
 
     val dualDatasetAMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] = (for {
       dualDatasetMetricChecks <- seqDualDatasetMetricChecks
       describedDatasetA: DescribedDataset = dualDatasetMetricChecks.describedDatasetA
-      metricDescriptors = dualDatasetMetricChecks.checks.map(_.dsAMetricDescriptor).distinct.toList
-    } yield (describedDatasetA, metricDescriptors)).toMap
+      metricDescriptors = dualDatasetMetricChecks.checks.map(_.dsAMetricDescriptor).toList
+    } yield (describedDatasetA, metricDescriptors)).groupBy(_._1).mapValues(_.flatMap(_._2).toList)
 
     val dualDatasetBMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] = (for {
       dualDatasetMetricChecks <- seqDualDatasetMetricChecks
       describedDatasetB: DescribedDataset = dualDatasetMetricChecks.describedDatasetB
-      metricDescriptors = dualDatasetMetricChecks.checks.map(_.dsBMetricDescriptor).distinct.toList
-    } yield (describedDatasetB, metricDescriptors)).toMap
+      metricDescriptors = dualDatasetMetricChecks.checks.map(_.dsBMetricDescriptor).toList
+    } yield (describedDatasetB, metricDescriptors)).groupBy(_._1).mapValues(_.flatMap(_._2).toList)
 
     val allMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] =
       (singleDatasetMetricDescriptors |+| dualDatasetAMetricDescriptors |+| dualDatasetBMetricDescriptors).mapValues(_.distinct)
@@ -90,7 +92,7 @@ case class MetricsBasedChecksSuite(checkSuiteDescription: String,
     val allMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] =
       getMinimumRequiredMetrics(seqSingleDatasetMetricsChecks, seqDualDatasetMetricChecks)
     val calculatedMetrics: Map[DescribedDataset, Map[MetricDescriptor, MetricValue]] = allMetricDescriptors.map { case (describedDataset, metricDescriptors) =>
-      val metricValues: Map[MetricDescriptor, MetricValue] = MetricsCalculator.calculateMetrics(describedDataset.dataset, metricDescriptors)
+      val metricValues: Map[MetricDescriptor, MetricValue] = MetricsCalculator.calculateMetrics(describedDataset.ds, metricDescriptors)
       (describedDataset, metricValues)
     }
 

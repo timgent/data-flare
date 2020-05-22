@@ -26,4 +26,18 @@ object QualityChecker {
       _ <- qcResultsRepository.save(qualityCheckResults)
     } yield ChecksSuitesResults(qualityCheckResults)
   }
+
+  /**
+   *
+   * @param qualityChecks Quality check suite that checks should be run for
+   * @param qcResultsRepository Repository for storing the results of the quality checks
+   * @param timestamp The timestamp the checks are being run for, used when persisting checks or metrics
+   * @param ec The execution context
+   * @return A Future of check suite results
+   */
+  def doQualityChecks(qualityChecks: ChecksSuite,
+                      qcResultsRepository: QcResultsRepository,
+                      timestamp: Instant)(implicit ec: ExecutionContext): Future[ChecksSuitesResults] = {
+    doQualityChecks(List(qualityChecks), qcResultsRepository, timestamp)
+  }
 }

@@ -10,7 +10,7 @@ import com.github.timgent.sparkdataquality.checkssuite.{CheckSuiteStatus, Checks
 import com.github.timgent.sparkdataquality.sparkdataquality.DeequCheckStatus
 
 object DeequHelpers {
-  implicit private [sparkdataquality] class VerificationResultToQualityCheckResult(verificationResult: VerificationResult) {
+  implicit private [sparkdataquality] class VerificationResultExtension(verificationResult: VerificationResult) {
     def toCheckSuiteResult(description: String, timestamp: Instant, checkTags: Map[String, String]): ChecksSuiteResult = {
       val checkStatus = verificationResult.status match {
         case com.amazon.deequ.checks.CheckStatus.Success => Success
@@ -39,6 +39,16 @@ object DeequHelpers {
         DeequQualityCheck,
         checkTags
       )
+    }
+    def toCheckResults(checkTags: Map[String, String]): Seq[CheckResult] = {
+      verificationResult.checkResults.map { case (deequCheck, deequCheckResult) =>
+        val checkResultDescription = deequCheckResult.status match {
+          case com.amazon.deequ.checks.CheckStatus.Success => "Deequ check was successful"
+          case com.amazon.deequ.checks.CheckStatus.Warning => "Deequ check produced a warning"
+          case com.amazon.deequ.checks.CheckStatus.Error => "Deequ check produced an error"
+        }
+        CheckResult(deequCheckResult.status.toCheckStatus, checkResultDescription, deequCheck.description)
+      }.toSeq
     }
   }
 

@@ -9,8 +9,7 @@ import org.apache.spark.sql.Dataset
 import scala.concurrent.{ExecutionContext, Future}
 
 object SingleDatasetChecksSuite {
-  def apply(ds: Dataset[_],
-            datasourceDescription: String,
+  def apply(describedDataset: DescribedDataset,
             checkDesc: String,
             checks: Seq[SingleDatasetCheck],
             checkTags: Map[String, String],
@@ -18,14 +17,14 @@ object SingleDatasetChecksSuite {
            ): SingleDatasetChecksSuite = {
     new SingleDatasetChecksSuite {
       def run(timestamp: Instant)(implicit ec: ExecutionContext): Future[ChecksSuiteResult] = {
-        val checkResults: Seq[CheckResult] = checks.map(_.applyCheck(dataset).withDatasourceDescription(datasourceDescription))
+        val checkResults: Seq[CheckResult] = checks.map(_.applyCheck(dataset).withDatasourceDescription(describedDataset.description))
         val overallCheckStatus = checkResultCombiner(checkResults)
         val checksSuiteResult = ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
           checkResults, timestamp, qcType, checkTags)
         Future.successful(checksSuiteResult)
       }
 
-      override def dataset: Dataset[_] = ds
+      override def dataset: Dataset[_] = describedDataset.ds
 
       override def checkSuiteDescription: String = checkDesc
 

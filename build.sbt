@@ -2,7 +2,7 @@ import Dependencies._
 import xerial.sbt.Sonatype.GitHubHosting
 
 ThisBuild / scalaVersion := "2.11.12"
-ThisBuild / version := "0.1.2"
+ThisBuild / version := "0.1.3"
 ThisBuild / organization := "com.github.timgent"
 ThisBuild / organizationName := "timgent"
 
@@ -44,6 +44,3 @@ publishTo := sonatypePublishToBundle.value
 sonatypeProfileName := "com.github.timgent"
 publishMavenStyle := true
 sonatypeProjectHosting := Some(GitHubHosting("timgent", "spark-data-quality", "tim.gent@gmail.com"))
-
-
-// See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.

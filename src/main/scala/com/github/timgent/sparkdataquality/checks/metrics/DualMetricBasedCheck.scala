@@ -7,17 +7,17 @@ import scala.reflect.ClassTag
 
 /**
  * A check based on a metric for one dataset compared to a metric on another dataset
+ *
  * @param dsAMetricDescriptor - the metric to be used on dataset a
  * @param dsBMetricDescriptor - the metric to be used on dataset b
- * @param metricComparator - comparison function for the metrics which determines if the check passes
- * @param description - description of the check
+ * @param metricComparator    - comparison function for the metrics which determines if the check passes
+ * @param description         - description of the check
  * @tparam MV
  */
 final case class DualMetricBasedCheck[MV <: MetricValue](dsAMetricDescriptor: MetricDescriptor,
                                                          dsBMetricDescriptor: MetricDescriptor,
-                                                         metricComparator: (MV, MV) => Boolean,
-                                                         description: String
-                                                        ) extends MetricsBasedCheck {
+                                                         description: String)(
+                                                         metricComparator: (MV, MV) => Boolean) extends MetricsBasedCheck {
 
   private def getCheckResult(checkPassed: Boolean): CheckResult = {
     if (checkPassed)
@@ -33,7 +33,7 @@ final case class DualMetricBasedCheck[MV <: MetricValue](dsAMetricDescriptor: Me
     (dsAMetricOpt, dsBMetricOpt) match {
       case (Some(dsAMetric), Some(dsBMetric)) => (dsAMetric, dsBMetric) match {
         case (dsAMetric: MV, dsBMetric: MV) => getCheckResult(metricComparator(dsAMetric, dsBMetric))
-        case _ =>   metricTypeErrorResult
+        case _ => metricTypeErrorResult
       }
       case _ => metricNotPresentErrorResult
     }

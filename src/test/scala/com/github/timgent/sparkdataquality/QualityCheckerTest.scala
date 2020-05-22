@@ -99,7 +99,7 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
       }
       val checks = Seq(singleDatasetCheck)
 
-      val qualityChecks = List(SingleDatasetChecksSuite(testDataset, datasourceDescription, checkDescription, checks, someTags))
+      val qualityChecks = List(SingleDatasetChecksSuite(DescribedDataset(testDataset, datasourceDescription), checkDescription, checks, someTags))
 
       for {
         qcResults: Seq[ChecksSuiteResult] <- QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).map(_.results)

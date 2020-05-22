@@ -50,4 +50,5 @@ private [sparkdataquality] object QcType extends Enum[QcType] {
   case object DatasetComparisonQualityCheck extends QcType
   case object ArbitraryQualityCheck extends QcType
   case object MetricsBasedQualityCheck extends QcType
+  case object GenericChecks extends QcType
 }

@@ -46,7 +46,7 @@ object SingleMetricBasedCheck {
      */
     def threshold: AbsoluteThreshold[MV#T]
 
-    private [sparkdataquality] def applyCheck(metric: MV): CheckResult = {
+    protected def applyCheck(metric: MV): CheckResult = {
       if (threshold.isWithinThreshold(metric.value)) {
         CheckResult(CheckStatus.Success, s"$checkShortName of ${metric.value} was within the range $threshold", description)
       } else {
@@ -60,7 +60,7 @@ object SingleMetricBasedCheck {
    * @param threshold
    * @param filter - filter to be applied before rows are counted
    */
-  case class SizeCheck(threshold: AbsoluteThreshold[Long], filter: MetricFilter) extends ThresholdBasedCheck[MetricValue.LongMetric] {
+  case class SizeCheck(threshold: AbsoluteThreshold[Long], filter: MetricFilter = MetricFilter.noFilter) extends ThresholdBasedCheck[MetricValue.LongMetric] {
     override def checkShortName: String = "Size"
 
     override def description: String = s"SizeCheck with filter: ${filter.filterDescription}"
