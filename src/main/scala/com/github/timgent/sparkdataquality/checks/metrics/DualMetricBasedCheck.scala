@@ -1,6 +1,6 @@
 package com.github.timgent.sparkdataquality.checks.metrics
 
-import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
+import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType}
 import com.github.timgent.sparkdataquality.metrics.{MetricDescriptor, MetricValue}
 
 import scala.reflect.ClassTag
@@ -19,11 +19,13 @@ final case class DualMetricBasedCheck[MV <: MetricValue](dsAMetricDescriptor: Me
                                                          description: String)(
                                                          metricComparator: (MV, MV) => Boolean) extends MetricsBasedCheck {
 
+  override def qcType: QcType = QcType.MetricsBasedQualityCheck
+
   private def getCheckResult(checkPassed: Boolean): CheckResult = {
     if (checkPassed)
-      CheckResult(CheckStatus.Success, "metric comparison passed", description)
+      CheckResult(qcType, CheckStatus.Success, "metric comparison passed", description)
     else
-      CheckResult(CheckStatus.Error, "metric comparison failed", description)
+      CheckResult(qcType, CheckStatus.Error, "metric comparison failed", description)
   }
 
   def applyCheckOnMetrics(dsAMetrics: Map[MetricDescriptor, MetricValue],

@@ -48,9 +48,9 @@ object SingleMetricBasedCheck {
 
     protected def applyCheck(metric: MV): CheckResult = {
       if (threshold.isWithinThreshold(metric.value)) {
-        CheckResult(CheckStatus.Success, s"$checkShortName of ${metric.value} was within the range $threshold", description)
+        CheckResult(qcType, CheckStatus.Success, s"$checkShortName of ${metric.value} was within the range $threshold", description)
       } else {
-        CheckResult(CheckStatus.Error, s"$checkShortName of ${metric.value} was outside the range $threshold", description)
+        CheckResult(qcType, CheckStatus.Error, s"$checkShortName of ${metric.value} was outside the range $threshold", description)
       }
     }
   }

@@ -10,6 +10,8 @@ import org.apache.spark.sql.functions.sum
 trait SingleDatasetCheck extends QCCheck {
   def description: String
 
+  override def qcType: QcType = QcType.SingleDatasetQualityCheck
+
   def applyCheck(ds: Dataset[_]): CheckResult
 }
 
@@ -18,7 +20,7 @@ object SingleDatasetCheck {
     new SingleDatasetCheck {
       override def description: String = checkDescription
 
-      override def applyCheck(ds: Dataset[_]): CheckResult = check(ds).withDescription(checkDescription)
+      override def applyCheck(ds: Dataset[_]): CheckResult = check(ds).withDescription(qcType, checkDescription)
     }
   }
 

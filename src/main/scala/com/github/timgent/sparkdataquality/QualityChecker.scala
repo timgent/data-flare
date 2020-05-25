@@ -2,7 +2,7 @@ package com.github.timgent.sparkdataquality
 
 import java.time.Instant
 
-import com.github.timgent.sparkdataquality.checkssuite.{ChecksSuite, ChecksSuiteResult, ChecksSuitesResults}
+import com.github.timgent.sparkdataquality.checkssuite.{ChecksSuiteBase, ChecksSuiteResult, ChecksSuitesResults}
 import com.github.timgent.sparkdataquality.repository.QcResultsRepository
 import cats.implicits._
 
@@ -17,7 +17,7 @@ object QualityChecker {
    * @param ec The execution context
    * @return A Future of check suite results
    */
-  def doQualityChecks(qualityChecks: List[ChecksSuite],
+  def doQualityChecks(qualityChecks: List[ChecksSuiteBase],
                       qcResultsRepository: QcResultsRepository,
                       timestamp: Instant)(implicit ec: ExecutionContext): Future[ChecksSuitesResults] = {
     val qualityCheckResultsFut: Future[List[ChecksSuiteResult]] = qualityChecks.traverse(_.run(timestamp))
@@ -35,7 +35,7 @@ object QualityChecker {
    * @param ec The execution context
    * @return A Future of check suite results
    */
-  def doQualityChecks(qualityChecks: ChecksSuite,
+  def doQualityChecks(qualityChecks: ChecksSuiteBase,
                       qcResultsRepository: QcResultsRepository,
                       timestamp: Instant)(implicit ec: ExecutionContext): Future[ChecksSuitesResults] = {
     doQualityChecks(List(qualityChecks), qcResultsRepository, timestamp)

@@ -1,7 +1,7 @@
 package com.github.timgent.sparkdataquality.checkssuite
 
 import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
-import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
+import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
 import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricComparator, MetricDescriptor, MetricFilter}
 import com.github.timgent.sparkdataquality.repository.InMemoryMetricsPersister
@@ -36,10 +36,10 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
           checkSuiteDescription,
           "1 checks were successful. 0 checks gave errors. 0 checks gave warnings",
           Seq(CheckResult(
-            CheckStatus.Success, "Size of 2 was within the range between 2 and 2", "SizeCheck with filter: no filter", Some(datasourceDescription)
+            QcType.MetricsBasedQualityCheck, CheckStatus.Success,
+            "Size of 2 was within the range between 2 and 2", "SizeCheck with filter: no filter", Some(datasourceDescription)
           )),
           now,
-          QcType.MetricsBasedQualityCheck,
           someTags
         )
       }
@@ -73,11 +73,10 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
           checkSuiteDescription,
           "1 checks were successful. 1 checks gave errors. 0 checks gave warnings",
           Seq(
-            CheckResult(CheckStatus.Success, "Size of 2 was within the range between 2 and 2", "SizeCheck with filter: no filter", Some("dsA")),
-            CheckResult(CheckStatus.Error, "Size of 3 was outside the range between 2 and 2", "SizeCheck with filter: no filter", Some("dsB"))
+            CheckResult(QcType.MetricsBasedQualityCheck, CheckStatus.Success, "Size of 2 was within the range between 2 and 2", "SizeCheck with filter: no filter", Some("dsA")),
+            CheckResult(QcType.MetricsBasedQualityCheck, CheckStatus.Error, "Size of 3 was outside the range between 2 and 2", "SizeCheck with filter: no filter", Some("dsB"))
           ),
           now,
-          QcType.MetricsBasedQualityCheck,
           someTags
         )
       }
@@ -114,10 +113,10 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
           checkSuiteDescription,
           "1 checks were successful. 0 checks gave errors. 0 checks gave warnings",
           Seq(CheckResult(
-            CheckStatus.Success, "metric comparison passed", "check size metrics are equal", Some("dsA compared to dsB")
+            QcType.MetricsBasedQualityCheck, CheckStatus.Success,
+            "metric comparison passed", "check size metrics are equal", Some("dsA compared to dsB")
           )),
           now,
-          QcType.MetricsBasedQualityCheck,
           someTags
         )
       }

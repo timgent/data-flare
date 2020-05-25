@@ -7,7 +7,7 @@ import com.github.timgent.sparkdataquality.QualityChecker
 import com.github.timgent.sparkdataquality.checks.{CheckStatus, RawCheckResult, SingleDatasetCheck}
 import com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck
 import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.{ComplianceCheck, SizeCheck}
-import com.github.timgent.sparkdataquality.checkssuite.{CheckSuiteStatus, ChecksSuite, DescribedDataset, DualDatasetMetricChecks, GenericCheckSuite, MetricsBasedChecksSuite, SingleDatasetCheckWithDs, SingleDatasetChecksSuite, SingleDatasetMetricChecks}
+import com.github.timgent.sparkdataquality.checkssuite.{CheckSuiteStatus, ChecksSuiteBase, DescribedDataset, DualDatasetMetricChecks, ChecksSuite, MetricsBasedChecksSuite, SingleDatasetCheckWithDs, SingleDatasetChecksSuite, SingleDatasetMetricChecks}
 import com.github.timgent.sparkdataquality.examples.ExampleHelpers.{Customer, Order}
 import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{DistinctValuesMetricDescriptor, SizeMetricDescriptor}
 import com.github.timgent.sparkdataquality.metrics.{ComplianceFn, MetricComparator, MetricDescriptor}
@@ -100,7 +100,7 @@ object Day1Checks extends App {
       RawCheckResult(CheckStatus.Error, s"Not all columns matched. $expectedColumns was different to ${ds.columns.toSet}")
   }
 
-  val checksSuite = GenericCheckSuite("Customers and orders check suite",
+  val checksSuite = ChecksSuite("Customers and orders check suite",
     seqSingleDatasetMetricsChecks = singleDsMetricChecks,
     seqDualDatasetMetricChecks = dualDsMetricChecks,
     metricsPersister = esMetricsPersister,

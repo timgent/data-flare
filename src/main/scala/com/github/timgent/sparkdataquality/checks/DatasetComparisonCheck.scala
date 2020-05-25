@@ -9,6 +9,8 @@ import org.apache.spark.sql.Dataset
 trait DatasetComparisonCheck extends QCCheck {
   def description: String
 
+  override def qcType: QcType = QcType.DatasetComparisonQualityCheck
+
   def applyCheck(dsPair: DatasetPair): CheckResult
 }
 
@@ -21,7 +23,7 @@ object DatasetComparisonCheck {
       override def description: String = checkDescription
 
       override def applyCheck(dsPair: DatasetPair): CheckResult = {
-        check(dsPair).withDescription(checkDescription)
+        check(dsPair).withDescription(qcType, checkDescription)
       }
     }
   }

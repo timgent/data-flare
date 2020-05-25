@@ -9,7 +9,7 @@ import com.amazon.deequ.metrics.{DoubleMetric, Entity}
 import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.repository.memory.InMemoryMetricsRepository
 import com.github.timgent.sparkdataquality.checks.DatasetComparisonCheck.DatasetPair
-import com.github.timgent.sparkdataquality.checks.{ArbitraryCheck, CheckResult, CheckStatus, DatasetComparisonCheck, DeequQCCheck, RawCheckResult, SingleDatasetCheck}
+import com.github.timgent.sparkdataquality.checks.{ArbitraryCheck, CheckResult, CheckStatus, DatasetComparisonCheck, DeequQCCheck, QcType, RawCheckResult, SingleDatasetCheck}
 import com.github.timgent.sparkdataquality.checkssuite._
 import com.github.timgent.sparkdataquality.repository.InMemoryQcResultsRepository
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
@@ -28,7 +28,6 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
   val now: Instant = Instant.now
 
   def checkResultAndPersistedResult(qcResult: ChecksSuiteResult, persistedQcResult: ChecksSuiteResult)(
-    checkType: QcType,
     timestamp: Instant,
     checkSuiteDescription: String,
     checkStatus: CheckSuiteStatus,
@@ -36,14 +35,12 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
     checkResults: Seq[CheckResult],
     checkTags: Map[String, String]
   ): Assertion = {
-    qcResult.checkType shouldBe checkType
     qcResult.timestamp shouldBe timestamp
     qcResult.checkSuiteDescription shouldBe checkSuiteDescription
     qcResult.overallStatus shouldBe checkStatus
     qcResult.resultDescription shouldBe resultDescription
     qcResult.checkResults shouldBe checkResults
     qcResult.checkTags shouldBe checkTags
-    persistedQcResult.checkType shouldBe checkType
     persistedQcResult.timestamp shouldBe timestamp
     persistedQcResult.checkSuiteDescription shouldBe checkSuiteDescription
     persistedQcResult.overallStatus shouldBe checkStatus
@@ -55,13 +52,17 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
   "doQualityChecks" should {
 
     "be able to do deequ quality checks and store check results and underlying metrics in a repository" in {
-      val testDataset = List((1, "a"), (2, "b"), (3, "c")).map(TestDataClass.tupled).toDF
+      val testDataset = DescribedDataset(List((1, "a"), (2, "b"), (3, "c")).map(TestDataClass.tupled).toDF, "testDataset")
       val qcResultsRepository = new InMemoryQcResultsRepository
       val deequMetricsRepository: InMemoryMetricsRepository = new InMemoryMetricsRepository
 
       val deequQcConstraint = DeequQCCheck(Check(CheckLevel.Error, "size check").hasSize(_ == 3))
       val qualityChecks = List(
-        DeequChecksSuite(testDataset, "sample deequ checks", Seq(deequQcConstraint), someTags)(deequMetricsRepository)
+        ChecksSuite(
+          checkSuiteDescription = "sample deequ checks",
+          deequChecks = Seq(DeequCheck(testDataset, Seq(deequQcConstraint))),
+          tags = someTags,
+          deequMetricsRepository = deequMetricsRepository)
       )
 
       for {
@@ -72,12 +73,11 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
         qcResults.size shouldBe 1
         persistedQcResults.size shouldBe 1
         checkResultAndPersistedResult(qcResults.head, persistedQcResults.head)(
-          checkType = QcType.DeequQualityCheck,
           timestamp = now,
           checkSuiteDescription = "sample deequ checks",
           checkStatus = CheckSuiteStatus.Success,
           resultDescription = "All Deequ checks were successful",
-          checkResults = Seq(CheckResult(CheckStatus.Success, "Deequ check was successful", deequQcConstraint.description)),
+          checkResults = Seq(CheckResult(QcType.DeequQualityCheck, CheckStatus.Success, "Deequ check was successful", deequQcConstraint.description)),
           checkTags = someTags
         )
 
@@ -106,12 +106,12 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
         persistedQcResults: Seq[ChecksSuiteResult] <- qcResultsRepository.loadAll
       } yield {
         checkResultAndPersistedResult(qcResults.head, persistedQcResults.head)(
-          checkType = QcType.SingleDatasetQualityCheck,
           timestamp = now,
           checkSuiteDescription = "DB: X, table: Y",
           checkStatus = CheckSuiteStatus.Error,
           resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
-          checkResults = Seq(CheckResult(CheckStatus.Error, "someSingleDatasetCheck was not successful", singleDatasetCheck.description, Some(datasourceDescription))),
+          checkResults = Seq(CheckResult(QcType.SingleDatasetQualityCheck, CheckStatus.Error,
+            "someSingleDatasetCheck was not successful", singleDatasetCheck.description, Some(datasourceDescription))),
           checkTags = someTags
         )
       }
@@ -132,12 +132,11 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
         persistedQcResults: Seq[ChecksSuiteResult] <- qcResultsRepository.loadAll
       } yield {
         checkResultAndPersistedResult(qcResults.head, persistedQcResults.head)(
-          checkType = QcType.DatasetComparisonQualityCheck,
           timestamp = now,
           checkSuiteDescription = "table A vs table B comparison",
           checkStatus = CheckSuiteStatus.Error,
           resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
-          checkResults = Seq(CheckResult(CheckStatus.Error, "counts were not equal", datasetComparisonCheck.description)),
+          checkResults = Seq(CheckResult(QcType.DatasetComparisonQualityCheck, CheckStatus.Error, "counts were not equal", datasetComparisonCheck.description)),
           checkTags = someTags
         )
       }
@@ -156,24 +155,21 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
         persistedQcResults: Seq[ChecksSuiteResult] <- qcResultsRepository.loadAll
       } yield {
         qcResults.size shouldBe 1
-        qcResults.head.checkType shouldBe QcType.ArbitraryQualityCheck
         qcResults.head.timestamp shouldBe now
         qcResults.head.checkSuiteDescription shouldBe "table A, table B, and table C comparison"
         qcResults.head.overallStatus shouldBe CheckSuiteStatus.Error
 
         persistedQcResults.size shouldBe 1
-        persistedQcResults.head.checkType shouldBe QcType.ArbitraryQualityCheck
         persistedQcResults.head.timestamp shouldBe now
         persistedQcResults.head.checkSuiteDescription shouldBe "table A, table B, and table C comparison"
         persistedQcResults.head.overallStatus shouldBe CheckSuiteStatus.Error
 
         checkResultAndPersistedResult(qcResults.head, persistedQcResults.head)(
-          checkType = QcType.ArbitraryQualityCheck,
           timestamp = now,
           checkSuiteDescription = "table A, table B, and table C comparison",
           checkStatus = CheckSuiteStatus.Error,
           resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
-          checkResults = Seq(CheckResult(CheckStatus.Error, "The arbitrary check failed!", arbitraryCheck.description)),
+          checkResults = Seq(CheckResult(QcType.ArbitraryQualityCheck, CheckStatus.Error, "The arbitrary check failed!", arbitraryCheck.description)),
           checkTags = someTags
         )
       }

@@ -3,7 +3,7 @@ package com.github.timgent.sparkdataquality.checkssuite
 import java.time.Instant
 
 import com.github.timgent.sparkdataquality.checks.{CheckResult, SingleDatasetCheck}
-import com.github.timgent.sparkdataquality.checkssuite.ChecksSuite.getOverallCheckResultDescription
+import com.github.timgent.sparkdataquality.checkssuite.ChecksSuiteBase.getOverallCheckResultDescription
 import org.apache.spark.sql.Dataset
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -20,20 +20,18 @@ object SingleDatasetChecksSuite {
         val checkResults: Seq[CheckResult] = checks.map(_.applyCheck(dataset).withDatasourceDescription(describedDataset.description))
         val overallCheckStatus = checkResultCombiner(checkResults)
         val checksSuiteResult = ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
-          checkResults, timestamp, qcType, checkTags)
+          checkResults, timestamp, checkTags)
         Future.successful(checksSuiteResult)
       }
 
       override def dataset: Dataset[_] = describedDataset.ds
 
       override def checkSuiteDescription: String = checkDesc
-
-      override def qcType: QcType = QcType.SingleDatasetQualityCheck
     }
   }
 }
 
-trait SingleDatasetChecksSuite extends ChecksSuite {
+trait SingleDatasetChecksSuite extends ChecksSuiteBase {
   /**
    * The dataset for checks to be done on
    * @return

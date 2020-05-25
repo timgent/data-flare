@@ -57,7 +57,7 @@ case class MetricsBasedChecksSuite(checkSuiteDescription: String,
                                    seqDualDatasetMetricChecks: Seq[DualDatasetMetricChecks] = Seq.empty,
                                    metricsPersister: MetricsPersister = NullMetricsPersister,
                                    checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
-                                  ) extends ChecksSuite {
+                                  ) extends ChecksSuiteBase {
   /**
    * Calculates the minimum required metrics to calculate this check suite
    */
@@ -129,15 +129,12 @@ case class MetricsBasedChecksSuite(checkSuiteDescription: String,
       ChecksSuiteResult(
         overallCheckResult,
         checkSuiteDescription,
-        ChecksSuite.getOverallCheckResultDescription(allCheckResults),
+        ChecksSuiteBase.getOverallCheckResultDescription(allCheckResults),
         allCheckResults,
         timestamp,
-        qcType,
         tags
       )
     }
 
   }
-
-  override def qcType: QcType = QcType.MetricsBasedQualityCheck
 }

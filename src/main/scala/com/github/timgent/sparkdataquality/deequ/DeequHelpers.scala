@@ -3,9 +3,8 @@ package com.github.timgent.sparkdataquality.deequ
 import java.time.Instant
 
 import com.amazon.deequ.VerificationResult
-import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
+import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType}
 import com.github.timgent.sparkdataquality.checkssuite.CheckSuiteStatus.{Success, Warning}
-import com.github.timgent.sparkdataquality.checkssuite.QcType.DeequQualityCheck
 import com.github.timgent.sparkdataquality.checkssuite.{CheckSuiteStatus, ChecksSuiteResult}
 import com.github.timgent.sparkdataquality.sparkdataquality.DeequCheckStatus
 
@@ -28,7 +27,7 @@ object DeequHelpers {
           case com.amazon.deequ.checks.CheckStatus.Warning => "Deequ check produced a warning"
           case com.amazon.deequ.checks.CheckStatus.Error => "Deequ check produced an error"
         }
-        CheckResult(deequCheckResult.status.toCheckStatus, checkResultDescription, deequCheck.description)
+        CheckResult(QcType.DeequQualityCheck, deequCheckResult.status.toCheckStatus, checkResultDescription, deequCheck.description)
       }.toSeq
       ChecksSuiteResult( // Do we want to add deequ constraint results to the checks suite result too? It's another level compared to what we have elsewhere. Could refactor to match deequ's way of doing things
         checkStatus,
@@ -36,7 +35,6 @@ object DeequHelpers {
         checkSuiteResultDescription,
         checkResults,
         timestamp,
-        DeequQualityCheck,
         checkTags
       )
     }
@@ -47,7 +45,7 @@ object DeequHelpers {
           case com.amazon.deequ.checks.CheckStatus.Warning => "Deequ check produced a warning"
           case com.amazon.deequ.checks.CheckStatus.Error => "Deequ check produced an error"
         }
-        CheckResult(deequCheckResult.status.toCheckStatus, checkResultDescription, deequCheck.description)
+        CheckResult(QcType.DeequQualityCheck, deequCheckResult.status.toCheckStatus, checkResultDescription, deequCheck.description)
       }.toSeq
     }
   }

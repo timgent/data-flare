@@ -1,7 +1,7 @@
 package com.github.timgent.sparkdataquality.checks.metrics
 
 import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.{ComplianceCheck, SizeCheck}
-import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
+import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
@@ -20,13 +20,13 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     "pass the check when the required metrics are provided in the metrics map and they meet the comparator criteria" in {
       val checkResult: CheckResult = dualMetricBasedCheck.applyCheckOnMetrics(Map(simpleSizeMetric -> LongMetric(2L)),
         Map(simpleSizeMetric -> LongMetric(2L)))
-      checkResult shouldBe CheckResult(CheckStatus.Success, "metric comparison passed", "size comparison")
+      checkResult shouldBe CheckResult(QcType.MetricsBasedQualityCheck, CheckStatus.Success, "metric comparison passed", "size comparison")
     }
 
     "fail the check when the required metrics are provided in the metrics map but they do not meet the comparator criteria" in {
       val checkResult: CheckResult = dualMetricBasedCheck.applyCheckOnMetrics(Map(simpleSizeMetric -> LongMetric(2L)),
         Map(simpleSizeMetric -> LongMetric(3L)))
-      checkResult shouldBe CheckResult(CheckStatus.Error, "metric comparison failed", "size comparison")
+      checkResult shouldBe CheckResult(QcType.MetricsBasedQualityCheck, CheckStatus.Error, "metric comparison failed", "size comparison")
     }
 
     "fail when the required metrics are not provided in the metrics map" in {
@@ -68,13 +68,13 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     "pass a check where the size is within the threshold" in {
       val check = SizeCheck(AbsoluteThreshold(Some(0), Some(3)), MetricFilter.noFilter)
       val result: CheckResult = check.applyCheckOnMetrics(Map(check.metricDescriptor -> LongMetric(2)))
-      result shouldBe CheckResult(CheckStatus.Success, "Size of 2 was within the range between 0 and 3", "SizeCheck with filter: no filter")
+      result shouldBe CheckResult(QcType.MetricsBasedQualityCheck, CheckStatus.Success, "Size of 2 was within the range between 0 and 3", "SizeCheck with filter: no filter")
     }
 
     "fail a check where the size is outside the threshold" in {
       val check = SizeCheck(AbsoluteThreshold(Some(0), Some(3)), MetricFilter(lit(false), "someFilter"))
       val result: CheckResult = check.applyCheckOnMetrics(Map(check.metricDescriptor -> LongMetric(4)))
-      result shouldBe CheckResult(CheckStatus.Error, "Size of 4 was outside the range between 0 and 3", "SizeCheck with filter: someFilter")
+      result shouldBe CheckResult(QcType.MetricsBasedQualityCheck, CheckStatus.Error, "Size of 4 was outside the range between 0 and 3", "SizeCheck with filter: someFilter")
     }
   }
 
@@ -82,14 +82,14 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     "pass a check where the compliance rate is within the threshold" in {
       val check = ComplianceCheck(AbsoluteThreshold(Some(0.9), Some(1)), someComplianceFn, MetricFilter.noFilter)
       val result: CheckResult = check.applyCheckOnMetrics(Map(check.metricDescriptor -> DoubleMetric(0.9)))
-      result shouldBe CheckResult(CheckStatus.Success, "Compliance of 0.9 was within the range between 0.9 and 1.0",
+      result shouldBe CheckResult(QcType.MetricsBasedQualityCheck, CheckStatus.Success, "Compliance of 0.9 was within the range between 0.9 and 1.0",
         "ComplianceCheck with filter: no filter")
     }
 
     "fail a check where the compliance rate is outside the threshold" in {
       val check = ComplianceCheck(AbsoluteThreshold(Some(0.9), Some(1)), someComplianceFn, MetricFilter.noFilter)
       val result: CheckResult = check.applyCheckOnMetrics(Map(check.metricDescriptor -> DoubleMetric(0.8)))
-      result shouldBe CheckResult(CheckStatus.Error, "Compliance of 0.8 was outside the range between 0.9 and 1.0",
+      result shouldBe CheckResult(QcType.MetricsBasedQualityCheck, CheckStatus.Error, "Compliance of 0.8 was outside the range between 0.9 and 1.0",
         "ComplianceCheck with filter: no filter")
     }
   }

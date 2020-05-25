@@ -2,7 +2,7 @@ package com.github.timgent.sparkdataquality
 
 import com.github.timgent.sparkdataquality.checkssuite.ChecksSuiteResultStatusCalculator.getWorstCheckStatus
 import com.github.timgent.sparkdataquality.checks.CheckStatus.Success
-import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
+import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType}
 import com.github.timgent.sparkdataquality.checkssuite.CheckSuiteStatus
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
 import org.scalatest.matchers.should.Matchers
@@ -10,9 +10,10 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class ChecksSuiteResultStatusCalculatorTest extends AnyWordSpec with Matchers {
   "getWorstCheckStatus" should {
-    val successfulCheckResult = CheckResult(Success, "", someCheck.description)
-    val errorCheckResult = CheckResult(CheckStatus.Error, "", someCheck.description)
-    val warningCheckResult = CheckResult(CheckStatus.Warning, "", someCheck.description)
+    val qcType = QcType.MetricsBasedQualityCheck
+    val successfulCheckResult = CheckResult(qcType, CheckStatus.Success, "", someCheck.description)
+    val errorCheckResult = CheckResult(qcType, CheckStatus.Error, "", someCheck.description)
+    val warningCheckResult = CheckResult(qcType, CheckStatus.Warning, "", someCheck.description)
     "Choose error status when there is at least one error" in {
       getWorstCheckStatus(List(successfulCheckResult, errorCheckResult, warningCheckResult)) shouldBe CheckSuiteStatus.Error
     }

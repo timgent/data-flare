@@ -4,12 +4,12 @@ import java.time.Instant
 
 import com.github.timgent.sparkdataquality.checks.DatasetComparisonCheck.DatasetPair
 import com.github.timgent.sparkdataquality.checks.{CheckResult, DatasetComparisonCheck}
-import com.github.timgent.sparkdataquality.checkssuite.ChecksSuite.getOverallCheckResultDescription
+import com.github.timgent.sparkdataquality.checkssuite.ChecksSuiteBase.getOverallCheckResultDescription
 import org.apache.spark.sql.Dataset
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait DatasetComparisonChecksSuite extends ChecksSuite {
+trait DatasetComparisonChecksSuite extends ChecksSuiteBase {
   /**
    * The dataset to run the check on
    * @return
@@ -40,13 +40,11 @@ object DatasetComparisonChecksSuite {
         val checkResults: Seq[CheckResult] = checks.map(_.applyCheck(DatasetPair(datasetToCheck, datasetToCompareTo)))
         val overallCheckStatus = checkResultCombiner(checkResults)
         val checkSuiteResult = ChecksSuiteResult(overallCheckStatus, checkSuiteDescription, getOverallCheckResultDescription(checkResults),
-          checkResults, timestamp, qcType, checkTags)
+          checkResults, timestamp, checkTags)
         Future.successful(checkSuiteResult)
       }
 
       override def checkSuiteDescription: String = checkDesc
-
-      override def qcType: QcType = QcType.DatasetComparisonQualityCheck
     }
   }
 }

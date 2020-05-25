@@ -11,7 +11,7 @@ private [sparkdataquality] case class RawCheckResult(
                         status: CheckStatus,
                         resultDescription: String
                       ) {
-  def withDescription(checkDescription: String) = CheckResult(status, resultDescription, checkDescription)
+  def withDescription(qcType: QcType, checkDescription: String) = CheckResult(qcType, status, resultDescription, checkDescription)
 }
 
 /**
@@ -22,6 +22,7 @@ private [sparkdataquality] case class RawCheckResult(
  * @param datasourceDescription - optional description of the datasource used in the check
  */
 case class CheckResult(
+                        qcType: QcType,
                         status: CheckStatus,
                         resultDescription: String,
                         checkDescription: String,
