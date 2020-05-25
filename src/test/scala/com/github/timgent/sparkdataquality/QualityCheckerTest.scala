@@ -76,7 +76,7 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
           timestamp = now,
           checkSuiteDescription = "sample deequ checks",
           checkStatus = CheckSuiteStatus.Success,
-          resultDescription = "All Deequ checks were successful",
+          resultDescription = "1 checks were successful. 0 checks gave errors. 0 checks gave warnings",
           checkResults = Seq(CheckResult(QcType.DeequQualityCheck, CheckStatus.Success, "Deequ check was successful", deequQcConstraint.description)),
           checkTags = someTags
         )
