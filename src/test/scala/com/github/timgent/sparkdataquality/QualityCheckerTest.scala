@@ -118,14 +118,18 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
     }
 
     "be able to run custom 2 table checks and store results in a repository" in {
-      val testDataset = List((1, "a"), (2, "b"), (3, "c")).map(TestDataClass.tupled).toDS
-      val datasetToCompare = List((1, "a"), (2, "b"), (3, "c"), (4, "d")).map(TestDataClass.tupled).toDS
+      val testDataset = DescribedDataset(List((1, "a"), (2, "b"), (3, "c")).map(TestDataClass.tupled).toDS, "testDataset")
+      val datasetToCompare = DescribedDataset(List((1, "a"), (2, "b"), (3, "c"), (4, "d")).map(TestDataClass.tupled).toDS, "datasetToCompare")
+      val datasetPair = DescribedDatasetPair(testDataset, datasetToCompare)
       val qcResultsRepository = new InMemoryQcResultsRepository
 
       val datasetComparisonCheck = DatasetComparisonCheck("Table counts equal") { case DatasetPair(ds, dsToCompare) =>
         RawCheckResult(CheckStatus.Error, "counts were not equal")
       }
-      val qualityChecks = List(DatasetComparisonChecksSuite(testDataset, datasetToCompare, "table A vs table B comparison", Seq(datasetComparisonCheck), someTags))
+      val qualityChecks = List(ChecksSuite("table A vs table B comparison",
+        datasetComparisonChecks = Seq(DatasetComparisonCheckWithDs(datasetPair, Seq(datasetComparisonCheck))),
+        tags = someTags)
+      )
 
       for {
         qcResults: Seq[ChecksSuiteResult] <- QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).map(_.results)
