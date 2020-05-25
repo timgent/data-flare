@@ -148,7 +148,8 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
       val arbitraryCheck = ArbitraryCheck("some arbitrary check") {
         RawCheckResult(CheckStatus.Error, "The arbitrary check failed!")
       }
-      val qualityChecks = List(ArbitraryChecksSuite("table A, table B, and table C comparison", Seq(arbitraryCheck), someTags))
+      val qualityChecks = List(ChecksSuite("table A, table B, and table C comparison",
+        arbitraryChecks = Seq(arbitraryCheck), tags = someTags))
 
       for {
         qcResults: Seq[ChecksSuiteResult] <- QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).map(_.results)
