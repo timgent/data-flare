@@ -26,7 +26,7 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
         Seq(SingleMetricBasedCheck.SizeCheck(AbsoluteThreshold(Some(2), Some(2)), MetricFilter.noFilter))
       ))
       val checkSuiteDescription = "my first metricsCheckSuite"
-      val metricsBasedChecksSuite = MetricsBasedChecksSuite(checkSuiteDescription, someTags, checks)
+      val metricsBasedChecksSuite = ChecksSuite(checkSuiteDescription, seqSingleDatasetMetricsChecks = checks, tags = someTags)
 
       for {
         checkResults: ChecksSuiteResult <- metricsBasedChecksSuite.run(now)
@@ -63,7 +63,7 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
         SingleDatasetMetricChecks(DescribedDataset(dsB.toDS, "dsB"), checks)
       )
       val checkSuiteDescription = "my first metricsCheckSuite"
-      val metricsBasedChecksSuite = MetricsBasedChecksSuite(checkSuiteDescription, someTags, singleDatasetChecks)
+      val metricsBasedChecksSuite = ChecksSuite(checkSuiteDescription, seqSingleDatasetMetricsChecks = singleDatasetChecks, tags = someTags)
 
       for {
         checkResults: ChecksSuiteResult <- metricsBasedChecksSuite.run(now)
@@ -103,7 +103,7 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
         metricChecks
       )
       val checkSuiteDescription = "my first metricsCheckSuite"
-      val metricsBasedChecksSuite = MetricsBasedChecksSuite(checkSuiteDescription, someTags, Seq.empty, Seq(dualDatasetChecks))
+      val metricsBasedChecksSuite = ChecksSuite(checkSuiteDescription, seqDualDatasetMetricChecks = Seq(dualDatasetChecks), tags = someTags)
 
       for {
         checkResults: ChecksSuiteResult <- metricsBasedChecksSuite.run(now)
@@ -150,8 +150,8 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
       ))
       val checkSuiteDescription = "my first metricsCheckSuite"
       val inMemoryMetricsPersister = new InMemoryMetricsPersister
-      val metricsBasedChecksSuite = MetricsBasedChecksSuite(checkSuiteDescription, someTags, singleDatasetChecks,
-        Seq(dualDatasetChecks), inMemoryMetricsPersister)
+      val metricsBasedChecksSuite = ChecksSuite(checkSuiteDescription, seqSingleDatasetMetricsChecks = singleDatasetChecks, tags = someTags,
+        seqDualDatasetMetricChecks = Seq(dualDatasetChecks), metricsPersister = inMemoryMetricsPersister)
 
       for {
         _ <- metricsBasedChecksSuite.run(now)

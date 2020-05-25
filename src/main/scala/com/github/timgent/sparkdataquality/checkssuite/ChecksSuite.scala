@@ -7,9 +7,10 @@ import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.{VerificationRunBuilder, VerificationSuite}
 import com.github.timgent.sparkdataquality.checks.DatasetComparisonCheck.DatasetPair
 import com.github.timgent.sparkdataquality.checks._
+import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
 import com.github.timgent.sparkdataquality.deequ.{DeequHelpers, DeequNullMetricsRepository}
 import com.github.timgent.sparkdataquality.deequ.DeequHelpers.VerificationResultExtension
-import com.github.timgent.sparkdataquality.metrics.{MetricDescriptor, MetricValue, MetricsCalculator}
+import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricDescriptor, MetricValue, MetricsCalculator}
 import com.github.timgent.sparkdataquality.repository.{MetricsPersister, NullMetricsPersister}
 import com.github.timgent.sparkdataquality.sparkdataquality.DeequMetricsRepository
 import org.apache.spark.sql.Dataset
@@ -26,6 +27,36 @@ case class DescribedDatasetPair(dataset: DescribedDataset, datasetToCompare: Des
 }
 
 case class DeequCheck(describedDataset: DescribedDataset, checks: Seq[DeequQCCheck])
+
+/**
+ * List of SingleMetricBasedChecks to be run on a single dataset
+ * @param describedDataset - the dataset the checks are being run on
+ * @param checks - a list of checks to be run
+ */
+case class SingleDatasetMetricChecks(describedDataset: DescribedDataset, checks: Seq[SingleMetricBasedCheck[_]] = Seq.empty) {
+  def withChecks(checks: Seq[SingleMetricBasedCheck[_]]) = this.copy(checks = this.checks ++ checks)
+}
+
+/**
+ * A dataset with description
+ * @param ds - the dataset
+ * @param description - description of the dataset
+ */
+case class DescribedDataset(ds: Dataset[_], description: DatasetDescription)
+
+object DescribedDataset {
+  def apply(dataset: Dataset[_], datasetDescription: String): DescribedDataset =
+    DescribedDataset(dataset, DatasetDescription(datasetDescription))
+}
+
+/**
+ * List of DualMetricBasedChecks to be run on a pair of datasets
+ * @param describedDatasetA - the first dataset that is part of the comparison
+ * @param describedDatasetB - the second dataset that is part of the comparison
+ * @param checks - the checks to be done on the datasets
+ */
+case class DualDatasetMetricChecks(describedDatasetA: DescribedDataset, describedDatasetB: DescribedDataset,
+                                   checks: Seq[DualMetricBasedCheck[_]])
 
 case class ChecksSuite(
                               checkSuiteDescription: String,
