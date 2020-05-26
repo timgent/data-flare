@@ -1,5 +1,6 @@
 package com.github.timgent.sparkdataquality.checks
 
+import com.github.timgent.sparkdataquality.checkssuite.DescribedDataset
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 import org.apache.spark.sql.{Dataset, Encoder}
 import org.apache.spark.sql.functions.sum
@@ -12,7 +13,7 @@ trait SingleDatasetCheck extends QCCheck {
 
   override def qcType: QcType = QcType.SingleDatasetQualityCheck
 
-  def applyCheck(ds: Dataset[_]): CheckResult
+  def applyCheck(ds: DescribedDataset): CheckResult
 }
 
 object SingleDatasetCheck {
@@ -20,7 +21,8 @@ object SingleDatasetCheck {
     new SingleDatasetCheck {
       override def description: String = checkDescription
 
-      override def applyCheck(ds: Dataset[_]): CheckResult = check(ds).withDescription(qcType, checkDescription)
+      override def applyCheck(dataset: DescribedDataset): CheckResult = check(dataset.ds).withDescription(qcType,
+        checkDescription, Some(dataset.description.value))
     }
   }
 

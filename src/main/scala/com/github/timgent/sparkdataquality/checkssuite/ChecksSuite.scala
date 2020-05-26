@@ -8,8 +8,8 @@ import com.amazon.deequ.{VerificationRunBuilder, VerificationSuite}
 import com.github.timgent.sparkdataquality.checks.DatasetComparisonCheck.DatasetPair
 import com.github.timgent.sparkdataquality.checks._
 import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
-import com.github.timgent.sparkdataquality.deequ.{DeequHelpers, DeequNullMetricsRepository}
 import com.github.timgent.sparkdataquality.deequ.DeequHelpers.VerificationResultExtension
+import com.github.timgent.sparkdataquality.deequ.DeequNullMetricsRepository
 import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricDescriptor, MetricValue, MetricsCalculator}
 import com.github.timgent.sparkdataquality.repository.{MetricsPersister, NullMetricsPersister}
 import com.github.timgent.sparkdataquality.sparkdataquality.DeequMetricsRepository
@@ -23,6 +23,8 @@ case class DatasetComparisonCheckWithDs(datasets: DescribedDatasetPair,
                                         checks: Seq[DatasetComparisonCheck])
 
 case class DescribedDatasetPair(dataset: DescribedDataset, datasetToCompare: DescribedDataset) {
+  def datasourceDescription: Option[String] = Some(s"dataset: ${dataset.description}. datasetToCompare: ${datasetToCompare.description}")
+
   private[sparkdataquality] def rawDatasetPair = DatasetPair(dataset.ds, datasetToCompare.ds)
 }
 
@@ -84,12 +86,12 @@ case class ChecksSuite(
     val singleDatasetCheckResults: Seq[CheckResult] = for {
       singleDatasetCheck <- singleDatasetChecks
       check <- singleDatasetCheck.checks
-      checkResults = check.applyCheck(singleDatasetCheck.dataset.ds)
+      checkResults = check.applyCheck(singleDatasetCheck.dataset)
     } yield checkResults
     val datasetComparisonCheckResults: Seq[CheckResult] = for {
       datasetComparisonCheck <- datasetComparisonChecks
       check <- datasetComparisonCheck.checks
-      checkResults = check.applyCheck(datasetComparisonCheck.datasets.rawDatasetPair)
+      checkResults = check.applyCheck(datasetComparisonCheck.datasets)
     } yield checkResults
     val arbitraryCheckResults = arbitraryChecks.map(_.applyCheck)
     val deequCheckResults = getDeequCheckResults(deequChecks, timestamp, tags)

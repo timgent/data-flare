@@ -3,6 +3,7 @@ package com.github.timgent.sparkdataquality.checks
 import com.github.timgent.sparkdataquality.checks.SingleDatasetCheck.sumOfValuesCheck
 import com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck
 import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.SizeCheck
+import com.github.timgent.sparkdataquality.checkssuite.DescribedDataset
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
@@ -18,7 +19,8 @@ class SingleDatasetCheckTest extends AnyWordSpec with DatasetSuiteBase with Matc
 
   "sumOfValuesCheck" should {
     val columnName = "number"
-    lazy val dsWithNumberSumOf6 = List((1, "a"), (2, "b"), (3, "c")).map(TestDataClass.tupled).toDS
+    lazy val dsWithNumberSumOf6 =
+      DescribedDataset(List((1, "a"), (2, "b"), (3, "c")).map(TestDataClass.tupled).toDS, "dsWithNumberSumOf6")
 
     def expectedResultDescription(passed: Boolean, threshold: AbsoluteThreshold[Long]) = if (passed)
       s"Sum of column number was 6, which was within the threshold $threshold"

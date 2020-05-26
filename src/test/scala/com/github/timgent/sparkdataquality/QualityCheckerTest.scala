@@ -99,7 +99,9 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
       }
       val checks = Seq(singleDatasetCheck)
 
-      val qualityChecks = List(SingleDatasetChecksSuite(DescribedDataset(testDataset, datasourceDescription), checkDescription, checks, someTags))
+      val qualityChecks = ChecksSuite(checkDescription,
+        singleDatasetChecks = Seq(SingleDatasetCheckWithDs(DescribedDataset(testDataset, datasourceDescription), checks)),
+        tags = someTags)
 
       for {
         qcResults: Seq[ChecksSuiteResult] <- QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).map(_.results)
@@ -140,7 +142,8 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
           checkSuiteDescription = "table A vs table B comparison",
           checkStatus = CheckSuiteStatus.Error,
           resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
-          checkResults = Seq(CheckResult(QcType.DatasetComparisonQualityCheck, CheckStatus.Error, "counts were not equal", datasetComparisonCheck.description)),
+          checkResults = Seq(CheckResult(QcType.DatasetComparisonQualityCheck, CheckStatus.Error, "counts were not equal",
+            datasetComparisonCheck.description, Some("dataset: testDataset. datasetToCompare: datasetToCompare"))),
           checkTags = someTags
         )
       }
