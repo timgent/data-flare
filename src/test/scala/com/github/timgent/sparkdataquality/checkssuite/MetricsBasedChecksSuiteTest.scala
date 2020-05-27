@@ -1,7 +1,7 @@
 package com.github.timgent.sparkdataquality.checkssuite
 
 import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
-import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
+import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
 import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricComparator, MetricDescriptor, MetricFilter}
 import com.github.timgent.sparkdataquality.repository.InMemoryMetricsPersister
@@ -26,7 +26,7 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
         Seq(SingleMetricBasedCheck.SizeCheck(AbsoluteThreshold(Some(2), Some(2)), MetricFilter.noFilter))
       ))
       val checkSuiteDescription = "my first metricsCheckSuite"
-      val metricsBasedChecksSuite = MetricsBasedChecksSuite(checkSuiteDescription, someTags, checks)
+      val metricsBasedChecksSuite = ChecksSuite(checkSuiteDescription, seqSingleDatasetMetricsChecks = checks, tags = someTags)
 
       for {
         checkResults: ChecksSuiteResult <- metricsBasedChecksSuite.run(now)
@@ -36,10 +36,10 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
           checkSuiteDescription,
           "1 checks were successful. 0 checks gave errors. 0 checks gave warnings",
           Seq(CheckResult(
-            CheckStatus.Success, "Size of 2 was within the range between 2 and 2", "SizeCheck with filter: no filter", Some(datasourceDescription)
+            QcType.MetricsBasedQualityCheck, CheckStatus.Success,
+            "Size of 2 was within the range between 2 and 2", "SizeCheck with filter: no filter", Some(datasourceDescription)
           )),
           now,
-          QcType.MetricsBasedQualityCheck,
           someTags
         )
       }
@@ -63,7 +63,7 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
         SingleDatasetMetricChecks(DescribedDataset(dsB.toDS, "dsB"), checks)
       )
       val checkSuiteDescription = "my first metricsCheckSuite"
-      val metricsBasedChecksSuite = MetricsBasedChecksSuite(checkSuiteDescription, someTags, singleDatasetChecks)
+      val metricsBasedChecksSuite = ChecksSuite(checkSuiteDescription, seqSingleDatasetMetricsChecks = singleDatasetChecks, tags = someTags)
 
       for {
         checkResults: ChecksSuiteResult <- metricsBasedChecksSuite.run(now)
@@ -73,11 +73,10 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
           checkSuiteDescription,
           "1 checks were successful. 1 checks gave errors. 0 checks gave warnings",
           Seq(
-            CheckResult(CheckStatus.Success, "Size of 2 was within the range between 2 and 2", "SizeCheck with filter: no filter", Some("dsA")),
-            CheckResult(CheckStatus.Error, "Size of 3 was outside the range between 2 and 2", "SizeCheck with filter: no filter", Some("dsB"))
+            CheckResult(QcType.MetricsBasedQualityCheck, CheckStatus.Success, "Size of 2 was within the range between 2 and 2", "SizeCheck with filter: no filter", Some("dsA")),
+            CheckResult(QcType.MetricsBasedQualityCheck, CheckStatus.Error, "Size of 3 was outside the range between 2 and 2", "SizeCheck with filter: no filter", Some("dsB"))
           ),
           now,
-          QcType.MetricsBasedQualityCheck,
           someTags
         )
       }
@@ -96,7 +95,7 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
         NumberString(3, "c")
       ).toDS
       val metricChecks = Seq(
-        DualMetricBasedCheck(simpleSizeMetric, simpleSizeMetric, MetricComparator.metricsAreEqual, "check size metrics are equal")
+        DualMetricBasedCheck(simpleSizeMetric, simpleSizeMetric, "check size metrics are equal")(MetricComparator.metricsAreEqual)
       )
       val dualDatasetChecks = DualDatasetMetricChecks(
         DescribedDataset(dsA, "dsA"),
@@ -104,7 +103,7 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
         metricChecks
       )
       val checkSuiteDescription = "my first metricsCheckSuite"
-      val metricsBasedChecksSuite = MetricsBasedChecksSuite(checkSuiteDescription, someTags, Seq.empty, Seq(dualDatasetChecks))
+      val metricsBasedChecksSuite = ChecksSuite(checkSuiteDescription, seqDualDatasetMetricChecks = Seq(dualDatasetChecks), tags = someTags)
 
       for {
         checkResults: ChecksSuiteResult <- metricsBasedChecksSuite.run(now)
@@ -114,10 +113,13 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
           checkSuiteDescription,
           "1 checks were successful. 0 checks gave errors. 0 checks gave warnings",
           Seq(CheckResult(
-            CheckStatus.Success, "metric comparison passed", "check size metrics are equal", Some("dsA compared to dsB")
+            QcType.MetricsBasedQualityCheck, CheckStatus.Success,
+            "metric comparison passed. dsAMetric of LongMetric(3) was compared to dsBMetric of LongMetric(3)",
+            "check size metrics are equal. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to " +
+              "SizeMetricDescriptor(MetricFilter(true,no filter)) using comparator of metrics are equal",
+            Some("dsA compared to dsB")
           )),
           now,
-          QcType.MetricsBasedQualityCheck,
           someTags
         )
       }
@@ -138,7 +140,7 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
         NumberString(1, "a")
       ).toDS
       val dualMetricChecks = Seq(
-        DualMetricBasedCheck(simpleSizeMetric, simpleSizeMetric, MetricComparator.metricsAreEqual, "check size metrics are equal")
+        DualMetricBasedCheck(simpleSizeMetric, simpleSizeMetric, "check size metrics are equal")(MetricComparator.metricsAreEqual)
       )
       val dualDatasetChecks = DualDatasetMetricChecks(
         DescribedDataset(dsA, "dsA"),
@@ -151,8 +153,8 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
       ))
       val checkSuiteDescription = "my first metricsCheckSuite"
       val inMemoryMetricsPersister = new InMemoryMetricsPersister
-      val metricsBasedChecksSuite = MetricsBasedChecksSuite(checkSuiteDescription, someTags, singleDatasetChecks,
-        Seq(dualDatasetChecks), inMemoryMetricsPersister)
+      val metricsBasedChecksSuite = ChecksSuite(checkSuiteDescription, seqSingleDatasetMetricsChecks = singleDatasetChecks, tags = someTags,
+        seqDualDatasetMetricChecks = Seq(dualDatasetChecks), metricsPersister = inMemoryMetricsPersister)
 
       for {
         _ <- metricsBasedChecksSuite.run(now)

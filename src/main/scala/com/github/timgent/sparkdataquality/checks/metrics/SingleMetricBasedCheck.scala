@@ -46,11 +46,11 @@ object SingleMetricBasedCheck {
      */
     def threshold: AbsoluteThreshold[MV#T]
 
-    private [sparkdataquality] def applyCheck(metric: MV): CheckResult = {
+    protected def applyCheck(metric: MV): CheckResult = {
       if (threshold.isWithinThreshold(metric.value)) {
-        CheckResult(CheckStatus.Success, s"$checkShortName of ${metric.value} was within the range $threshold", description)
+        CheckResult(qcType, CheckStatus.Success, s"$checkShortName of ${metric.value} was within the range $threshold", description)
       } else {
-        CheckResult(CheckStatus.Error, s"$checkShortName of ${metric.value} was outside the range $threshold", description)
+        CheckResult(qcType, CheckStatus.Error, s"$checkShortName of ${metric.value} was outside the range $threshold", description)
       }
     }
   }
@@ -60,7 +60,7 @@ object SingleMetricBasedCheck {
    * @param threshold
    * @param filter - filter to be applied before rows are counted
    */
-  case class SizeCheck(threshold: AbsoluteThreshold[Long], filter: MetricFilter) extends ThresholdBasedCheck[MetricValue.LongMetric] {
+  case class SizeCheck(threshold: AbsoluteThreshold[Long], filter: MetricFilter = MetricFilter.noFilter) extends ThresholdBasedCheck[MetricValue.LongMetric] {
     override def checkShortName: String = "Size"
 
     override def description: String = s"SizeCheck with filter: ${filter.filterDescription}"
@@ -79,7 +79,7 @@ object SingleMetricBasedCheck {
 
     override def checkShortName: String = "Compliance"
 
-    override def description: String = s"ComplianceCheck with filter: ${filter.filterDescription}"
+    override def description: String = s"ComplianceCheck ${complianceFn.description} with filter: ${filter.filterDescription}"
 
     override def metricDescriptor: MetricDescriptor = ComplianceMetricDescriptor(complianceFn, filter)
   }
@@ -96,7 +96,7 @@ object SingleMetricBasedCheck {
 
     override def checkShortName: String = "DistinctValues"
 
-    override def description: String = s"DistinctValuesCheck with filter: ${filter.filterDescription}"
+    override def description: String = s"DistinctValuesCheck on columns: $onColumns with filter: ${filter.filterDescription}"
 
     override def metricDescriptor: MetricDescriptor = DistinctValuesMetricDescriptor(onColumns, filter)
   }

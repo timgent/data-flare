@@ -21,7 +21,6 @@ case class ChecksSuiteResult(
                                                        resultDescription: String,
                                                        checkResults: Seq[CheckResult],
                                                        timestamp: Instant,
-                                                       checkType: QcType,
                                                        checkTags: Map[String, String]
                                                       )
 

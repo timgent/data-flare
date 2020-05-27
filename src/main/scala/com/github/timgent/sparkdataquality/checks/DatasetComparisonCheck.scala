@@ -1,6 +1,7 @@
 package com.github.timgent.sparkdataquality.checks
 
 import com.github.timgent.sparkdataquality.checks.DatasetComparisonCheck.DatasetPair
+import com.github.timgent.sparkdataquality.checkssuite.DescribedDatasetPair
 import org.apache.spark.sql.Dataset
 
 /**
@@ -9,7 +10,9 @@ import org.apache.spark.sql.Dataset
 trait DatasetComparisonCheck extends QCCheck {
   def description: String
 
-  def applyCheck(dsPair: DatasetPair): CheckResult
+  override def qcType: QcType = QcType.DatasetComparisonQualityCheck
+
+  def applyCheck(dsPair: DescribedDatasetPair): CheckResult
 }
 
 object DatasetComparisonCheck {
@@ -20,8 +23,8 @@ object DatasetComparisonCheck {
     new DatasetComparisonCheck {
       override def description: String = checkDescription
 
-      override def applyCheck(dsPair: DatasetPair): CheckResult = {
-        check(dsPair).withDescription(checkDescription)
+      override def applyCheck(dsPair: DescribedDatasetPair): CheckResult = {
+        check(dsPair.rawDatasetPair).withDescription(qcType, checkDescription, dsPair.datasourceDescription)
       }
     }
   }
