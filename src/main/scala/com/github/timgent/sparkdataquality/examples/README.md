@@ -22,5 +22,19 @@ cd spark-data-quality/src/main/scala/com/github/timgent/sparkdataquality/example
 docker-compose up
 ```
 
-## Defining a set of data quality checks
-In Example.scala there is some generic setup code
+## 2. Defining a set of data quality checks
+In Example.scala you will find the code for this example. In the Helpers object you will find the code responsible for
+settings up the example checks.
+
+### 3 & 4. Running checks on data that changes over time, and checking the QC Results
+There are objects defining some sample data - Day1Data, Day2Data, etc.
+
+Then there are runnable objects that use a local spark driver to perform checks - Day1Checks, Day2Checks, etc. Run
+these objects to run the quality checks. If you'd like to check out the output returned either use some println
+statements or use a debugger.
+
+### 5 & 6. Load up Kibana
+Use Kibana to do some visualizations. Using docker-compose it will be available at http://localhost:5601/
+
+We have some pre-setup settings that you can use to view some basic data. In Kibana navigate to Management > Saved 
+Objects. Select Import, and import the export.json file in the examples directory. 

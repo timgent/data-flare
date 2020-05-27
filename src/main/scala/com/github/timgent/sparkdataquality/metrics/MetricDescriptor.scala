@@ -65,7 +65,7 @@ object MetricDescriptor {
                                         filter: MetricFilter = MetricFilter.noFilter) extends MetricDescriptor with Filterable {
     override def metricCalculator: DistinctValuesMetricCalculator = DistinctValuesMetricCalculator(onColumns, filter)
     override def toSimpleMetricDescriptor: SimpleMetricDescriptor =
-      SimpleMetricDescriptor("Compliance", Some(filter.filterDescription), onColumns = Some(onColumns))
+      SimpleMetricDescriptor("DistinctValues", Some(filter.filterDescription), onColumns = Some(onColumns))
     override type MC = DistinctValuesMetricCalculator
   }
 }

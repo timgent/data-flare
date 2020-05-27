@@ -114,7 +114,10 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
           "1 checks were successful. 0 checks gave errors. 0 checks gave warnings",
           Seq(CheckResult(
             QcType.MetricsBasedQualityCheck, CheckStatus.Success,
-            "metric comparison passed", "check size metrics are equal", Some("dsA compared to dsB")
+            "metric comparison passed. dsAMetric of LongMetric(3) was compared to dsBMetric of LongMetric(3)",
+            "check size metrics are equal. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to " +
+              "SizeMetricDescriptor(MetricFilter(true,no filter)) using comparator of metrics are equal",
+            Some("dsA compared to dsB")
           )),
           now,
           someTags

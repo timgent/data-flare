@@ -79,7 +79,7 @@ object SingleMetricBasedCheck {
 
     override def checkShortName: String = "Compliance"
 
-    override def description: String = s"ComplianceCheck with filter: ${filter.filterDescription}"
+    override def description: String = s"ComplianceCheck ${complianceFn.description} with filter: ${filter.filterDescription}"
 
     override def metricDescriptor: MetricDescriptor = ComplianceMetricDescriptor(complianceFn, filter)
   }
@@ -96,7 +96,7 @@ object SingleMetricBasedCheck {
 
     override def checkShortName: String = "DistinctValues"
 
-    override def description: String = s"DistinctValuesCheck with filter: ${filter.filterDescription}"
+    override def description: String = s"DistinctValuesCheck on columns: $onColumns with filter: ${filter.filterDescription}"
 
     override def metricDescriptor: MetricDescriptor = DistinctValuesMetricDescriptor(onColumns, filter)
   }

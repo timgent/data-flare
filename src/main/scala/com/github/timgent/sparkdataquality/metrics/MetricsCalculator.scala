@@ -16,7 +16,7 @@ private [sparkdataquality] object MetricsCalculator {
         case simpleCalculator: SimpleMetricCalculator => Some(descriptor, simpleCalculator)
         case _ => None
       }
-    }.zipWithIndex.map{case ((descriptor, calculator), colNum) => DescriptorWithColumnNumber(descriptor, calculator, colNum)} // TODO: Not sure I need the index now?
+    }.zipWithIndex.map{case ((descriptor, calculator), colNum) => DescriptorWithColumnNumber(descriptor, calculator, colNum)}
 
     val simpleMetrics: Map[MetricDescriptor, SimpleMetricCalculator#MetricType] = simpleDescriptors match {
       case Nil => Map.empty

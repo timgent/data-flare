@@ -19,7 +19,7 @@ case class AbsoluteThreshold[T: Ordering](lowerBound: Option[T], upperBound: Opt
 
   override def toString: String = (lowerBound, upperBound) match {
     case (None, None) => "no threshold set"
-    case (Some(lowerBound), None) => s"great than $lowerBound"
+    case (Some(lowerBound), None) => s"greater than $lowerBound"
     case (None, Some(upperBound)) => s"less than $upperBound"
     case (Some(lowerBound), Some(upperBound)) => s"between $lowerBound and $upperBound"
   }
