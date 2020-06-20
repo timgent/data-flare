@@ -3,8 +3,8 @@ package com.github.timgent.sparkdataquality.checks
 import enumeratum._
 
 /**
- * Represents a check to be done
- */
+  * Represents a check to be done
+  */
 trait QCCheck {
   def description: String
 
@@ -12,8 +12,8 @@ trait QCCheck {
 }
 
 /**
- * Represents the resulting status of a check
- */
+  * Represents the resulting status of a check
+  */
 sealed trait CheckStatus extends EnumEntry
 
 object CheckStatus extends Enum[CheckStatus] {
@@ -26,9 +26,9 @@ object CheckStatus extends Enum[CheckStatus] {
   case object Error extends CheckStatus
 }
 
-private [sparkdataquality] sealed trait QcType extends EnumEntry
+private[sparkdataquality] sealed trait QcType extends EnumEntry
 
-private [sparkdataquality] object QcType extends Enum[QcType] {
+private[sparkdataquality] object QcType extends Enum[QcType] {
   val values = findValues
   case object DeequQualityCheck extends QcType
   case object SingleDatasetQualityCheck extends QcType

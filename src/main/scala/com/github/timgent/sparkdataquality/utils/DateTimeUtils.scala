@@ -1,6 +1,6 @@
 package com.github.timgent.sparkdataquality.utils
 
-import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 
 object DateTimeUtils {
   implicit class InstantExtension(instant: Instant) {

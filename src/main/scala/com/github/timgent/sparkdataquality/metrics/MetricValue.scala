@@ -1,8 +1,8 @@
 package com.github.timgent.sparkdataquality.metrics
 
 /**
- * Represents the value of a metric
- */
+  * Represents the value of a metric
+  */
 sealed trait MetricValue {
   type T
   def value: T

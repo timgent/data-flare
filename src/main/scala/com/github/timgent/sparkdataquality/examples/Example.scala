@@ -4,13 +4,22 @@ import java.time.{LocalDateTime, ZoneOffset}
 
 import com.github.timgent.sparkdataquality.QualityChecker
 import com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck
-import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.{ComplianceCheck, SizeCheck}
+import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.{
+  ComplianceCheck,
+  SizeCheck
+}
 import com.github.timgent.sparkdataquality.checks.{CheckStatus, RawCheckResult, SingleDatasetCheck}
 import com.github.timgent.sparkdataquality.checkssuite._
 import com.github.timgent.sparkdataquality.examples.ExampleHelpers.{Customer, Order, _}
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{DistinctValuesMetricDescriptor, SizeMetricDescriptor}
+import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{
+  DistinctValuesMetricDescriptor,
+  SizeMetricDescriptor
+}
 import com.github.timgent.sparkdataquality.metrics.{ComplianceFn, MetricComparator}
-import com.github.timgent.sparkdataquality.repository.{ElasticSearchMetricsPersister, ElasticSearchQcResultsRepository}
+import com.github.timgent.sparkdataquality.repository.{
+  ElasticSearchMetricsPersister,
+  ElasticSearchQcResultsRepository
+}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 import com.github.timgent.sparkdataquality.utils.DateTimeUtils.InstantExtension
 import org.apache.spark.SparkConf
@@ -43,7 +52,8 @@ object Day1Data {
   import ExampleHelpers.spark.implicits._
 
   private val customerIds = (0 to 1000 by 100).map(_.toString)
-  private val customers = customerIds.map(customerId => Customer(customerId, s"Jonny number $customerId"))
+  private val customers =
+    customerIds.map(customerId => Customer(customerId, s"Jonny number $customerId"))
   private val rand = scala.util.Random
   private val orders = for {
     customerId <- customerIds
@@ -54,7 +64,8 @@ object Day1Data {
   } yield Order(orderId, customerId, item)
   val customerDs = DescribedDataset(customers.toDS, "customers")
   val orderDs = DescribedDataset(orders.toDS, "orders")
-  val customersWithOrdersDs = DescribedDataset(customerDs.ds.join(orderDs.ds, List("customer_id"), "left"), "customerOrders")
+  val customersWithOrdersDs =
+    DescribedDataset(customerDs.ds.join(orderDs.ds, List("customer_id"), "left"), "customerOrders")
 
   def showData = {
     customerDs.ds.show(10, false)
@@ -68,7 +79,8 @@ object Day2Data {
   import ExampleHelpers.spark.implicits._
 
   private val customerIds = (0 to 1000 by 100).map(_.toString)
-  private val customers = customerIds.map(customerId => Customer(customerId, s"Jonny number $customerId"))
+  private val customers =
+    customerIds.map(customerId => Customer(customerId, s"Jonny number $customerId"))
   private val rand = scala.util.Random
   private val orders = for {
     customerId <- customerIds
@@ -79,7 +91,8 @@ object Day2Data {
   } yield Order(orderId, customerId, item)
   val customerDs = DescribedDataset(customers.toDS, "customers")
   val orderDs = DescribedDataset(orders.toDS, "orders")
-  val customersWithOrdersDs = DescribedDataset(customerDs.ds.join(orderDs.ds, List("customer_id"), "left"), "customerOrders")
+  val customersWithOrdersDs =
+    DescribedDataset(customerDs.ds.join(orderDs.ds, List("customer_id"), "left"), "customerOrders")
 
   def showData = {
     customerDs.ds.show(10, false)
@@ -93,7 +106,8 @@ object Day3Data {
   import ExampleHelpers.spark.implicits._
 
   private val customerIds = (0 to 1000 by 100).map(_.toString)
-  private val customers = customerIds.map(customerId => Customer(customerId, s"Jonny number $customerId"))
+  private val customers =
+    customerIds.map(customerId => Customer(customerId, s"Jonny number $customerId"))
   private val rand = scala.util.Random
   private val orders = for {
     customerId <- customerIds.tail
@@ -104,9 +118,11 @@ object Day3Data {
   } yield Order(orderId, customerId, item)
   val customerDs = DescribedDataset(customers.toDS, "customers")
   val orderDs = DescribedDataset(orders.toDS, "orders")
-  val customersWithOrdersDs = DescribedDataset(customerDs.ds.join(orderDs.ds, List("customer_id"), "inner"), "customerOrders")
+  val customersWithOrdersDs =
+    DescribedDataset(customerDs.ds.join(orderDs.ds, List("customer_id"), "inner"), "customerOrders")
 
   def showData = {
+
     customerDs.ds.show(10, false)
     orderDs.ds.show(10, false)
     customersWithOrdersDs.ds.show(10, false)
@@ -120,29 +136,58 @@ object DemoIntro extends App {
 }
 
 object Helpers {
-  val qcResultsRepository = ElasticSearchQcResultsRepository(List("http://127.0.0.1:9200"), "orders_qc_results")
-  val esMetricsPersister = ElasticSearchMetricsPersister(List("http://127.0.0.1:9200"), "order_metrics")
+  val qcResultsRepository =
+    ElasticSearchQcResultsRepository(List("http://127.0.0.1:9200"), "orders_qc_results")
+  val esMetricsPersister =
+    ElasticSearchMetricsPersister(List("http://127.0.0.1:9200"), "order_metrics")
 
-  def getCheckSuite(orderDs: DescribedDataset,
-                    customerDs: DescribedDataset,
-                    customersWithOrdersDs: DescribedDataset): ChecksSuite = {
+  def getCheckSuite(
+      orderDs: DescribedDataset,
+      customerDs: DescribedDataset,
+      customersWithOrdersDs: DescribedDataset
+  ): ChecksSuite = {
 
     val singleDsMetricChecks = List(
-      SingleDatasetMetricChecks(customerDs, List(
-        SizeCheck(AbsoluteThreshold(Some(10), Some(20))),
-        ComplianceCheck(AbsoluteThreshold.exactly(1), ComplianceFn(col("name").isNotNull, "mustHaveName"))
-      )),
+      SingleDatasetMetricChecks(
+        customerDs,
+        List(
+          SizeCheck(AbsoluteThreshold(Some(10), Some(20))),
+          ComplianceCheck(
+            AbsoluteThreshold.exactly(1),
+            ComplianceFn(col("name").isNotNull, "mustHaveName")
+          )
+        )
+      ),
       SingleDatasetMetricChecks(orderDs, List(SizeCheck(AbsoluteThreshold(Some(1), None)))),
-      SingleDatasetMetricChecks(customersWithOrdersDs, List(SizeCheck(AbsoluteThreshold(Some(1), None))))
+      SingleDatasetMetricChecks(
+        customersWithOrdersDs,
+        List(SizeCheck(AbsoluteThreshold(Some(1), None)))
+      )
     )
 
     val dualDsMetricChecks = List(
-      DualDatasetMetricChecks(customerDs, customersWithOrdersDs, List(
-        DualMetricBasedCheck(SizeMetricDescriptor(), DistinctValuesMetricDescriptor(List("customer_id")), "Keep all customers")(MetricComparator.metricsAreEqual)
-      )),
-      DualDatasetMetricChecks(orderDs, customersWithOrdersDs, List(
-        DualMetricBasedCheck(SizeMetricDescriptor(), DistinctValuesMetricDescriptor(List("order_id")), "Keep all orders")(MetricComparator.metricsAreEqual)
-      ))
+      DualDatasetMetricChecks(
+        customerDs,
+        customersWithOrdersDs,
+        List(
+          DualMetricBasedCheck(
+            SizeMetricDescriptor(),
+            DistinctValuesMetricDescriptor(List("customer_id")),
+            "Keep all customers"
+          )(MetricComparator.metricsAreEqual)
+        )
+      ),
+      DualDatasetMetricChecks(
+        orderDs,
+        customersWithOrdersDs,
+        List(
+          DualMetricBasedCheck(
+            SizeMetricDescriptor(),
+            DistinctValuesMetricDescriptor(List("order_id")),
+            "Keep all orders"
+          )(MetricComparator.metricsAreEqual)
+        )
+      )
     )
 
     val expectedCustomerColumnsCheck = SingleDatasetCheck("correctColumns") { ds =>
@@ -151,14 +196,19 @@ object Helpers {
       if (columnsMatchExpected)
         RawCheckResult(CheckStatus.Success, "all columns matched")
       else
-        RawCheckResult(CheckStatus.Error, s"Not all columns matched. $expectedColumns was different to ${ds.columns.toSet}")
+        RawCheckResult(
+          CheckStatus.Error,
+          s"Not all columns matched. $expectedColumns was different to ${ds.columns.toSet}"
+        )
     }
 
-    val checksSuite = ChecksSuite("Customers and orders check suite",
+    val checksSuite = ChecksSuite(
+      "Customers and orders check suite",
       seqSingleDatasetMetricsChecks = singleDsMetricChecks,
       seqDualDatasetMetricChecks = dualDsMetricChecks,
       metricsPersister = esMetricsPersister,
-      singleDatasetChecks = List(SingleDatasetCheckWithDs(customerDs, List(expectedCustomerColumnsCheck)))
+      singleDatasetChecks =
+        List(SingleDatasetCheckWithDs(customerDs, List(expectedCustomerColumnsCheck)))
     )
 
     checksSuite
@@ -204,7 +254,8 @@ object Day3Checks extends App {
 
   val checksSuite = Helpers.getCheckSuite(orderDs, customerDs, customersWithOrdersDs)
 
-  val allQcResultsFuture = QualityChecker.doQualityChecks(checksSuite, qcResultsRepository, wednesday)
+  val allQcResultsFuture =
+    QualityChecker.doQualityChecks(checksSuite, qcResultsRepository, wednesday)
   val allQcResults = Await.result(allQcResultsFuture, 10 seconds)
 
   if (allQcResults.results.forall(_.overallStatus == CheckSuiteStatus.Success))
