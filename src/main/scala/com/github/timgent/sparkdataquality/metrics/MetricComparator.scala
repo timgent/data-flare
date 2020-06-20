@@ -1,5 +1,11 @@
 package com.github.timgent.sparkdataquality.metrics
 
+/**
+  * Comparison to apply between 2 metrics
+  * @param description - description of what this comparison does
+  * @param fn - the function which compares 2 metrics and returns true is the comparison passes, otherwise returns false
+  * @tparam MV - the type of the metric values being compared
+  */
 case class MetricComparator[MV <: MetricValue](description: String, fn: (MV, MV) => Boolean)
 
 /**
