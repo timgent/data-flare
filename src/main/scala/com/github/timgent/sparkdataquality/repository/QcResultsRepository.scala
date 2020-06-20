@@ -10,7 +10,7 @@ trait QcResultsRepository {
   /**
     * Save Quality Check results to some repository
     * @param qcResults A list of results
-    * @return A Future of the given list of results
+    * @return A Future of Unit
     */
   def save(qcResults: List[ChecksSuiteResult]): Future[Unit]
 
