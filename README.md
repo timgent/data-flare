@@ -23,9 +23,11 @@ libraryDependencies += "com.github.timgent" % "spark-data-quality_2.11" % "x.x.x
 For other build systems like maven, and to check the latest version go to 
 https://search.maven.org/artifact/com.github.timgent/spark-data-quality_2.11
 
+You can [find the javadocs here](https://www.javadoc.io/doc/com.github.timgent/spark-data-quality_2.11/latest/index.html#package)
+
 ## ChecksSuite
 A ChecksSuite lets you perform a number of checks under a single umbrella. To get started defining a suite of checks
-checkout the [example](src/main/scala/com/github/timgent/sparkdataquality/examples). All possible checks are documented
+checkout the [example](src/main/scala/com/github/timgent/sparkdataquality/examplhttps://www.javadoc.io/doc/com.github.timgent/spark-data-quality_2.11/latest/index.html#packagehttps://www.javadoc.io/doc/com.github.timgent/spark-data-quality_2.11/latest/index.html#packagees). All possible checks are documented
 in the API docs and codebase - just look for anything that implements the QCCheck trait. The tests are also a great
 resource to see example usage.
 
