@@ -1,16 +1,9 @@
 package com.github.timgent.sparkdataquality.checks.metrics
 
-import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.{
-  ComplianceCheck,
-  SizeCheck
-}
+import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.{ComplianceCheck, SizeCheck}
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
-import com.github.timgent.sparkdataquality.metrics.{
-  MetricComparator,
-  MetricDescriptor,
-  MetricFilter
-}
+import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
 import com.holdenkarau.spark.testing.DatasetSuiteBase

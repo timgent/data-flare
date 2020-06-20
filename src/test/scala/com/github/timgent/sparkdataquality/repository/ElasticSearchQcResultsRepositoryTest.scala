@@ -1,9 +1,6 @@
 package com.github.timgent.sparkdataquality.repository
 
-import com.github.timgent.sparkdataquality.checks.QcType.{
-  DatasetComparisonQualityCheck,
-  SingleDatasetQualityCheck
-}
+import com.github.timgent.sparkdataquality.checks.QcType.{DatasetComparisonQualityCheck, SingleDatasetQualityCheck}
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType}
 import com.github.timgent.sparkdataquality.checkssuite.CheckSuiteStatus.{Error, Success}
 import com.github.timgent.sparkdataquality.checkssuite.{CheckSuiteStatus, ChecksSuiteResult}
@@ -16,12 +13,7 @@ import org.scalatest.wordspec.AsyncWordSpec
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-class ElasticSearchQcResultsRepositoryTest
-    extends AsyncWordSpec
-    with Matchers
-    with DockerTests
-    with Eventually
-    with EsTestUtils {
+class ElasticSearchQcResultsRepositoryTest extends AsyncWordSpec with Matchers with DockerTests with Eventually with EsTestUtils {
   "ElasticSearchQcResultsRepository.save" should {
     def generateRawCheckResult(qcType: QcType, suffix: String, status: CheckStatus) =
       CheckResult(qcType, status, s"checkResult$suffix", s"checkDescription$suffix")
@@ -81,8 +73,7 @@ class ElasticSearchQcResultsRepositoryTest
         _ <- repo.save(initialResultsToInsert)
         _ <- checkStoredResultsAre(storedResultsFut, initialResultsToInsert)
         _ <- repo.save(moreResultsToInsert)
-        finalAssertion <-
-          checkStoredResultsAre(storedResultsFut, initialResultsToInsert ++ moreResultsToInsert)
+        finalAssertion <- checkStoredResultsAre(storedResultsFut, initialResultsToInsert ++ moreResultsToInsert)
       } yield {
         finalAssertion
       }

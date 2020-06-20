@@ -43,9 +43,7 @@ object MetricDescriptor {
     * A metric that calculates the number of rows in your dataset
     * @param filter - filter to be applied before the size is calculated
     */
-  case class SizeMetricDescriptor(filter: MetricFilter = MetricFilter.noFilter)
-      extends MetricDescriptor
-      with Filterable {
+  case class SizeMetricDescriptor(filter: MetricFilter = MetricFilter.noFilter) extends MetricDescriptor with Filterable {
     override def metricCalculator: SizeMetricCalculator = SizeMetricCalculator(filter)
     override def toSimpleMetricDescriptor: SimpleMetricDescriptor =
       SimpleMetricDescriptor("Size", Some(filter.filterDescription))

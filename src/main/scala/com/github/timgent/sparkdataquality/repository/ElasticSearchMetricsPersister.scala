@@ -2,11 +2,7 @@ package com.github.timgent.sparkdataquality.repository
 
 import java.time.Instant
 
-import com.github.timgent.sparkdataquality.metrics.{
-  DatasetDescription,
-  MetricValue,
-  SimpleMetricDescriptor
-}
+import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricValue, SimpleMetricDescriptor}
 import com.sksamuel.elastic4s.ElasticDsl.{bulk, indexInto, _}
 import com.sksamuel.elastic4s.circe._
 import com.sksamuel.elastic4s.http.JavaClient
@@ -75,8 +71,7 @@ class ElasticSearchMetricsPersister(client: ElasticClient, index: Index)(implici
       .map(_ => metrics)
   }
 
-  override def loadAll
-      : Future[Map[Instant, Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]]] = {
+  override def loadAll: Future[Map[Instant, Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]]] = {
     val resp = client.execute {
       search(index) query matchAllQuery
     }

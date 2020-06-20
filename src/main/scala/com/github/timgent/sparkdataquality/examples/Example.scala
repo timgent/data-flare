@@ -4,22 +4,13 @@ import java.time.{LocalDateTime, ZoneOffset}
 
 import com.github.timgent.sparkdataquality.QualityChecker
 import com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck
-import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.{
-  ComplianceCheck,
-  SizeCheck
-}
+import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.{ComplianceCheck, SizeCheck}
 import com.github.timgent.sparkdataquality.checks.{CheckStatus, RawCheckResult, SingleDatasetCheck}
 import com.github.timgent.sparkdataquality.checkssuite._
 import com.github.timgent.sparkdataquality.examples.ExampleHelpers.{Customer, Order, _}
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{
-  DistinctValuesMetricDescriptor,
-  SizeMetricDescriptor
-}
+import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{DistinctValuesMetricDescriptor, SizeMetricDescriptor}
 import com.github.timgent.sparkdataquality.metrics.{ComplianceFn, MetricComparator}
-import com.github.timgent.sparkdataquality.repository.{
-  ElasticSearchMetricsPersister,
-  ElasticSearchQcResultsRepository
-}
+import com.github.timgent.sparkdataquality.repository.{ElasticSearchMetricsPersister, ElasticSearchQcResultsRepository}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 import com.github.timgent.sparkdataquality.utils.DateTimeUtils.InstantExtension
 import org.apache.spark.SparkConf
@@ -207,8 +198,7 @@ object Helpers {
       seqSingleDatasetMetricsChecks = singleDsMetricChecks,
       seqDualDatasetMetricChecks = dualDsMetricChecks,
       metricsPersister = esMetricsPersister,
-      singleDatasetChecks =
-        List(SingleDatasetCheckWithDs(customerDs, List(expectedCustomerColumnsCheck)))
+      singleDatasetChecks = List(SingleDatasetCheckWithDs(customerDs, List(expectedCustomerColumnsCheck)))
     )
 
     checksSuite

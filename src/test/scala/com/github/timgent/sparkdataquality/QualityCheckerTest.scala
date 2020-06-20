@@ -82,8 +82,7 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
       )
 
       for {
-        qcResults <-
-          QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).map(_.results)
+        qcResults <- QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).map(_.results)
         persistedQcResults <- qcResultsRepository.loadAll
         persistedDeequMetrics = deequMetricsRepository.load().get()
       } yield {
@@ -93,8 +92,7 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
           timestamp = now,
           checkSuiteDescription = "sample deequ checks",
           checkStatus = CheckSuiteStatus.Success,
-          resultDescription =
-            "1 checks were successful. 0 checks gave errors. 0 checks gave warnings",
+          resultDescription = "1 checks were successful. 0 checks gave errors. 0 checks gave warnings",
           checkResults = Seq(
             CheckResult(
               QcType.DeequQualityCheck,
@@ -135,16 +133,14 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
       )
 
       for {
-        qcResults: Seq[ChecksSuiteResult] <-
-          QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).map(_.results)
+        qcResults: Seq[ChecksSuiteResult] <- QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).map(_.results)
         persistedQcResults: Seq[ChecksSuiteResult] <- qcResultsRepository.loadAll
       } yield {
         checkResultAndPersistedResult(qcResults.head, persistedQcResults.head)(
           timestamp = now,
           checkSuiteDescription = "DB: X, table: Y",
           checkStatus = CheckSuiteStatus.Error,
-          resultDescription =
-            "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
+          resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
           checkResults = Seq(
             CheckResult(
               QcType.SingleDatasetQualityCheck,
@@ -178,23 +174,20 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
       val qualityChecks = List(
         ChecksSuite(
           "table A vs table B comparison",
-          datasetComparisonChecks =
-            Seq(DatasetComparisonCheckWithDs(datasetPair, Seq(datasetComparisonCheck))),
+          datasetComparisonChecks = Seq(DatasetComparisonCheckWithDs(datasetPair, Seq(datasetComparisonCheck))),
           tags = someTags
         )
       )
 
       for {
-        qcResults: Seq[ChecksSuiteResult] <-
-          QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).map(_.results)
+        qcResults: Seq[ChecksSuiteResult] <- QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).map(_.results)
         persistedQcResults: Seq[ChecksSuiteResult] <- qcResultsRepository.loadAll
       } yield {
         checkResultAndPersistedResult(qcResults.head, persistedQcResults.head)(
           timestamp = now,
           checkSuiteDescription = "table A vs table B comparison",
           checkStatus = CheckSuiteStatus.Error,
-          resultDescription =
-            "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
+          resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
           checkResults = Seq(
             CheckResult(
               QcType.DatasetComparisonQualityCheck,
@@ -224,8 +217,7 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
       )
 
       for {
-        qcResults: Seq[ChecksSuiteResult] <-
-          QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).map(_.results)
+        qcResults: Seq[ChecksSuiteResult] <- QualityChecker.doQualityChecks(qualityChecks, qcResultsRepository, now).map(_.results)
         persistedQcResults: Seq[ChecksSuiteResult] <- qcResultsRepository.loadAll
       } yield {
         qcResults.size shouldBe 1
@@ -242,8 +234,7 @@ class QualityCheckerTest extends AsyncWordSpec with DatasetSuiteBase with Matche
           timestamp = now,
           checkSuiteDescription = "table A, table B, and table C comparison",
           checkStatus = CheckSuiteStatus.Error,
-          resultDescription =
-            "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
+          resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
           checkResults = Seq(
             CheckResult(
               QcType.ArbitraryQualityCheck,

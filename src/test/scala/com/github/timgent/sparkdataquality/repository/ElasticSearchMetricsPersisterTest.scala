@@ -5,11 +5,7 @@ import java.time.Instant
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
 import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.SizeMetricDescriptor
 import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
-import com.github.timgent.sparkdataquality.metrics.{
-  DatasetDescription,
-  MetricValue,
-  SimpleMetricDescriptor
-}
+import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricValue, SimpleMetricDescriptor}
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
 import com.sksamuel.elastic4s.testkit.DockerTests
 import org.scalatest.concurrent.Eventually
@@ -19,12 +15,7 @@ import org.scalatest.wordspec.AsyncWordSpec
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-class ElasticSearchMetricsPersisterTest
-    extends AsyncWordSpec
-    with Matchers
-    with DockerTests
-    with Eventually
-    with EsTestUtils {
+class ElasticSearchMetricsPersisterTest extends AsyncWordSpec with Matchers with DockerTests with Eventually with EsTestUtils {
   "ElasticSearchQcResultsRepository.save" should {
     val someIndex = "index_name"
     implicit val patienceConfig: PatienceConfig = PatienceConfig(5 seconds, 1 second)
@@ -33,8 +24,7 @@ class ElasticSearchMetricsPersisterTest
     "Append check suite results to the index" in {
       val repo: ElasticSearchMetricsPersister = new ElasticSearchMetricsPersister(client, someIndex)
 
-      val initialResultsToInsert
-          : Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]] = Map(
+      val initialResultsToInsert: Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]] = Map(
         DatasetDescription("dsA") -> Map(
           SizeMetricDescriptor().toSimpleMetricDescriptor -> LongMetric(1)
         ),

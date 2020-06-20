@@ -34,8 +34,7 @@ private[sparkdataquality] object MetricCalculator {
     override def wrapMetricValue(metricValue: Long): LongMetric = LongMetric(metricValue)
   }
 
-  case class ComplianceMetricCalculator(complianceFn: ComplianceFn, filter: MetricFilter)
-      extends SimpleMetricCalculator {
+  case class ComplianceMetricCalculator(complianceFn: ComplianceFn, filter: MetricFilter) extends SimpleMetricCalculator {
     override type MetricType = DoubleMetric
 
     override def aggFunction: Column = {
@@ -46,8 +45,7 @@ private[sparkdataquality] object MetricCalculator {
     override def wrapMetricValue(metricValue: Double): DoubleMetric = DoubleMetric(metricValue)
   }
 
-  case class DistinctValuesMetricCalculator(onColumns: List[String], filter: MetricFilter)
-      extends SimpleMetricCalculator {
+  case class DistinctValuesMetricCalculator(onColumns: List[String], filter: MetricFilter) extends SimpleMetricCalculator {
     override type MetricType = LongMetric
 
     override def aggFunction: Column = {

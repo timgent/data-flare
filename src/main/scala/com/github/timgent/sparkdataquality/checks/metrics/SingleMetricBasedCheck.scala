@@ -6,12 +6,7 @@ import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{
   DistinctValuesMetricDescriptor,
   SizeMetricDescriptor
 }
-import com.github.timgent.sparkdataquality.metrics.{
-  ComplianceFn,
-  MetricDescriptor,
-  MetricFilter,
-  MetricValue
-}
+import com.github.timgent.sparkdataquality.metrics.{ComplianceFn, MetricDescriptor, MetricFilter, MetricValue}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 
 import scala.reflect.ClassTag

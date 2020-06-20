@@ -2,11 +2,7 @@ package com.github.timgent.sparkdataquality
 
 import java.time.Instant
 
-import com.github.timgent.sparkdataquality.checkssuite.{
-  ChecksSuiteBase,
-  ChecksSuiteResult,
-  ChecksSuitesResults
-}
+import com.github.timgent.sparkdataquality.checkssuite.{ChecksSuiteBase, ChecksSuiteResult, ChecksSuitesResults}
 import com.github.timgent.sparkdataquality.repository.QcResultsRepository
 import cats.implicits._
 

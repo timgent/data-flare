@@ -7,18 +7,10 @@ import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.{VerificationRunBuilder, VerificationSuite}
 import com.github.timgent.sparkdataquality.checks.DatasetComparisonCheck.DatasetPair
 import com.github.timgent.sparkdataquality.checks._
-import com.github.timgent.sparkdataquality.checks.metrics.{
-  DualMetricBasedCheck,
-  SingleMetricBasedCheck
-}
+import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
 import com.github.timgent.sparkdataquality.deequ.DeequHelpers.VerificationResultExtension
 import com.github.timgent.sparkdataquality.deequ.DeequNullMetricsRepository
-import com.github.timgent.sparkdataquality.metrics.{
-  DatasetDescription,
-  MetricDescriptor,
-  MetricValue,
-  MetricsCalculator
-}
+import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricDescriptor, MetricValue, MetricsCalculator}
 import com.github.timgent.sparkdataquality.repository.{MetricsPersister, NullMetricsPersister}
 import com.github.timgent.sparkdataquality.sparkdataquality.DeequMetricsRepository
 import org.apache.spark.sql.Dataset
@@ -88,8 +80,7 @@ case class ChecksSuite(
     deequChecks: Seq[DeequCheck] = Seq.empty,
     metricsPersister: MetricsPersister = NullMetricsPersister,
     deequMetricsRepository: DeequMetricsRepository = new DeequNullMetricsRepository,
-    checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus =
-      ChecksSuiteResultStatusCalculator.getWorstCheckStatus
+    checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
 ) extends ChecksSuiteBase {
 
   /**
@@ -211,34 +202,32 @@ case class ChecksSuite(
     for {
       _ <- storedMetricsFut
     } yield {
-      val singleDatasetCheckResults: Seq[CheckResult] = seqSingleDatasetMetricsChecks.flatMap {
-        singleDatasetMetricChecks =>
-          val checks = singleDatasetMetricChecks.checks
-          val datasetDescription = singleDatasetMetricChecks.describedDataset.description
-          val metricsForDs: Map[MetricDescriptor, MetricValue] =
-            calculatedMetrics(singleDatasetMetricChecks.describedDataset)
-          val checkResults: Seq[CheckResult] = checks.map(
-            _.applyCheckOnMetrics(metricsForDs).withDatasourceDescription(datasetDescription)
-          )
-          checkResults
+      val singleDatasetCheckResults: Seq[CheckResult] = seqSingleDatasetMetricsChecks.flatMap { singleDatasetMetricChecks =>
+        val checks = singleDatasetMetricChecks.checks
+        val datasetDescription = singleDatasetMetricChecks.describedDataset.description
+        val metricsForDs: Map[MetricDescriptor, MetricValue] =
+          calculatedMetrics(singleDatasetMetricChecks.describedDataset)
+        val checkResults: Seq[CheckResult] = checks.map(
+          _.applyCheckOnMetrics(metricsForDs).withDatasourceDescription(datasetDescription)
+        )
+        checkResults
       }
 
-      val dualDatasetCheckResults: Seq[CheckResult] = seqDualDatasetMetricChecks.flatMap {
-        dualDatasetMetricChecks =>
-          val checks = dualDatasetMetricChecks.checks
-          val describedDatasetA = dualDatasetMetricChecks.describedDatasetA
-          val describedDatasetB = dualDatasetMetricChecks.describedDatasetB
-          val metricsForDsA: Map[MetricDescriptor, MetricValue] =
-            calculatedMetrics(describedDatasetA)
-          val metricsForDsB: Map[MetricDescriptor, MetricValue] =
-            calculatedMetrics(describedDatasetB)
-          val checkResults: Seq[CheckResult] = checks.map(
-            _.applyCheckOnMetrics(metricsForDsA, metricsForDsB)
-              .withDatasourceDescription(
-                s"${describedDatasetA.description} compared to ${describedDatasetB.description}"
-              )
-          )
-          checkResults
+      val dualDatasetCheckResults: Seq[CheckResult] = seqDualDatasetMetricChecks.flatMap { dualDatasetMetricChecks =>
+        val checks = dualDatasetMetricChecks.checks
+        val describedDatasetA = dualDatasetMetricChecks.describedDatasetA
+        val describedDatasetB = dualDatasetMetricChecks.describedDatasetB
+        val metricsForDsA: Map[MetricDescriptor, MetricValue] =
+          calculatedMetrics(describedDatasetA)
+        val metricsForDsB: Map[MetricDescriptor, MetricValue] =
+          calculatedMetrics(describedDatasetB)
+        val checkResults: Seq[CheckResult] = checks.map(
+          _.applyCheckOnMetrics(metricsForDsA, metricsForDsB)
+            .withDatasourceDescription(
+              s"${describedDatasetA.description} compared to ${describedDatasetB.description}"
+            )
+        )
+        checkResults
       }
 
       singleDatasetCheckResults ++ dualDatasetCheckResults

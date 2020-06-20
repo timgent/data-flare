@@ -3,12 +3,7 @@ package com.github.timgent.sparkdataquality.deequ
 import com.amazon.deequ.analyzers.Analyzer
 import com.amazon.deequ.analyzers.runners.AnalyzerContext
 import com.amazon.deequ.metrics.Metric
-import com.amazon.deequ.repository.{
-  AnalysisResult,
-  MetricsRepository,
-  MetricsRepositoryMultipleResultsLoader,
-  ResultKey
-}
+import com.amazon.deequ.repository.{AnalysisResult, MetricsRepository, MetricsRepositoryMultipleResultsLoader, ResultKey}
 
 /**
   * Use this if you don't want to store metrics from deequ
