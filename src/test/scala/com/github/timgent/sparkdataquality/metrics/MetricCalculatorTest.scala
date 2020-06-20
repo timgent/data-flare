@@ -1,6 +1,11 @@
 package com.github.timgent.sparkdataquality.metrics
 
-import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{ComplianceMetricCalculator, DistinctValuesMetricCalculator, SimpleMetricCalculator, SizeMetricCalculator}
+import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{
+  ComplianceMetricCalculator,
+  DistinctValuesMetricCalculator,
+  SimpleMetricCalculator,
+  SizeMetricCalculator
+}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
 import com.holdenkarau.spark.testing.DatasetSuiteBase
@@ -13,7 +18,11 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
 
   import spark.implicits._
 
-  def testMetricAggFunction[T](ds: Dataset[_], calculator: SimpleMetricCalculator, expectedValue: T) = {
+  def testMetricAggFunction[T](
+      ds: Dataset[_],
+      calculator: SimpleMetricCalculator,
+      expectedValue: T
+  ) = {
     calculator.valueFromRow(ds.agg(calculator.aggFunction).collect.head, 0) shouldBe expectedValue
   }
 
@@ -53,15 +62,25 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
     ).toDS
 
     "calculate the compliance rate of a DataFrame correctly" in {
-      testMetricAggFunction(ds, ComplianceMetricCalculator(ComplianceFn(col("number") >= 7, "Number >= 6"),
-        MetricFilter.noFilter), DoubleMetric(0.4))
+      testMetricAggFunction(
+        ds,
+        ComplianceMetricCalculator(
+          ComplianceFn(col("number") >= 7, "Number >= 6"),
+          MetricFilter.noFilter
+        ),
+        DoubleMetric(0.4)
+      )
     }
 
     "apply the provided filter before calculating the compliance in a DataFrame" in {
-      testMetricAggFunction(ds,
-        ComplianceMetricCalculator(ComplianceFn(col("number") <= 9, "Number <= 9"),
-          MetricFilter(col("number") >= 9, "number >= 9")),
-        DoubleMetric(0.5))
+      testMetricAggFunction(
+        ds,
+        ComplianceMetricCalculator(
+          ComplianceFn(col("number") <= 9, "Number <= 9"),
+          MetricFilter(col("number") >= 9, "number >= 9")
+        ),
+        DoubleMetric(0.5)
+      )
     }
 
     "return a failure when an invalid filter is given" in { // TODO: Implement error handling for bad metrics
@@ -83,13 +102,22 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
     ).toDS
 
     "calculate the number of distinct values for a set of columns correctly" in {
-      testMetricAggFunction(ds, DistinctValuesMetricCalculator(List("number", "str"),
-        MetricFilter.noFilter), LongMetric(4))
+      testMetricAggFunction(
+        ds,
+        DistinctValuesMetricCalculator(List("number", "str"), MetricFilter.noFilter),
+        LongMetric(4)
+      )
     }
 
     "apply the provided filter before calculating the compliance in a DataFrame" in {
-      testMetricAggFunction(ds, DistinctValuesMetricCalculator(List("number", "str"),
-        MetricFilter(col("str") =!= "c", "string not equal to c")), LongMetric(3))
+      testMetricAggFunction(
+        ds,
+        DistinctValuesMetricCalculator(
+          List("number", "str"),
+          MetricFilter(col("str") =!= "c", "string not equal to c")
+        ),
+        LongMetric(3)
+      )
     }
 
     "return a failure when an invalid filter is given" in { // TODO: Implement error handling for bad metrics
