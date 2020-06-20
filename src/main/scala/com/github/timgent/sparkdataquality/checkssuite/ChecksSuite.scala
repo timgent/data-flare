@@ -69,6 +69,20 @@ case class DualDatasetMetricChecks(
     checks: Seq[DualMetricBasedCheck[_]]
 )
 
+/**
+  * Main entry point which contains the suite of checks you want to perform
+  * @param checkSuiteDescription - dsecription of the check suite
+  * @param tags - any tags associated with the check suite
+  * @param seqSingleDatasetMetricsChecks - list of metric based checks to perform on single datasets
+  * @param seqDualDatasetMetricChecks - list of metric based checks where the metrics are compared across pairs of datasets
+  * @param singleDatasetChecks - arbitrary checks performed on single datasets
+  * @param datasetComparisonChecks - arbitrary checks performed on pairs of datasets
+  * @param arbitraryChecks - any other arbitrary checks
+  * @param deequChecks - checks to perform using deequ as the underlying checking mechanism
+  * @param metricsPersister - how to persist metrics
+  * @param deequMetricsRepository - how to persist deequ's metrics
+  * @param checkResultCombiner - how the overall result status should be calculated
+  */
 case class ChecksSuite(
     checkSuiteDescription: String,
     tags: Map[String, String] = Map.empty,
