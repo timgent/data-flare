@@ -15,10 +15,14 @@ class ChecksSuiteResultStatusCalculatorTest extends AnyWordSpec with Matchers {
     val errorCheckResult = CheckResult(qcType, CheckStatus.Error, "", someCheck.description)
     val warningCheckResult = CheckResult(qcType, CheckStatus.Warning, "", someCheck.description)
     "Choose error status when there is at least one error" in {
-      getWorstCheckStatus(List(successfulCheckResult, errorCheckResult, warningCheckResult)) shouldBe CheckSuiteStatus.Error
+      getWorstCheckStatus(
+        List(successfulCheckResult, errorCheckResult, warningCheckResult)
+      ) shouldBe CheckSuiteStatus.Error
     }
     "Choose warning status when there is at least one warning and no errors" in {
-      getWorstCheckStatus(List(successfulCheckResult, warningCheckResult)) shouldBe CheckSuiteStatus.Warning
+      getWorstCheckStatus(
+        List(successfulCheckResult, warningCheckResult)
+      ) shouldBe CheckSuiteStatus.Warning
     }
     "Choose success status when all checks were successful" in {
       getWorstCheckStatus(List(successfulCheckResult)) shouldBe CheckSuiteStatus.Success
