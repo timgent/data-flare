@@ -16,7 +16,8 @@ class MetricsCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Match
 
       val sizeMetricDescriptor = MetricDescriptor.SizeMetricDescriptor(MetricFilter.noFilter)
 
-      val calculatedMetrics: Map[MetricDescriptor, MetricValue] = MetricsCalculator.calculateMetrics(ds.toDS, Seq(sizeMetricDescriptor))
+      val calculatedMetrics: Map[MetricDescriptor, MetricValue] =
+        MetricsCalculator.calculateMetrics(ds.toDS, Seq(sizeMetricDescriptor))
 
       calculatedMetrics shouldBe Map(
         sizeMetricDescriptor -> MetricValue.LongMetric(2)

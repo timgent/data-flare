@@ -6,11 +6,12 @@ import com.github.timgent.sparkdataquality.sparkdataquality.DeequCheckStatus
 object DeequUtils {
 
   implicit class DeequCheckStatusEnricher(checkStatus: DeequCheckStatus) {
-    def toCheckStatus = checkStatus match {
-      case DeequCheckStatus.Success => Success
-      case DeequCheckStatus.Warning => Warning
-      case DeequCheckStatus.Error => Error
-    }
+    def toCheckStatus =
+      checkStatus match {
+        case DeequCheckStatus.Success => Success
+        case DeequCheckStatus.Warning => Warning
+        case DeequCheckStatus.Error   => Error
+      }
   }
 
 }

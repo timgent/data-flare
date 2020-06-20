@@ -8,9 +8,9 @@ import scala.concurrent.Future
 
 trait EsTestUtils {
   self: Matchers with Eventually with AsyncTestSuite =>
-  def checkStoredResultsAre[T](getFutResults: () => Future[List[T]],
-                               expected: List[T])(
-                              implicit patienceConfig: PatienceConfig): Future[Assertion] = {
+  def checkStoredResultsAre[T](getFutResults: () => Future[List[T]], expected: List[T])(implicit
+      patienceConfig: PatienceConfig
+  ): Future[Assertion] = {
     eventually {
       for {
         storedResults <- getFutResults()

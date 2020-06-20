@@ -46,3 +46,4 @@ ElasticSearch you can easily use Kibana to graph them over time and set up dashb
 
 ## Published with SBT Sonatype
 https://github.com/xerial/sbt-sonatype
+
