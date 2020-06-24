@@ -2,15 +2,19 @@ package com.github.timgent.sparkdataquality.repository
 
 import java.time.Instant
 
+import cats.syntax.either._
+import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricValue, SimpleMetricDescriptor}
 import com.sksamuel.elastic4s.ElasticDsl.{bulk, indexInto, _}
 import com.sksamuel.elastic4s.circe._
 import com.sksamuel.elastic4s.http.JavaClient
 import com.sksamuel.elastic4s.{ElasticClient, ElasticProperties, Index}
-import io.circe.generic.auto._
+import io.circe.generic.semiauto._
+import io.circe.syntax._
+import io.circe.{Encoder, _}
 
 import scala.concurrent.{ExecutionContext, Future}
-private case class EsMetricsDocument(
+private[repository] case class EsMetricsDocument(
     timestamp: Instant,
     datasetDescription: String,
     metricDescriptor: SimpleMetricDescriptor,
@@ -18,6 +22,41 @@ private case class EsMetricsDocument(
 )
 
 private object EsMetricsDocument {
+  private implicit val metricDescriptorEncoder: Encoder[SimpleMetricDescriptor] = new Encoder[SimpleMetricDescriptor] {
+    override def apply(a: SimpleMetricDescriptor): Json = {
+      val fields: List[(String, Json)] = List(
+        Some("metricName" -> a.metricName.asJson),
+        a.filterDescription.map(fd => "filterDescription" -> fd.asJson),
+        a.complianceDescription.map(cd => "complianceDescription" -> cd.asJson),
+        a.onColumns.map(oc => "onColumns" -> oc.asJson)
+      ).flatten
+      Json.obj(fields: _*)
+    }
+  }
+  private implicit val metricValueEncoder: Encoder[MetricValue] = new Encoder[MetricValue] {
+    override def apply(a: MetricValue): Json = {
+      a match {
+        case LongMetric(value)               => Json.obj("value" -> value.asJson, "type" -> Json.fromString("LongMetric"))
+        case MetricValue.DoubleMetric(value) => Json.obj("value" -> value.asJson, "type" -> Json.fromString("DoubleMetric"))
+      }
+    }
+  }
+  private implicit val metricDescriptorDecoder: Decoder[SimpleMetricDescriptor] = deriveDecoder[SimpleMetricDescriptor]
+  private implicit val metricValueDecoder: Decoder[MetricValue] = new Decoder[MetricValue] {
+    override def apply(c: HCursor): Decoder.Result[MetricValue] = {
+      for {
+        metricType <- c.downField("type").as[String]
+        value = c.downField("value")
+        metricValue <- metricType match {
+          case "LongMetric"   => value.as[Long].map(LongMetric)
+          case "DoubleMetric" => value.as[Double].map(DoubleMetric)
+        }
+      } yield metricValue
+    }
+  }
+  implicit val encoder: Encoder[EsMetricsDocument] = deriveEncoder[EsMetricsDocument]
+  implicit val decoder: Decoder[EsMetricsDocument] = deriveDecoder[EsMetricsDocument]
+
   def fromMetricsMap(
       timestamp: Instant,
       metrics: Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]
