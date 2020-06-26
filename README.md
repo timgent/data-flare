@@ -6,6 +6,11 @@
 A data quality library build with spark and deequ, to give you ultimate flexibility and power in ensuring your data
 is of high quality.
 
+# What does this library give you?
+* The ability to neatly define and run quality checks on your data efficiently
+* The ability to store those quality checks results. Currently available in ElasticSearch or you can extend our library to add a custom repository
+* The ability to store the metrics underlying those quality checks, for example tracking size of your datasets over time. Currently available in ElasticSearch or you can extend our library to add a custom repository
+
 # Key Concepts
 * A `ChecksSuite` is a suite of checks that perform a given types of checks
 * A checks suite is made up of a number of `QCCheck`s. QCChecks define a check to do on the data. The types of `QCCheck`s
