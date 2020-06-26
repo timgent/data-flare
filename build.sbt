@@ -2,7 +2,7 @@ import Dependencies._
 import xerial.sbt.Sonatype.GitHubHosting
 
 ThisBuild / scalaVersion := "2.11.12"
-ThisBuild / version := "0.1.4"
+ThisBuild / version := "0.1.5"
 ThisBuild / organization := "com.github.timgent"
 ThisBuild / organizationName := "timgent"
 
