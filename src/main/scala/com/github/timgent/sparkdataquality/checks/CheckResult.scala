@@ -7,7 +7,7 @@ import com.github.timgent.sparkdataquality.metrics.DatasetDescription
   * @param status - status of the check
   * @param resultDescription - description of the check result
   */
-private[sparkdataquality] case class RawCheckResult(
+case class RawCheckResult(
     status: CheckStatus,
     resultDescription: String
 ) {
