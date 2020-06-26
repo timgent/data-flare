@@ -1,11 +1,6 @@
 package com.github.timgent.sparkdataquality.metrics
 
-import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{
-  ComplianceMetricCalculator,
-  DistinctValuesMetricCalculator,
-  SimpleMetricCalculator,
-  SizeMetricCalculator
-}
+import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{ComplianceMetricCalculator, DistinctValuesMetricCalculator, SimpleMetricCalculator, SizeMetricCalculator, SumValuesMetricCalculator}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
 import com.holdenkarau.spark.testing.DatasetSuiteBase
@@ -129,6 +124,45 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
     }
 
     "return a failure when an empty list of columns is given" in {
+      pending
+    }
+  }
+
+
+  "SumValuesMetricCalculator" should {
+    lazy val ds = Seq(
+      NumberString(1, "a"),
+      NumberString(2, "b"),
+      NumberString(3, "c"),
+      NumberString(3, "d"),
+      NumberString(3, "d") // not distinct
+    ).toDS
+
+    "calculate the sum of values for a given column" in {
+      testMetricAggFunction(
+        ds,
+        SumValuesMetricCalculator[LongMetric]("number", MetricFilter.noFilter),
+        LongMetric(12)
+      )
+    }
+
+    "apply the provided filter before calculating the compliance in a DataFrame" in {
+      testMetricAggFunction(
+        ds,
+        SumValuesMetricCalculator[LongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
+        LongMetric(6)
+      )
+    }
+
+    "return a failure when an invalid filter is given" in { // TODO: Implement error handling for bad metrics
+      pending
+    }
+
+    "return a failure when an invalid column is given" in { // TODO: Implement error handling for bad metrics
+      pending
+    }
+
+    "return a failure when the column value can't be summed" in { // TODO: Implement error handling for bad metrics
       pending
     }
   }
