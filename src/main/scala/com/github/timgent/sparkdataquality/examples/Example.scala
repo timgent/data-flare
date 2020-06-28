@@ -142,17 +142,17 @@ object Helpers {
       SingleDatasetMetricChecks(
         customerDs,
         List(
-          SizeCheck(AbsoluteThreshold(Some(10), Some(20))),
+          SizeCheck(AbsoluteThreshold(Some(10L), Some(20L))),
           ComplianceCheck(
             AbsoluteThreshold.exactly(1),
             ComplianceFn(col("name").isNotNull, "mustHaveName")
           )
         )
       ),
-      SingleDatasetMetricChecks(orderDs, List(SizeCheck(AbsoluteThreshold(Some(1), None)))),
+      SingleDatasetMetricChecks(orderDs, List(SizeCheck(AbsoluteThreshold(Some(1L), None)))),
       SingleDatasetMetricChecks(
         customersWithOrdersDs,
-        List(SizeCheck(AbsoluteThreshold(Some(1), None)))
+        List(SizeCheck(AbsoluteThreshold(Some(1L), None)))
       )
     )
 

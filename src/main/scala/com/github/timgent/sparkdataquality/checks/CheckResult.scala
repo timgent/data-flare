@@ -11,11 +11,7 @@ case class RawCheckResult(
     status: CheckStatus,
     resultDescription: String
 ) {
-  def withDescription(
-      qcType: QcType,
-      checkDescription: String,
-      datasourceDescription: Option[String]
-  ) =
+  def withDescription(qcType: QcType, checkDescription: String, datasourceDescription: Option[String] = None) =
     CheckResult(qcType, status, resultDescription, checkDescription, datasourceDescription)
 }
 

@@ -1,6 +1,6 @@
 package com.github.timgent.sparkdataquality.checks.metrics
 
-import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
+import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType, RawCheckResult}
 import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{
   ComplianceMetricDescriptor,
   DistinctValuesMetricDescriptor,
@@ -68,6 +68,14 @@ object SingleMetricBasedCheck {
           description
         )
       }
+    }
+  }
+
+  case class NewSingleMetricsBasedCheck[MV <: MetricValue](metricDescriptor: MetricDescriptor, description: String)(
+      check: MV => RawCheckResult
+  ) extends SingleMetricBasedCheck[MV] {
+    override protected def applyCheck(metric: MV): CheckResult = {
+      check(metric).withDescription(QcType.SingleDatasetQualityCheck, description)
     }
   }
 

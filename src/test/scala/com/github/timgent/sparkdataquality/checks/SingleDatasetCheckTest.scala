@@ -1,15 +1,10 @@
 package com.github.timgent.sparkdataquality.checks
 
 import com.github.timgent.sparkdataquality.checks.SingleDatasetCheck.sumOfValuesCheck
-import com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck
-import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.SizeCheck
 import com.github.timgent.sparkdataquality.checkssuite.DescribedDataset
-import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
-import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 import com.github.timgent.sparkdataquality.utils.TestDataClass
 import com.holdenkarau.spark.testing.DatasetSuiteBase
-import org.apache.spark.sql.functions.lit
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 

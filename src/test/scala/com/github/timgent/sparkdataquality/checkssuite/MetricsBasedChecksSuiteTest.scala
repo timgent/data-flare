@@ -26,7 +26,7 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
           DescribedDataset(ds, datasourceDescription),
           Seq(
             SingleMetricBasedCheck
-              .SizeCheck(AbsoluteThreshold(Some(2), Some(2)), MetricFilter.noFilter)
+              .SizeCheck(AbsoluteThreshold(Some(2L), Some(2L)), MetricFilter.noFilter)
           )
         )
       )
@@ -67,7 +67,7 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
         NumberString(3, "c")
       )
       val checks: Seq[SingleMetricBasedCheck[_]] = Seq(
-        SingleMetricBasedCheck.SizeCheck(AbsoluteThreshold(Some(2), Some(2)), MetricFilter.noFilter)
+        SingleMetricBasedCheck.SizeCheck(AbsoluteThreshold(Some(2L), Some(2L)), MetricFilter.noFilter)
       )
       val singleDatasetChecks = Seq(
         SingleDatasetMetricChecks(DescribedDataset(dsA.toDS, "dsA"), checks),
@@ -190,7 +190,7 @@ class MetricsBasedChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase wi
           DescribedDataset(dsC, "dsC"),
           Seq(
             SingleMetricBasedCheck
-              .SizeCheck(AbsoluteThreshold(Some(2), Some(2)), MetricFilter.noFilter)
+              .SizeCheck(AbsoluteThreshold(Some(2L), Some(2L)), MetricFilter.noFilter)
           )
         )
       )
