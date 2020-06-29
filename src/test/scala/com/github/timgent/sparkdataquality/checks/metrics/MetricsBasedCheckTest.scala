@@ -1,6 +1,5 @@
 package com.github.timgent.sparkdataquality.checks.metrics
 
-import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.{ComplianceCheck, NewSingleMetricsBasedCheck, SizeCheck}
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType, RawCheckResult}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter}
@@ -65,7 +64,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
   // TODO: Remove "New" prefix and replace all existing SingleMetricBasedChecks with this one
   "NewSingleMetricsBasedCheck" should {
     val metric = mock[MetricDescriptor]
-    val exampleCheck = NewSingleMetricsBasedCheck[LongMetric](metric, "exampleCheck") { metricValue =>
+    val exampleCheck = SingleMetricBasedCheck[LongMetric](metric, "exampleCheck") { metricValue =>
       val isWithinThreshold = AbsoluteThreshold(2L, 2L).isWithinThreshold(metricValue.value)
       if (isWithinThreshold)
         RawCheckResult(CheckStatus.Success, "it's within the threshold")
@@ -95,7 +94,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
   }
 
   "SingleMetricBasedCheck for any check type" should {
-    val simpleSizeCheck = SizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter.noFilter)
+    val simpleSizeCheck = SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter.noFilter)
 
     "apply the check when the required metric is provided in the metrics map" in {
       val result =
@@ -118,9 +117,9 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     }
   }
 
-  "MetricsBasedCheck.SizeCheck" should {
+  "SingleMetricBasedCheck.sizeCheck" should {
     "pass a check where the size is within the threshold" in {
-      val check = SizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter.noFilter)
+      val check = SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter.noFilter)
       val result: CheckResult =
         check.applyCheckOnMetrics(Map(check.metricDescriptor -> LongMetric(2)))
       result shouldBe CheckResult(
@@ -133,7 +132,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
 
     "fail a check where the size is outside the threshold" in {
       val check =
-        SizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter(lit(false), "someFilter"))
+        SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter(lit(false), "someFilter"))
       val result: CheckResult =
         check.applyCheckOnMetrics(Map(check.metricDescriptor -> LongMetric(4)))
       result shouldBe CheckResult(
@@ -145,9 +144,9 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     }
   }
 
-  "MetricsBasedCheck.ComplianceCheck" should {
+  "SingleMetricBasedCheck.complianceCheck" should {
     "pass a check where the compliance rate is within the threshold" in {
-      val check = ComplianceCheck(
+      val check = SingleMetricBasedCheck.complianceCheck(
         AbsoluteThreshold(Some(0.9), Some(1d)),
         someComplianceFn,
         MetricFilter.noFilter
@@ -163,7 +162,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     }
 
     "fail a check where the compliance rate is outside the threshold" in {
-      val check = ComplianceCheck(
+      val check = SingleMetricBasedCheck.complianceCheck(
         AbsoluteThreshold(Some(0.9), Some(1d)),
         someComplianceFn,
         MetricFilter.noFilter

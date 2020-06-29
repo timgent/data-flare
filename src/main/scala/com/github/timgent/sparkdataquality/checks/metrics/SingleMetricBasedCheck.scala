@@ -6,19 +6,25 @@ import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{
   DistinctValuesMetricDescriptor,
   SizeMetricDescriptor
 }
+import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.metrics.{ComplianceFn, MetricDescriptor, MetricFilter, MetricValue}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 
 import scala.reflect.ClassTag
 
 /**
-  * A check on a single metric
+  * A check based on a single metric
+  * @param metricDescriptor - describes the metric the check will be done on
+  * @param description - the user friendly description for this check
+  * @param check - the check to be done
   * @tparam MV - the type of the MetricValue that will be calculated in order to complete this check
   */
-trait SingleMetricBasedCheck[MV <: MetricValue] extends MetricsBasedCheck {
-  def metricDescriptor: MetricDescriptor
-
-  protected def applyCheck(metric: MV): CheckResult
+case class SingleMetricBasedCheck[MV <: MetricValue](metricDescriptor: MetricDescriptor, description: String)(
+    check: MV => RawCheckResult
+) extends MetricsBasedCheck {
+  def applyCheck(metric: MV): CheckResult = {
+    check(metric).withDescription(QcType.MetricsBasedQualityCheck, description)
+  }
 
   // typeTag required here to enable match of metric on type MV. Without class tag this type check would be fruitless
   private[sparkdataquality] final def applyCheckOnMetrics(
@@ -40,42 +46,30 @@ trait SingleMetricBasedCheck[MV <: MetricValue] extends MetricsBasedCheck {
 object SingleMetricBasedCheck {
 
   /**
-    * A check based on an AbsoluteThreshold for a metric value
+    * A check based on a single metric that checks if that metric is within the given threshold
+    * @param metricDescriptor - describes the metric the check will be done on
+    * @param description - the user friendly description for this check
+    * @param threshold - the threshold that the metric must be within to pass
     * @tparam MV - the type of the MetricValue that will be calculated in order to complete this check
+    * @return
     */
-  trait ThresholdBasedCheck[MV <: MetricValue] extends SingleMetricBasedCheck[MV] {
-    protected def checkShortName: String
-
-    /**
-      * The threshold that the metric must be within
-      * @return
-      */
-    def threshold: AbsoluteThreshold[MV#T]
-
-    protected def applyCheck(metric: MV): CheckResult = {
-      if (threshold.isWithinThreshold(metric.value)) {
-        CheckResult(
-          qcType,
+  def thresholdBasedCheck[MV <: MetricValue](
+      metricDescriptor: MetricDescriptor,
+      description: String,
+      threshold: AbsoluteThreshold[MV#T]
+  ): SingleMetricBasedCheck[MV] = {
+    SingleMetricBasedCheck(metricDescriptor, description) { metricValue: MV =>
+      if (threshold.isWithinThreshold(metricValue.value)) {
+        RawCheckResult(
           CheckStatus.Success,
-          s"$checkShortName of ${metric.value} was within the range $threshold",
-          description
+          s"${metricDescriptor.metricName} of ${metricValue.value} was within the range $threshold"
         )
       } else {
-        CheckResult(
-          qcType,
+        RawCheckResult(
           CheckStatus.Error,
-          s"$checkShortName of ${metric.value} was outside the range $threshold",
-          description
+          s"${metricDescriptor.metricName} of ${metricValue.value} was outside the range $threshold"
         )
       }
-    }
-  }
-
-  case class NewSingleMetricsBasedCheck[MV <: MetricValue](metricDescriptor: MetricDescriptor, description: String)(
-      check: MV => RawCheckResult
-  ) extends SingleMetricBasedCheck[MV] {
-    override protected def applyCheck(metric: MV): CheckResult = {
-      check(metric).withDescription(QcType.SingleDatasetQualityCheck, description)
     }
   }
 
@@ -84,16 +78,8 @@ object SingleMetricBasedCheck {
     * @param threshold
     * @param filter - filter to be applied before rows are counted
     */
-  case class SizeCheck(
-      threshold: AbsoluteThreshold[Long],
-      filter: MetricFilter = MetricFilter.noFilter
-  ) extends ThresholdBasedCheck[MetricValue.LongMetric] {
-    override def checkShortName: String = "Size"
-
-    override def description: String = s"SizeCheck with filter: ${filter.filterDescription}"
-
-    override def metricDescriptor: MetricDescriptor = SizeMetricDescriptor(filter)
-  }
+  def sizeCheck(threshold: AbsoluteThreshold[Long], filter: MetricFilter = MetricFilter.noFilter): SingleMetricBasedCheck[LongMetric] =
+    thresholdBasedCheck[LongMetric](SizeMetricDescriptor(filter), s"SizeCheck with filter: ${filter.filterDescription}", threshold)
 
   /**
     * Checks the fraction of rows that are compliant with the given complianceFn
@@ -101,20 +87,16 @@ object SingleMetricBasedCheck {
     * @param complianceFn - the function rows are tested with to see if they are compliant
     * @param filter - the filter that is applied before the compliance fraction is calculated
     */
-  case class ComplianceCheck(
+  def complianceCheck(
       threshold: AbsoluteThreshold[Double],
       complianceFn: ComplianceFn,
       filter: MetricFilter = MetricFilter.noFilter
-  ) extends ThresholdBasedCheck[MetricValue.DoubleMetric] {
-
-    override def checkShortName: String = "Compliance"
-
-    override def description: String =
-      s"ComplianceCheck ${complianceFn.description} with filter: ${filter.filterDescription}"
-
-    override def metricDescriptor: MetricDescriptor =
-      ComplianceMetricDescriptor(complianceFn, filter)
-  }
+  ): SingleMetricBasedCheck[DoubleMetric] =
+    thresholdBasedCheck[DoubleMetric](
+      ComplianceMetricDescriptor(complianceFn, filter),
+      s"ComplianceCheck ${complianceFn.description} with filter: ${filter.filterDescription}",
+      threshold
+    )
 
   /**
     * Checks the number of distinct values across the given columns
@@ -122,19 +104,14 @@ object SingleMetricBasedCheck {
     * @param onColumns - the columns to check for distinct values in
     * @param filter - the filter that is applied before the distinct value count is done
     */
-  case class DistinctValuesCheck(
+  def distinctValuesCheck(
       threshold: AbsoluteThreshold[Long],
       onColumns: List[String],
       filter: MetricFilter = MetricFilter.noFilter
-  ) extends ThresholdBasedCheck[MetricValue.LongMetric] {
-
-    override def checkShortName: String = "DistinctValues"
-
-    override def description: String =
-      s"DistinctValuesCheck on columns: $onColumns with filter: ${filter.filterDescription}"
-
-    override def metricDescriptor: MetricDescriptor =
-      DistinctValuesMetricDescriptor(onColumns, filter)
-  }
-
+  ): SingleMetricBasedCheck[LongMetric] =
+    thresholdBasedCheck[LongMetric](
+      DistinctValuesMetricDescriptor(onColumns, filter),
+      s"DistinctValuesCheck on columns: $onColumns with filter: ${filter.filterDescription}",
+      threshold
+    )
 }
