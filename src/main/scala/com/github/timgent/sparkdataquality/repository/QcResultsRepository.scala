@@ -14,6 +14,8 @@ trait QcResultsRepository {
     */
   def save(qcResults: List[ChecksSuiteResult]): Future[Unit]
 
+  def save(qcResult: ChecksSuiteResult): Future[Unit] = save(List(qcResult))
+
   /**
     * Load all check results in the repository
     * @return
