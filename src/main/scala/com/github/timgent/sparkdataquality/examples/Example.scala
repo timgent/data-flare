@@ -3,8 +3,7 @@ package com.github.timgent.sparkdataquality.examples
 import java.time.{LocalDateTime, ZoneOffset}
 
 import com.github.timgent.sparkdataquality.QualityChecker
-import com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck
-import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.{ComplianceCheck, SizeCheck}
+import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
 import com.github.timgent.sparkdataquality.checks.{CheckStatus, RawCheckResult, SingleDatasetCheck}
 import com.github.timgent.sparkdataquality.checkssuite._
 import com.github.timgent.sparkdataquality.examples.ExampleHelpers.{Customer, Order, _}
@@ -142,17 +141,17 @@ object Helpers {
       SingleDatasetMetricChecks(
         customerDs,
         List(
-          SizeCheck(AbsoluteThreshold(Some(10), Some(20))),
-          ComplianceCheck(
+          SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(10L), Some(20L))),
+          SingleMetricBasedCheck.complianceCheck(
             AbsoluteThreshold.exactly(1),
             ComplianceFn(col("name").isNotNull, "mustHaveName")
           )
         )
       ),
-      SingleDatasetMetricChecks(orderDs, List(SizeCheck(AbsoluteThreshold(Some(1), None)))),
+      SingleDatasetMetricChecks(orderDs, List(SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(1L), None)))),
       SingleDatasetMetricChecks(
         customersWithOrdersDs,
-        List(SizeCheck(AbsoluteThreshold(Some(1), None)))
+        List(SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(1L), None)))
       )
     )
 

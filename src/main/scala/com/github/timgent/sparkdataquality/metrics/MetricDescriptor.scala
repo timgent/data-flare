@@ -1,12 +1,17 @@
 package com.github.timgent.sparkdataquality.metrics
 
-import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{ComplianceMetricCalculator, DistinctValuesMetricCalculator, SizeMetricCalculator, SumValuesMetricCalculator}
+import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{
+  ComplianceMetricCalculator,
+  DistinctValuesMetricCalculator,
+  SizeMetricCalculator,
+  SumValuesMetricCalculator
+}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.NumericMetricValue
 
 /**
   * Describes the metric being calculated
   */
-sealed trait MetricDescriptor {
+private[sparkdataquality] trait MetricDescriptor {
   type MC <: MetricCalculator
 
   /**
@@ -20,6 +25,12 @@ sealed trait MetricDescriptor {
     * @return the SimpleMetricDescriptor
     */
   def toSimpleMetricDescriptor: SimpleMetricDescriptor
+
+  /**
+    * A name for the metric
+    * @return
+    */
+  def metricName: String
 }
 
 object MetricDescriptor {
@@ -43,7 +54,8 @@ object MetricDescriptor {
   case class SizeMetricDescriptor(filter: MetricFilter = MetricFilter.noFilter) extends MetricDescriptor with Filterable {
     override def metricCalculator: SizeMetricCalculator = SizeMetricCalculator(filter)
     override def toSimpleMetricDescriptor: SimpleMetricDescriptor =
-      SimpleMetricDescriptor("Size", Some(filter.filterDescription))
+      SimpleMetricDescriptor(metricName, Some(filter.filterDescription))
+    override def metricName: String = "Size"
     override type MC = SizeMetricCalculator
   }
 
@@ -51,10 +63,15 @@ object MetricDescriptor {
     * A metric that calculates the number of rows in your dataset
     * @param filter - filter to be applied before the size is calculated
     */
-  case class SumValuesMetricDescriptor[MV <: NumericMetricValue: MetricValueConstructor](onColumn: String, filter: MetricFilter = MetricFilter.noFilter) extends MetricDescriptor with Filterable {
+  case class SumValuesMetricDescriptor[MV <: NumericMetricValue: MetricValueConstructor](
+      onColumn: String,
+      filter: MetricFilter = MetricFilter.noFilter
+  ) extends MetricDescriptor
+      with Filterable {
     override def metricCalculator: SumValuesMetricCalculator[MV] = SumValuesMetricCalculator[MV](onColumn, filter)
     override def toSimpleMetricDescriptor: SimpleMetricDescriptor =
-      SimpleMetricDescriptor("SumValues", Some(filter.filterDescription))
+      SimpleMetricDescriptor(metricName, Some(filter.filterDescription))
+    override def metricName: String = "SumValues"
     override type MC = SumValuesMetricCalculator[MV]
   }
 
@@ -72,10 +89,11 @@ object MetricDescriptor {
       ComplianceMetricCalculator(complianceFn, filter)
     override def toSimpleMetricDescriptor: SimpleMetricDescriptor =
       SimpleMetricDescriptor(
-        "Compliance",
+        metricName,
         Some(filter.filterDescription),
         Some(complianceFn.description)
       )
+    override def metricName: String = "Compliance"
     override type MC = ComplianceMetricCalculator
   }
 
@@ -93,10 +111,11 @@ object MetricDescriptor {
       DistinctValuesMetricCalculator(onColumns, filter)
     override def toSimpleMetricDescriptor: SimpleMetricDescriptor =
       SimpleMetricDescriptor(
-        "DistinctValues",
+        metricName,
         Some(filter.filterDescription),
         onColumns = Some(onColumns)
       )
+    override def metricName: String = "DistinctValues"
     override type MC = DistinctValuesMetricCalculator
   }
 }

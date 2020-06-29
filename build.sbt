@@ -10,8 +10,9 @@ lazy val root = (project in file("."))
   .settings(
     name := "spark-data-quality",
     libraryDependencies ++= List(
-      scalaTest % Test,
-      sparkTestingBase % Test,
+      scalaTest,
+      sparkTestingBase,
+      scalaMock,
       sparkCore,
       sparkSql,
       deequ,

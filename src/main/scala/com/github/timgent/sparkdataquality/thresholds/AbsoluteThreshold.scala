@@ -27,5 +27,6 @@ case class AbsoluteThreshold[T: Ordering](lowerBound: Option[T], upperBound: Opt
 }
 
 object AbsoluteThreshold {
+  def apply[T: Ordering](lowerBound: T, upperBound: T): AbsoluteThreshold[T] = AbsoluteThreshold(Some(lowerBound), Some(upperBound))
   def exactly[T: Ordering](t: T) = AbsoluteThreshold(Some(t), Some(t))
 }
