@@ -2,10 +2,10 @@ package com.github.timgent.sparkdataquality.examples
 
 import java.time.{LocalDateTime, ZoneOffset}
 
-import com.github.timgent.sparkdataquality.QualityChecker
 import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
 import com.github.timgent.sparkdataquality.checks.{CheckStatus, RawCheckResult, SingleDatasetCheck}
 import com.github.timgent.sparkdataquality.checkssuite._
+import com.github.timgent.sparkdataquality.examples.Day1Checks.qcResults
 import com.github.timgent.sparkdataquality.examples.ExampleHelpers.{Customer, Order, _}
 import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{DistinctValuesMetricDescriptor, SizeMetricDescriptor}
 import com.github.timgent.sparkdataquality.metrics.{ComplianceFn, MetricComparator}
@@ -197,7 +197,8 @@ object Helpers {
       seqSingleDatasetMetricsChecks = singleDsMetricChecks,
       seqDualDatasetMetricChecks = dualDsMetricChecks,
       metricsPersister = esMetricsPersister,
-      singleDatasetChecks = List(SingleDatasetCheckWithDs(customerDs, List(expectedCustomerColumnsCheck)))
+      singleDatasetChecks = List(SingleDatasetCheckWithDs(customerDs, List(expectedCustomerColumnsCheck))),
+      qcResultsRepository = qcResultsRepository
     )
 
     checksSuite
@@ -211,10 +212,10 @@ object Day1Checks extends App {
 
   val checksSuite = Helpers.getCheckSuite(orderDs, customerDs, customersWithOrdersDs)
 
-  val allQcResultsFuture = QualityChecker.doQualityChecks(checksSuite, qcResultsRepository, monday)
-  val allQcResults = Await.result(allQcResultsFuture, 10 seconds)
+  val allQcResultsFuture = checksSuite.run(monday)
+  val qcResults = Await.result(allQcResultsFuture, 10 seconds)
 
-  if (allQcResults.results.forall(_.overallStatus == CheckSuiteStatus.Success))
+  if (qcResults.overallStatus == CheckSuiteStatus.Success)
     println("All checks completed successfully!!")
   else
     println("Checks failed :(")
@@ -227,10 +228,10 @@ object Day2Checks extends App {
 
   val checksSuite = Helpers.getCheckSuite(orderDs, customerDs, customersWithOrdersDs)
 
-  val allQcResultsFuture = QualityChecker.doQualityChecks(checksSuite, qcResultsRepository, tuesday)
+  val allQcResultsFuture = checksSuite.run(tuesday)
   val allQcResults = Await.result(allQcResultsFuture, 10 seconds)
 
-  if (allQcResults.results.forall(_.overallStatus == CheckSuiteStatus.Success))
+  if (qcResults.overallStatus == CheckSuiteStatus.Success)
     println("All checks completed successfully!!")
   else
     println("Checks failed :(")
@@ -243,11 +244,10 @@ object Day3Checks extends App {
 
   val checksSuite = Helpers.getCheckSuite(orderDs, customerDs, customersWithOrdersDs)
 
-  val allQcResultsFuture =
-    QualityChecker.doQualityChecks(checksSuite, qcResultsRepository, wednesday)
+  val allQcResultsFuture = checksSuite.run(wednesday)
   val allQcResults = Await.result(allQcResultsFuture, 10 seconds)
 
-  if (allQcResults.results.forall(_.overallStatus == CheckSuiteStatus.Success))
+  if (qcResults.overallStatus == CheckSuiteStatus.Success)
     println("All checks completed successfully!!")
   else
     println("Checks failed :(")

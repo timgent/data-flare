@@ -11,7 +11,13 @@ import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck,
 import com.github.timgent.sparkdataquality.deequ.DeequHelpers.VerificationResultExtension
 import com.github.timgent.sparkdataquality.deequ.DeequNullMetricsRepository
 import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricDescriptor, MetricValue, MetricsCalculator}
-import com.github.timgent.sparkdataquality.repository.{MetricsPersister, NullMetricsPersister}
+import com.github.timgent.sparkdataquality.repository.{
+  InMemoryQcResultsRepository,
+  MetricsPersister,
+  NullMetricsPersister,
+  NullQcResultsRepository,
+  QcResultsRepository
+}
 import com.github.timgent.sparkdataquality.sparkdataquality.DeequMetricsRepository
 import org.apache.spark.sql.Dataset
 
@@ -94,6 +100,7 @@ case class ChecksSuite(
     deequChecks: Seq[DeequCheck] = Seq.empty,
     metricsPersister: MetricsPersister = NullMetricsPersister,
     deequMetricsRepository: DeequMetricsRepository = new DeequNullMetricsRepository,
+    qcResultsRepository: QcResultsRepository = new NullQcResultsRepository,
     checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
 ) extends ChecksSuiteBase {
 
@@ -121,11 +128,10 @@ case class ChecksSuite(
 
     for {
       metricBasedCheckResults <- metricBasedCheckResultsFut
-    } yield {
-      val allCheckResults =
+      allCheckResults =
         metricBasedCheckResults ++ singleDatasetCheckResults ++ datasetComparisonCheckResults ++
           arbitraryCheckResults ++ deequCheckResults
-      val checkSuiteResult = ChecksSuiteResult(
+      checkSuiteResult = ChecksSuiteResult(
         overallStatus = checkResultCombiner(allCheckResults),
         checkSuiteDescription = checkSuiteDescription,
         resultDescription = ChecksSuiteBase.getOverallCheckResultDescription(allCheckResults),
@@ -133,6 +139,8 @@ case class ChecksSuite(
         timestamp = timestamp,
         tags
       )
+      _ <- qcResultsRepository.save(checkSuiteResult)
+    } yield {
       checkSuiteResult
     }
   }
