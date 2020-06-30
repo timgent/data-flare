@@ -134,7 +134,6 @@ case class ChecksSuite(
       checkSuiteResult = ChecksSuiteResult(
         overallStatus = checkResultCombiner(allCheckResults),
         checkSuiteDescription = checkSuiteDescription,
-        resultDescription = ChecksSuiteBase.getOverallCheckResultDescription(allCheckResults),
         checkResults = allCheckResults,
         timestamp = timestamp,
         tags

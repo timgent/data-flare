@@ -22,11 +22,6 @@ object DeequHelpers {
         case com.amazon.deequ.checks.CheckStatus.Warning => Warning
         case com.amazon.deequ.checks.CheckStatus.Error   => CheckSuiteStatus.Error
       }
-      val checkSuiteResultDescription = checkStatus match {
-        case CheckSuiteStatus.Success => "All Deequ checks were successful"
-        case CheckSuiteStatus.Warning => "Deequ checks returned a warning"
-        case CheckSuiteStatus.Error   => "Deequ checks returned an error"
-      }
       val checkResults = verificationResult.checkResults.map {
         case (deequCheck, deequCheckResult) =>
           val checkResultDescription = deequCheckResult.status match {
@@ -44,7 +39,6 @@ object DeequHelpers {
       ChecksSuiteResult( // Do we want to add deequ constraint results to the checks suite result too? It's another level compared to what we have elsewhere. Could refactor to match deequ's way of doing things
         checkStatus,
         description,
-        checkSuiteResultDescription,
         checkResults,
         timestamp,
         checkTags

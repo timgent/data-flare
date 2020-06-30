@@ -26,14 +26,3 @@ trait ChecksSuiteBase {
     */
   def checkSuiteDescription: String
 }
-
-object ChecksSuiteBase {
-  private[checkssuite] def getOverallCheckResultDescription(
-      checkResults: Seq[CheckResult]
-  ): String = {
-    val successfulCheckCount = checkResults.count(_.status == CheckStatus.Success)
-    val erroringCheckCount = checkResults.count(_.status == CheckStatus.Error)
-    val warningCheckCount = checkResults.count(_.status == CheckStatus.Warning)
-    s"$successfulCheckCount checks were successful. $erroringCheckCount checks gave errors. $warningCheckCount checks gave warnings"
-  }
-}

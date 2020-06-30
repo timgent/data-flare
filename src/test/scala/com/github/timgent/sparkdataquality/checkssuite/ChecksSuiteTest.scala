@@ -49,13 +49,11 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
     qcResult.timestamp shouldBe timestamp
     qcResult.checkSuiteDescription shouldBe checkSuiteDescription
     qcResult.overallStatus shouldBe checkStatus
-    qcResult.resultDescription shouldBe resultDescription
     qcResult.checkResults shouldBe checkResults
     qcResult.checkTags shouldBe checkTags
     persistedQcResult.timestamp shouldBe timestamp
     persistedQcResult.checkSuiteDescription shouldBe checkSuiteDescription
     persistedQcResult.overallStatus shouldBe checkStatus
-    persistedQcResult.resultDescription shouldBe resultDescription
     persistedQcResult.checkResults shouldBe checkResults
     persistedQcResult.checkTags shouldBe checkTags
   }
@@ -88,7 +86,6 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
           checkResults shouldBe ChecksSuiteResult(
             CheckSuiteStatus.Success,
             checkSuiteDescription,
-            "1 checks were successful. 0 checks gave errors. 0 checks gave warnings",
             Seq(
               CheckResult(
                 QcType.MetricsBasedQualityCheck,
@@ -134,7 +131,6 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
           checkResults shouldBe ChecksSuiteResult(
             CheckSuiteStatus.Error,
             checkSuiteDescription,
-            "1 checks were successful. 1 checks gave errors. 0 checks gave warnings",
             Seq(
               CheckResult(
                 QcType.MetricsBasedQualityCheck,
@@ -193,7 +189,6 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
           checkResults shouldBe ChecksSuiteResult(
             CheckSuiteStatus.Success,
             checkSuiteDescription,
-            "1 checks were successful. 0 checks gave errors. 0 checks gave warnings",
             Seq(
               CheckResult(
                 QcType.MetricsBasedQualityCheck,

@@ -42,7 +42,6 @@ class ElasticSearchQcResultsRepositoryTest extends AsyncWordSpec with Matchers w
         ChecksSuiteResult(
           Success,
           "checkSuiteA",
-          "resultA",
           Seq(checkResultA1, checkResultA2),
           now,
           someTags
@@ -50,7 +49,6 @@ class ElasticSearchQcResultsRepositoryTest extends AsyncWordSpec with Matchers w
         ChecksSuiteResult(
           Error,
           "checkSuiteB",
-          "resultB",
           Seq(checkResultB1, checkResultB2),
           now,
           someTags
@@ -60,7 +58,6 @@ class ElasticSearchQcResultsRepositoryTest extends AsyncWordSpec with Matchers w
         ChecksSuiteResult(
           CheckSuiteStatus.Success,
           "checkSuiteB",
-          "resultB",
           Seq(checkResultB1Success, checkResultB2Success),
           now.plusSeconds(10),
           someTags
