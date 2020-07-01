@@ -1,19 +1,38 @@
 package com.github.timgent.sparkdataquality.repository
 
+import com.fortysevendeg.scalacheck.datetime.jdk8.ArbitraryJdk8.arbInstantJdk8
 import com.github.timgent.sparkdataquality.checks.QcType.{DatasetComparisonQualityCheck, SingleDatasetQualityCheck}
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType}
 import com.github.timgent.sparkdataquality.checkssuite.CheckSuiteStatus.{Error, Success}
 import com.github.timgent.sparkdataquality.checkssuite.{CheckSuiteStatus, ChecksSuiteResult}
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
 import com.sksamuel.elastic4s.testkit.DockerTests
+import io.circe.parser._
+import io.circe.syntax._
+import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-class ElasticSearchQcResultsRepositoryTest extends AsyncWordSpec with Matchers with DockerTests with Eventually with EsTestUtils {
+class ElasticSearchQcResultsRepositoryTest
+    extends AsyncWordSpec
+    with Matchers
+    with DockerTests
+    with Eventually
+    with EsTestUtils
+    with ScalaCheckDrivenPropertyChecks {
+
+  implicit val checkSuiteStatusArb = Arbitrary(Gen.oneOf(CheckSuiteStatus.values))
+  implicit val checkStatusArb = Arbitrary(Gen.oneOf(CheckStatus.values))
+  implicit val qcTypeArb = Arbitrary(Gen.oneOf(QcType.values))
+  implicit val checkResultArb = Arbitrary(Gen.resultOf(CheckResult))
+  val checksSuiteResultGen: Gen[ChecksSuiteResult] = Gen.resultOf(ChecksSuiteResult)
+  implicit val checksSuiteResultArb: Arbitrary[ChecksSuiteResult] = Arbitrary(checksSuiteResultGen)
+
   "ElasticSearchQcResultsRepository.save" should {
     def generateRawCheckResult(qcType: QcType, suffix: String, status: CheckStatus) =
       CheckResult(qcType, status, s"checkResult$suffix", s"checkDescription$suffix")
@@ -74,6 +93,64 @@ class ElasticSearchQcResultsRepositoryTest extends AsyncWordSpec with Matchers w
       } yield {
         finalAssertion
       }
+    }
+  }
+
+  "ElasticSearchQcResultsRepository" should {
+    import ElasticSearchQcResultsRepository.checksSuiteResultEncoder
+    "encode a ChecksSuiteResult in JSON as expected" in {
+      val json = ChecksSuiteResult(
+        CheckSuiteStatus.Success,
+        "someCheckSuiteDescription",
+        Seq(
+          CheckResult(
+            QcType.MetricsBasedQualityCheck,
+            CheckStatus.Success,
+            "someResultDescriptionA",
+            "someCheckDescriptionA",
+            Some("someDatasourceDescription")
+          ),
+          CheckResult(QcType.SingleDatasetQualityCheck, CheckStatus.Error, "someResultDescriptionB", "someCheckDescriptionB", None)
+        ),
+        now,
+        Map("someTagKey" -> "someTagValue")
+      ).asJson
+      val expectedJson = parse(
+        s"""
+           |{
+           |  "overallStatus" : "Success",
+           |  "checkSuiteDescription" : "someCheckSuiteDescription",
+           |  "checkResults" : [
+           |    {
+           |      "qcType" : "MetricsBasedQualityCheck",
+           |      "status" : "Success",
+           |      "resultDescription" : "someResultDescriptionA",
+           |      "checkDescription" : "someCheckDescriptionA",
+           |      "datasourceDescription" : "someDatasourceDescription"
+           |    },
+           |    {
+           |      "qcType" : "SingleDatasetQualityCheck",
+           |      "status" : "Error",
+           |      "resultDescription" : "someResultDescriptionB",
+           |      "checkDescription" : "someCheckDescriptionB",
+           |      "datasourceDescription" : null
+           |    }
+           |  ],
+           |  "timestamp" : "${now.toString}",
+           |  "checkTags" : { "someTagKey": "someTagValue" }
+           |}
+           |""".stripMargin
+      ).right.get
+      json shouldBe expectedJson
+    }
+
+    "always be possible to encode and decode a ChecksSuiteResult from JSON" in {
+      import ElasticSearchQcResultsRepository._
+      forAll { checksSuiteResult: ChecksSuiteResult =>
+        val afterRoundTrip = checksSuiteResult.asJson.as[ChecksSuiteResult]
+        afterRoundTrip.right.get shouldBe checksSuiteResult
+      }
+
     }
   }
 }
