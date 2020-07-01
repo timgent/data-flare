@@ -2,7 +2,8 @@ package com.github.timgent.sparkdataquality.repository
 
 import java.time.Instant
 
-import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricValue, SimpleMetricDescriptor}
+import com.github.timgent.sparkdataquality.checks.DatasourceDescription.SingleDsDescription
+import com.github.timgent.sparkdataquality.metrics.{MetricValue, SimpleMetricDescriptor}
 
 import scala.collection.mutable
 import scala.concurrent.Future
@@ -17,14 +18,14 @@ trait MetricsPersister {
     */
   def save(
       timestamp: Instant,
-      metrics: Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]
-  ): Future[Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]]
+      metrics: Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]
+  ): Future[Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]]
 
   /**
     * Loads all metrics in the repository
     * @return Future of a map with timestamps to metrics
     */
-  def loadAll: Future[Map[Instant, Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]]]
+  def loadAll: Future[Map[Instant, Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]]]
 }
 
 /**
@@ -34,12 +35,12 @@ trait MetricsPersister {
 object NullMetricsPersister extends MetricsPersister {
   override def save(
       timestamp: Instant,
-      metrics: Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]
-  ): Future[Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]] = {
+      metrics: Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]
+  ): Future[Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]] = {
     Future.successful(metrics)
   }
 
-  override def loadAll: Future[Map[Instant, Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]]] =
+  override def loadAll: Future[Map[Instant, Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]]] =
     Future.successful(Map.empty)
 }
 
@@ -48,18 +49,18 @@ object NullMetricsPersister extends MetricsPersister {
   */
 class InMemoryMetricsPersister extends MetricsPersister {
 
-  val savedResults: mutable.Map[Instant, Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]] =
+  val savedResults: mutable.Map[Instant, Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]] =
     mutable.Map.empty
 
   override def save(
       timestamp: Instant,
-      metrics: Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]
-  ): Future[Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]] = {
+      metrics: Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]
+  ): Future[Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]] = {
     savedResults += (timestamp -> metrics)
     Future.successful(metrics)
   }
 
-  override def loadAll: Future[Map[Instant, Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]]] = {
+  override def loadAll: Future[Map[Instant, Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]]] = {
     Future.successful(savedResults.toMap)
   }
 }

@@ -2,10 +2,11 @@ package com.github.timgent.sparkdataquality.repository
 
 import java.time.Instant
 
+import com.github.timgent.sparkdataquality.checks.DatasourceDescription.SingleDsDescription
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
 import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.SizeMetricDescriptor
 import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
-import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricValue, SimpleMetricDescriptor}
+import com.github.timgent.sparkdataquality.metrics.{MetricValue, SimpleMetricDescriptor}
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
 import com.sksamuel.elastic4s.testkit.DockerTests
 import org.scalatest.concurrent.Eventually
@@ -24,26 +25,26 @@ class ElasticSearchMetricsPersisterTest extends AsyncWordSpec with Matchers with
     "Append check suite results to the index" in {
       val repo: ElasticSearchMetricsPersister = new ElasticSearchMetricsPersister(client, someIndex)
 
-      val initialResultsToInsert: Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]] = Map(
-        DatasetDescription("dsA") -> Map(
+      val initialResultsToInsert: Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]] = Map(
+        SingleDsDescription("dsA") -> Map(
           SizeMetricDescriptor().toSimpleMetricDescriptor -> LongMetric(1)
         ),
-        DatasetDescription("dsB") -> Map(
+        SingleDsDescription("dsB") -> Map(
           SizeMetricDescriptor().toSimpleMetricDescriptor -> LongMetric(1)
         )
       )
-      val moreResultsToInsert: Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]] =
+      val moreResultsToInsert: Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]] =
         Map(
-          DatasetDescription("dsA") -> Map(
+          SingleDsDescription("dsA") -> Map(
             SizeMetricDescriptor().toSimpleMetricDescriptor -> LongMetric(2)
           ),
-          DatasetDescription("dsC") -> Map(
+          SingleDsDescription("dsC") -> Map(
             SizeMetricDescriptor().toSimpleMetricDescriptor -> LongMetric(1)
           )
         )
 
       def storedResultsFut(): Future[
-        List[(Instant, Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]])]
+        List[(Instant, Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]])]
       ] =
         repo.loadAll.map(_.toList)
 

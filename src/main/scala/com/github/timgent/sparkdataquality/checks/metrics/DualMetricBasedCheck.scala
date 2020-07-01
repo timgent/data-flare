@@ -1,5 +1,6 @@
 package com.github.timgent.sparkdataquality.checks.metrics
 
+import com.github.timgent.sparkdataquality.checks.DatasourceDescription.DualDsDescription
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType}
 import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricValue}
 
@@ -26,26 +27,27 @@ final case class DualMetricBasedCheck[MV <: MetricValue](
 
   override def qcType: QcType = QcType.MetricsBasedQualityCheck
 
-  private def getCheckResult(checkPassed: Boolean, dsAMetric: MV, dsBMetric: MV): CheckResult = {
+  private def getCheckResult(checkPassed: Boolean, dsAMetric: MV, dsBMetric: MV, dualDsDescription: DualDsDescription): CheckResult = {
     if (checkPassed)
       CheckResult(
         qcType,
         CheckStatus.Success,
-        s"metric comparison passed. dsAMetric of $dsAMetric was compared to dsBMetric of $dsBMetric",
+        s"metric comparison passed. ${dualDsDescription.datasourceA} with $dsAMetric was compared to ${dualDsDescription.datasourceB} with $dsBMetric",
         description
       )
     else
       CheckResult(
         qcType,
         CheckStatus.Error,
-        s"metric comparison failed. dsAMetric of $dsAMetric was compared to dsBMetric of $dsBMetric",
+        s"metric comparison failed. ${dualDsDescription.datasourceA} with $dsAMetric was compared to ${dualDsDescription.datasourceB} with $dsBMetric",
         description
       )
   }
 
   def applyCheckOnMetrics(
       dsAMetrics: Map[MetricDescriptor, MetricValue],
-      dsBMetrics: Map[MetricDescriptor, MetricValue]
+      dsBMetrics: Map[MetricDescriptor, MetricValue],
+      dualDsDescription: DualDsDescription
   )(implicit classTag: ClassTag[MV]): CheckResult = {
     val dsAMetricOpt: Option[MetricValue] = dsAMetrics.get(dsAMetricDescriptor)
     val dsBMetricOpt: Option[MetricValue] = dsBMetrics.get(dsBMetricDescriptor)
@@ -53,7 +55,7 @@ final case class DualMetricBasedCheck[MV <: MetricValue](
       case (Some(dsAMetric), Some(dsBMetric)) =>
         (dsAMetric, dsBMetric) match {
           case (dsAMetric: MV, dsBMetric: MV) =>
-            getCheckResult(metricComparator.fn(dsAMetric, dsBMetric), dsAMetric, dsBMetric)
+            getCheckResult(metricComparator.fn(dsAMetric, dsBMetric), dsAMetric, dsBMetric, dualDsDescription)
           case _ => metricTypeErrorResult
         }
       case _ => metricNotPresentErrorResult

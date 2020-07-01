@@ -1,6 +1,7 @@
 package com.github.timgent.sparkdataquality.repository
 
 import com.fortysevendeg.scalacheck.datetime.jdk8.ArbitraryJdk8.arbInstantJdk8
+import com.github.timgent.sparkdataquality.checks.DatasourceDescription.SingleDsDescription
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.metrics.{MetricValue, SimpleMetricDescriptor}
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
@@ -20,19 +21,24 @@ class EsMetricsDocumentTest extends AnyWordSpec with Matchers with ScalaCheckDri
   private implicit val arbMetricValue: Arbitrary[MetricValue] = Arbitrary(Gen.oneOf(longMetricGen, doubleMetricGen))
   implicit private val esMetricsDocumentArb = Arbitrary(for {
     timestamp <- arbInstantJdk8.arbitrary
-    datasetDescription <- arbString.arbitrary
+    datasetDescription <- arbString.arbitrary.map(SingleDsDescription)
     metricDescriptor <- arbitrary[SimpleMetricDescriptor]
     metricValue <- arbitrary[MetricValue]
   } yield EsMetricsDocument(timestamp, datasetDescription, metricDescriptor, metricValue))
 
   "EsMetricsDocument" should {
     "be encoded in JSON as expected" in {
-      val json = EsMetricsDocument(now, "myDs", SimpleMetricDescriptor("myMetric", Some("myFilter"), None, None), LongMetric(10)).asJson
+      val json = EsMetricsDocument(
+        now,
+        SingleDsDescription("myDs"),
+        SimpleMetricDescriptor("myMetric", Some("myFilter"), None, None),
+        LongMetric(10)
+      ).asJson
       val expectedJson = parse(
         s"""
           |{
           | "timestamp" : "${now.toString}",
-          | "datasetDescription" : "myDs",
+          | "datasourceDescription" : "myDs",
           | "metricDescriptor" : {
           |   "metricName" : "myMetric",
           |   "filterDescription" : "myFilter"

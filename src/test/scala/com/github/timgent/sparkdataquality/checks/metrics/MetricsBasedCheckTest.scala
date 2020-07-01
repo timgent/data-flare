@@ -1,5 +1,6 @@
 package com.github.timgent.sparkdataquality.checks.metrics
 
+import com.github.timgent.sparkdataquality.checks.DatasourceDescription.DualDsDescription
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType, RawCheckResult}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter}
@@ -19,15 +20,17 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
       DualMetricBasedCheck[LongMetric](simpleSizeMetric, simpleSizeMetric, "size comparison")(
         MetricComparator.metricsAreEqual
       )
+    val dualDsDescription = DualDsDescription("dsA", "dsB")
     "pass the check when the required metrics are provided in the metrics map and they meet the comparator criteria" in {
       val checkResult: CheckResult = dualMetricBasedCheck.applyCheckOnMetrics(
         Map(simpleSizeMetric -> LongMetric(2L)),
-        Map(simpleSizeMetric -> LongMetric(2L))
+        Map(simpleSizeMetric -> LongMetric(2L)),
+        dualDsDescription
       )
       checkResult shouldBe CheckResult(
         QcType.MetricsBasedQualityCheck,
         CheckStatus.Success,
-        "metric comparison passed. dsAMetric of LongMetric(2) was compared to dsBMetric of LongMetric(2)",
+        "metric comparison passed. dsA with LongMetric(2) was compared to dsB with LongMetric(2)",
         "size comparison. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to SizeMetricDescriptor(MetricFilter(true,no filter)) using comparator of metrics are equal"
       )
     }
@@ -35,18 +38,19 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     "fail the check when the required metrics are provided in the metrics map but they do not meet the comparator criteria" in {
       val checkResult: CheckResult = dualMetricBasedCheck.applyCheckOnMetrics(
         Map(simpleSizeMetric -> LongMetric(2L)),
-        Map(simpleSizeMetric -> LongMetric(3L))
+        Map(simpleSizeMetric -> LongMetric(3L)),
+        dualDsDescription
       )
       checkResult shouldBe CheckResult(
         QcType.MetricsBasedQualityCheck,
         CheckStatus.Error,
-        "metric comparison failed. dsAMetric of LongMetric(2) was compared to dsBMetric of LongMetric(3)",
+        "metric comparison failed. dsA with LongMetric(2) was compared to dsB with LongMetric(3)",
         "size comparison. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to SizeMetricDescriptor(MetricFilter(true,no filter)) using comparator of metrics are equal"
       )
     }
 
     "fail when the required metrics are not provided in the metrics map" in {
-      val result: CheckResult = dualMetricBasedCheck.applyCheckOnMetrics(Map.empty, Map.empty)
+      val result: CheckResult = dualMetricBasedCheck.applyCheckOnMetrics(Map.empty, Map.empty, dualDsDescription)
       result.status shouldBe CheckStatus.Error
       result.resultDescription shouldBe "Failed to find corresponding metric for this check. Please report this error - this should not occur"
     }
@@ -54,7 +58,8 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     "fail when the required metrics are the wrong type" in {
       val result: CheckResult = dualMetricBasedCheck.applyCheckOnMetrics(
         Map(simpleSizeMetric -> DoubleMetric(2)),
-        Map(simpleSizeMetric -> DoubleMetric(2))
+        Map(simpleSizeMetric -> DoubleMetric(2)),
+        dualDsDescription
       )
       result.status shouldBe CheckStatus.Error
       result.resultDescription shouldBe "Found metric of the wrong type for this check. Please report this error - this should not occur"
