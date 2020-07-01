@@ -1,5 +1,6 @@
 package com.github.timgent.sparkdataquality.checks
 
+import com.github.timgent.sparkdataquality.checks.DatasourceDescription.SingleDsDescription
 import com.github.timgent.sparkdataquality.checkssuite.DescribedDataset
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 import org.apache.spark.sql.{Dataset, Encoder}
@@ -22,7 +23,7 @@ object SingleDatasetCheck {
       override def description: String = checkDescription
 
       override def applyCheck(dataset: DescribedDataset): CheckResult =
-        check(dataset.ds).withDescription(qcType, checkDescription, Some(dataset.description.value))
+        check(dataset.ds).withDescription(qcType, checkDescription, Some(SingleDsDescription(dataset.description)))
     }
   }
 

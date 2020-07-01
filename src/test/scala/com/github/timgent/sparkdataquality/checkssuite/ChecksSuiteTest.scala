@@ -9,6 +9,7 @@ import com.amazon.deequ.metrics.{DoubleMetric, Entity}
 import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.repository.memory.InMemoryMetricsRepository
 import com.github.timgent.sparkdataquality.checks.DatasetComparisonCheck.DatasetPair
+import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, SingleDsDescription}
 import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
 import com.github.timgent.sparkdataquality.checks.{
   ArbitraryCheck,
@@ -21,7 +22,7 @@ import com.github.timgent.sparkdataquality.checks.{
   SingleDatasetCheck
 }
 import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
-import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricComparator, MetricDescriptor, MetricFilter}
+import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter}
 import com.github.timgent.sparkdataquality.repository.{InMemoryMetricsPersister, InMemoryQcResultsRepository}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
@@ -92,7 +93,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
                 CheckStatus.Success,
                 "Size of 2 was within the range between 2 and 2",
                 "SizeCheck with filter: no filter",
-                Some(datasourceDescription)
+                Some(SingleDsDescription(datasourceDescription))
               )
             ),
             now,
@@ -137,14 +138,14 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
                 CheckStatus.Success,
                 "Size of 2 was within the range between 2 and 2",
                 "SizeCheck with filter: no filter",
-                Some("dsA")
+                Some(SingleDsDescription("dsA"))
               ),
               CheckResult(
                 QcType.MetricsBasedQualityCheck,
                 CheckStatus.Error,
                 "Size of 3 was outside the range between 2 and 2",
                 "SizeCheck with filter: no filter",
-                Some("dsB")
+                Some(SingleDsDescription("dsB"))
               )
             ),
             now,
@@ -196,7 +197,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
                 "metric comparison passed. dsAMetric of LongMetric(3) was compared to dsBMetric of LongMetric(3)",
                 "check size metrics are equal. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to " +
                   "SizeMetricDescriptor(MetricFilter(true,no filter)) using comparator of metrics are equal",
-                Some("dsA compared to dsB")
+                Some(DualDsDescription("dsA", "dsB"))
               )
             ),
             now,
@@ -255,13 +256,13 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
           storedMetrics <- inMemoryMetricsPersister.loadAll
         } yield storedMetrics shouldBe Map(
           now -> Map(
-            DatasetDescription("dsA") -> Map(
+            SingleDsDescription("dsA") -> Map(
               simpleSizeMetric.toSimpleMetricDescriptor -> LongMetric(3L)
             ),
-            DatasetDescription("dsB") -> Map(
+            SingleDsDescription("dsB") -> Map(
               simpleSizeMetric.toSimpleMetricDescriptor -> LongMetric(2L)
             ),
-            DatasetDescription("dsC") -> Map(
+            SingleDsDescription("dsC") -> Map(
               simpleSizeMetric.toSimpleMetricDescriptor -> LongMetric(1L)
             )
           )
@@ -355,7 +356,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
                 CheckStatus.Error,
                 "someSingleDatasetCheck was not successful",
                 singleDatasetCheck.description,
-                Some(datasourceDescription)
+                Some(SingleDsDescription(datasourceDescription))
               )
             ),
             checkTags = someTags
@@ -403,7 +404,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
                 CheckStatus.Error,
                 "counts were not equal",
                 datasetComparisonCheck.description,
-                Some("dataset: testDataset. datasetToCompare: datasetToCompare")
+                Some(DualDsDescription("testDataset", "datasetToCompare"))
               )
             ),
             checkTags = someTags

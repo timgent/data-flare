@@ -1,17 +1,16 @@
 package com.github.timgent.sparkdataquality.checks
 
-import com.github.timgent.sparkdataquality.metrics.DatasetDescription
-
 /**
   * Check result without additional information about datasource and check description
-  * @param status - status of the check
+  *
+ * @param status - status of the check
   * @param resultDescription - description of the check result
   */
 case class RawCheckResult(
     status: CheckStatus,
     resultDescription: String
 ) {
-  def withDescription(qcType: QcType, checkDescription: String, datasourceDescription: Option[String] = None) =
+  def withDescription(qcType: QcType, checkDescription: String, datasourceDescription: Option[DatasourceDescription] = None) =
     CheckResult(qcType, status, resultDescription, checkDescription, datasourceDescription)
 }
 
@@ -27,10 +26,8 @@ case class CheckResult(
     status: CheckStatus,
     resultDescription: String,
     checkDescription: String,
-    datasourceDescription: Option[String] = None
+    datasourceDescription: Option[DatasourceDescription] = None
 ) {
-  def withDatasourceDescription(datasetDescription: DatasetDescription): CheckResult =
-    this.copy(datasourceDescription = Some(datasetDescription.value))
-  def withDatasourceDescription(datasourceDescription: String): CheckResult =
+  def withDatasourceDescription(datasourceDescription: DatasourceDescription): CheckResult =
     this.copy(datasourceDescription = Some(datasourceDescription))
 }

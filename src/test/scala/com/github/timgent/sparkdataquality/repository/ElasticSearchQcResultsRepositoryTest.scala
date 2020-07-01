@@ -1,8 +1,9 @@
 package com.github.timgent.sparkdataquality.repository
 
 import com.fortysevendeg.scalacheck.datetime.jdk8.ArbitraryJdk8.arbInstantJdk8
+import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, OtherDsDescription, SingleDsDescription}
 import com.github.timgent.sparkdataquality.checks.QcType.{DatasetComparisonQualityCheck, SingleDatasetQualityCheck}
-import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType}
+import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, DatasourceDescription, QcType}
 import com.github.timgent.sparkdataquality.checkssuite.CheckSuiteStatus.{Error, Success}
 import com.github.timgent.sparkdataquality.checkssuite.{CheckSuiteStatus, ChecksSuiteResult}
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
@@ -14,6 +15,7 @@ import org.scalatest.concurrent.Eventually
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalacheck.Arbitrary.arbitrary
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -29,6 +31,11 @@ class ElasticSearchQcResultsRepositoryTest
   implicit val checkSuiteStatusArb = Arbitrary(Gen.oneOf(CheckSuiteStatus.values))
   implicit val checkStatusArb = Arbitrary(Gen.oneOf(CheckStatus.values))
   implicit val qcTypeArb = Arbitrary(Gen.oneOf(QcType.values))
+  implicit val singleDsDescriptionArb = Arbitrary(Gen.resultOf(SingleDsDescription))
+  implicit val dualDsDescriptionArb = Arbitrary(Gen.resultOf(DualDsDescription))
+  implicit val otherDsDescriptionArb = Arbitrary(Gen.resultOf(OtherDsDescription))
+  implicit val datasourceDescriptionArb: Arbitrary[Option[DatasourceDescription]] =
+    Arbitrary(Gen.option(Gen.oneOf(arbitrary[SingleDsDescription], arbitrary[DualDsDescription], arbitrary[OtherDsDescription])))
   implicit val checkResultArb = Arbitrary(Gen.resultOf(CheckResult))
   val checksSuiteResultGen: Gen[ChecksSuiteResult] = Gen.resultOf(ChecksSuiteResult)
   implicit val checksSuiteResultArb: Arbitrary[ChecksSuiteResult] = Arbitrary(checksSuiteResultGen)
@@ -96,7 +103,7 @@ class ElasticSearchQcResultsRepositoryTest
     }
   }
 
-  "ElasticSearchQcResultsRepository" should {
+  "ElasticSearchQcResultsRepository.checksSuiteResultEncoder" should {
     import ElasticSearchQcResultsRepository.checksSuiteResultEncoder
     "encode a ChecksSuiteResult in JSON as expected" in {
       val json = ChecksSuiteResult(
@@ -108,7 +115,7 @@ class ElasticSearchQcResultsRepositoryTest
             CheckStatus.Success,
             "someResultDescriptionA",
             "someCheckDescriptionA",
-            Some("someDatasourceDescription")
+            Some(SingleDsDescription("someDatasourceDescription"))
           ),
           CheckResult(QcType.SingleDatasetQualityCheck, CheckStatus.Error, "someResultDescriptionB", "someCheckDescriptionB", None)
         ),
@@ -126,7 +133,10 @@ class ElasticSearchQcResultsRepositoryTest
            |      "status" : "Success",
            |      "resultDescription" : "someResultDescriptionA",
            |      "checkDescription" : "someCheckDescriptionA",
-           |      "datasourceDescription" : "someDatasourceDescription"
+           |      "datasourceDescription" : {
+           |        "type": "SingleDs",
+           |        "datasource": "someDatasourceDescription"
+           |      }
            |    },
            |    {
            |      "qcType" : "SingleDatasetQualityCheck",
@@ -150,7 +160,41 @@ class ElasticSearchQcResultsRepositoryTest
         val afterRoundTrip = checksSuiteResult.asJson.as[ChecksSuiteResult]
         afterRoundTrip.right.get shouldBe checksSuiteResult
       }
+    }
+  }
 
+  "ElasticSearchQcResultsRepository.datasourceDescriptionEncoder" should {
+    import ElasticSearchQcResultsRepository.datasourceDescriptionEncoder
+    "encoder SingleDsDescription correctly" in {
+      val description: DatasourceDescription = SingleDsDescription("myDatasource")
+      val json = description.asJson
+      val expectedJson =
+        parse("""{
+          |"type": "SingleDs",
+          |"datasource": "myDatasource"
+          |}""".stripMargin).right.get
+      json shouldBe expectedJson
+    }
+    "encoder DualDsDescription correctly" in {
+      val description: DatasourceDescription = DualDsDescription("myDatasourceA", "myDatasourceB")
+      val json = description.asJson
+      val expectedJson =
+        parse("""{
+                |"type": "DualDs",
+                |"datasourceA": "myDatasourceA",
+                |"datasourceB": "myDatasourceB"
+                |}""".stripMargin).right.get
+      json shouldBe expectedJson
+    }
+    "encoder OtherDsDescription correctly" in {
+      val description: DatasourceDescription = OtherDsDescription("myDatasource")
+      val json = description.asJson
+      val expectedJson =
+        parse("""{
+                |"type": "OtherDs",
+                |"datasource": "myDatasource"
+                |}""".stripMargin).right.get
+      json shouldBe expectedJson
     }
   }
 }

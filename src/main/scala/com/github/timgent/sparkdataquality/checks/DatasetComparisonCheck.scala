@@ -1,5 +1,6 @@
 package com.github.timgent.sparkdataquality.checks
 
+import com.github.timgent.sparkdataquality.checks.DatasourceDescription.DualDsDescription
 import com.github.timgent.sparkdataquality.checkssuite.DescribedDatasetPair
 import org.apache.spark.sql.Dataset
 

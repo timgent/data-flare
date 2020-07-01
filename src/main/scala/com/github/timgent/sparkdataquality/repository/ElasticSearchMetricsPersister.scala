@@ -3,8 +3,9 @@ package com.github.timgent.sparkdataquality.repository
 import java.time.Instant
 
 import cats.syntax.either._
+import com.github.timgent.sparkdataquality.checks.DatasourceDescription.SingleDsDescription
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
-import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricValue, SimpleMetricDescriptor}
+import com.github.timgent.sparkdataquality.metrics.{MetricValue, SimpleMetricDescriptor}
 import com.sksamuel.elastic4s.ElasticDsl.{bulk, indexInto, _}
 import com.sksamuel.elastic4s.circe._
 import com.sksamuel.elastic4s.http.JavaClient
@@ -16,7 +17,7 @@ import io.circe.{Encoder, _}
 import scala.concurrent.{ExecutionContext, Future}
 private[repository] case class EsMetricsDocument(
     timestamp: Instant,
-    datasetDescription: String,
+    datasourceDescription: SingleDsDescription,
     metricDescriptor: SimpleMetricDescriptor,
     metricValue: MetricValue
 )
@@ -54,30 +55,32 @@ private object EsMetricsDocument {
       } yield metricValue
     }
   }
+  private implicit val singleDsDescriptionEncoder = Encoder.encodeString.contramap[SingleDsDescription](_.datasource)
+  private implicit val singleDsDescriptionDecoder = Decoder.decodeString.emap(datasource => Right(SingleDsDescription(datasource)))
   implicit val encoder: Encoder[EsMetricsDocument] = deriveEncoder[EsMetricsDocument]
   implicit val decoder: Decoder[EsMetricsDocument] = deriveDecoder[EsMetricsDocument]
 
   def fromMetricsMap(
       timestamp: Instant,
-      metrics: Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]
+      metrics: Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]
   ): List[EsMetricsDocument] = {
     (for {
       (datasetDescription, metricsMap) <- metrics
       (metricDescriptor, metricValue) <- metricsMap
     } yield EsMetricsDocument(
       timestamp,
-      datasetDescription.value,
+      datasetDescription,
       metricDescriptor,
       metricValue
     )).toList
   }
   def docsToMetricsMap(
       documents: Seq[EsMetricsDocument]
-  ): Map[Instant, Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]] = {
+  ): Map[Instant, Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]] = {
     documents
       .groupBy(_.timestamp)
       .mapValues(
-        _.groupBy(doc => DatasetDescription(doc.datasetDescription))
+        _.groupBy(doc => doc.datasourceDescription)
           .mapValues(
             _.groupBy(_.metricDescriptor)
               .mapValues(_.head.metricValue)
@@ -97,8 +100,8 @@ class ElasticSearchMetricsPersister(client: ElasticClient, index: Index)(implici
 ) extends MetricsPersister {
   override def save(
       timestamp: Instant,
-      metrics: Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]
-  ): Future[Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]] = {
+      metrics: Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]
+  ): Future[Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]] = {
     client
       .execute {
         bulk(
@@ -110,7 +113,7 @@ class ElasticSearchMetricsPersister(client: ElasticClient, index: Index)(implici
       .map(_ => metrics)
   }
 
-  override def loadAll: Future[Map[Instant, Map[DatasetDescription, Map[SimpleMetricDescriptor, MetricValue]]]] = {
+  override def loadAll: Future[Map[Instant, Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]]] = {
     val resp = client.execute {
       search(index) query matchAllQuery
     }

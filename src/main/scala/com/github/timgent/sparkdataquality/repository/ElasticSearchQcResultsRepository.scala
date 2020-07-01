@@ -2,7 +2,7 @@ package com.github.timgent.sparkdataquality.repository
 
 import java.time.Instant
 
-import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType}
+import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, DatasourceDescription, QcType}
 import com.github.timgent.sparkdataquality.checkssuite.{CheckSuiteStatus, ChecksSuiteResult}
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.circe._
@@ -11,6 +11,7 @@ import com.sksamuel.elastic4s.{ElasticClient, ElasticProperties, Index}
 import io.circe.Decoder.Result
 import io.circe.{Decoder, Encoder, HCursor, Json}
 import cats.syntax.either._
+import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, OtherDsDescription, SingleDsDescription}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -55,6 +56,50 @@ object ElasticSearchQcResultsRepository {
   private implicit val checkStatusEncoder: Encoder[CheckStatus] = new Encoder[CheckStatus] {
     override def apply(a: CheckStatus): Json = Json.fromString(a.toString)
   }
+  private[repository] implicit val datasourceDescriptionEncoder: Encoder[DatasourceDescription] = new Encoder[DatasourceDescription] {
+    override def apply(a: DatasourceDescription): Json = {
+      val fields = a match {
+        case SingleDsDescription(datasource) =>
+          Seq(
+            "type" -> Json.fromString("SingleDs"),
+            "datasource" -> Json.fromString(datasource)
+          )
+        case DatasourceDescription.DualDsDescription(datasourceA, datasourceB) =>
+          Seq(
+            "type" -> Json.fromString("DualDs"),
+            "datasourceA" -> Json.fromString(datasourceA),
+            "datasourceB" -> Json.fromString(datasourceB)
+          )
+        case DatasourceDescription.OtherDsDescription(datasource) =>
+          Seq(
+            "type" -> Json.fromString("OtherDs"),
+            "datasource" -> Json.fromString(datasource)
+          )
+      }
+      Json.obj(fields: _*)
+    }
+  }
+  private implicit val datasourceDescriptionDecoder: Decoder[DatasourceDescription] = new Decoder[DatasourceDescription] {
+    override def apply(c: HCursor): Result[DatasourceDescription] =
+      for {
+        datasourceType <- c.downField("type").as[String]
+        datasourceDescription <- datasourceType match {
+          case "SingleDs" =>
+            for {
+              datasource <- c.downField("datasource").as[String]
+            } yield SingleDsDescription(datasource)
+          case "DualDs" =>
+            for {
+              datasourceA <- c.downField("datasourceA").as[String]
+              datasourceB <- c.downField("datasourceB").as[String]
+            } yield DualDsDescription(datasourceA, datasourceB)
+          case "OtherDs" =>
+            for {
+              datasource <- c.downField("datasource").as[String]
+            } yield OtherDsDescription(datasource)
+        }
+      } yield datasourceDescription
+  }
   private implicit val checkResultEncoder: Encoder[CheckResult] = deriveEncoder[CheckResult]
   private implicit val checkResultDecoder: Decoder[CheckResult] = new Decoder[CheckResult] {
     override def apply(c: HCursor): Result[CheckResult] = {
@@ -63,7 +108,7 @@ object ElasticSearchQcResultsRepository {
         status <- c.downField("status").as[String].map(CheckStatus.namesToValuesMap)
         resultDescription <- c.downField("resultDescription").as[String]
         checkDescription <- c.downField("checkDescription").as[String]
-        datasourceDescription = c.downField("datasourceDescription").as[String].fold(_ => None, Some(_))
+        datasourceDescription = c.downField("datasourceDescription").as[DatasourceDescription].fold(_ => None, Some(_))
       } yield CheckResult(qcType, status, resultDescription, checkDescription, datasourceDescription)
     }
   }

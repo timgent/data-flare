@@ -6,11 +6,12 @@ import cats.implicits._
 import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.{VerificationRunBuilder, VerificationSuite}
 import com.github.timgent.sparkdataquality.checks.DatasetComparisonCheck.DatasetPair
+import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, SingleDsDescription}
 import com.github.timgent.sparkdataquality.checks._
 import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
 import com.github.timgent.sparkdataquality.deequ.DeequHelpers.VerificationResultExtension
 import com.github.timgent.sparkdataquality.deequ.DeequNullMetricsRepository
-import com.github.timgent.sparkdataquality.metrics.{DatasetDescription, MetricDescriptor, MetricValue, MetricsCalculator}
+import com.github.timgent.sparkdataquality.metrics.{MetricDescriptor, MetricValue, MetricsCalculator}
 import com.github.timgent.sparkdataquality.repository.{
   InMemoryQcResultsRepository,
   MetricsPersister,
@@ -31,8 +32,7 @@ case class DatasetComparisonCheckWithDs(
 )
 
 case class DescribedDatasetPair(dataset: DescribedDataset, datasetToCompare: DescribedDataset) {
-  def datasourceDescription: Option[String] =
-    Some(s"dataset: ${dataset.description}. datasetToCompare: ${datasetToCompare.description}")
+  def datasourceDescription: Option[DualDsDescription] = Some(DualDsDescription(dataset.description, datasetToCompare.description))
 
   private[sparkdataquality] def rawDatasetPair = DatasetPair(dataset.ds, datasetToCompare.ds)
 }
@@ -56,12 +56,7 @@ case class SingleDatasetMetricChecks(
   * @param ds - the dataset
   * @param description - description of the dataset
   */
-case class DescribedDataset(ds: Dataset[_], description: DatasetDescription)
-
-object DescribedDataset {
-  def apply(dataset: Dataset[_], datasetDescription: String): DescribedDataset =
-    DescribedDataset(dataset, DatasetDescription(datasetDescription))
-}
+case class DescribedDataset(ds: Dataset[_], description: String)
 
 /**
   * List of DualMetricBasedChecks to be run on a pair of datasets
@@ -212,7 +207,7 @@ case class ChecksSuite(
     val metricsToSave = calculatedMetrics.map {
       case (describedDataset, metrics) =>
         (
-          describedDataset.description,
+          SingleDsDescription(describedDataset.description),
           metrics.map {
             case (descriptor, value) => (descriptor.toSimpleMetricDescriptor, value)
           }
@@ -225,7 +220,7 @@ case class ChecksSuite(
     } yield {
       val singleDatasetCheckResults: Seq[CheckResult] = seqSingleDatasetMetricsChecks.flatMap { singleDatasetMetricChecks =>
         val checks = singleDatasetMetricChecks.checks
-        val datasetDescription = singleDatasetMetricChecks.describedDataset.description
+        val datasetDescription = SingleDsDescription(singleDatasetMetricChecks.describedDataset.description)
         val metricsForDs: Map[MetricDescriptor, MetricValue] =
           calculatedMetrics(singleDatasetMetricChecks.describedDataset)
         val checkResults: Seq[CheckResult] = checks.map(
@@ -242,11 +237,10 @@ case class ChecksSuite(
           calculatedMetrics(describedDatasetA)
         val metricsForDsB: Map[MetricDescriptor, MetricValue] =
           calculatedMetrics(describedDatasetB)
+        val datasourceDescription = DualDsDescription(describedDatasetA.description, describedDatasetB.description)
         val checkResults: Seq[CheckResult] = checks.map(
           _.applyCheckOnMetrics(metricsForDsA, metricsForDsB)
-            .withDatasourceDescription(
-              s"${describedDatasetA.description} compared to ${describedDatasetB.description}"
-            )
+            .withDatasourceDescription(datasourceDescription)
         )
         checkResults
       }
