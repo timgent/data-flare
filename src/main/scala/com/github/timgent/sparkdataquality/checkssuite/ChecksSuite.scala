@@ -12,13 +12,7 @@ import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck,
 import com.github.timgent.sparkdataquality.deequ.DeequHelpers.VerificationResultExtension
 import com.github.timgent.sparkdataquality.deequ.DeequNullMetricsRepository
 import com.github.timgent.sparkdataquality.metrics.{MetricDescriptor, MetricValue, MetricsCalculator}
-import com.github.timgent.sparkdataquality.repository.{
-  InMemoryQcResultsRepository,
-  MetricsPersister,
-  NullMetricsPersister,
-  NullQcResultsRepository,
-  QcResultsRepository
-}
+import com.github.timgent.sparkdataquality.repository.{MetricsPersister, NullMetricsPersister, NullQcResultsRepository, QcResultsRepository}
 import com.github.timgent.sparkdataquality.sparkdataquality.DeequMetricsRepository
 import org.apache.spark.sql.Dataset
 
@@ -239,7 +233,7 @@ case class ChecksSuite(
           calculatedMetrics(describedDatasetB)
         val datasourceDescription = DualDsDescription(describedDatasetA.description, describedDatasetB.description)
         val checkResults: Seq[CheckResult] = checks.map(
-          _.applyCheckOnMetrics(metricsForDsA, metricsForDsB)
+          _.applyCheckOnMetrics(metricsForDsA, metricsForDsB, datasourceDescription)
             .withDatasourceDescription(datasourceDescription)
         )
         checkResults
