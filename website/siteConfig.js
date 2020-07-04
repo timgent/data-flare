@@ -20,20 +20,20 @@ const users = [
   },
 ];
 
-const baseUrl = 'https://timgent.github.io/spark-data-quality/'
+const baseUrl = '/spark-data-quality/'
 
 const siteConfig = {
-  title: 'Test Site', // Title for your website.
-  tagline: 'A website for testing',
-  url: 'https://timgent.github.io/spark-data-quality/', // Your website URL
+  title: 'Spark Data Quality', // Title for your website.
+  tagline: 'Tools to ensure the quality of your data, built on Spark',
+  url: 'https://timgent.github.io', // Your website URL
   baseUrl: baseUrl, // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: 'https://facebook.github.io',
   //   baseUrl: '/test-site/',
 
   // Used for publishing and more
-  projectName: 'test-site',
-  organizationName: 'facebook',
+  projectName: 'spark-data-quality',
+  organizationName: 'timgent',
   // For top-level user or org sites, the organization is still the same.
   // e.g., for the https://JoelMarcey.github.io site, it would be set like...
   //   organizationName: 'JoelMarcey'
