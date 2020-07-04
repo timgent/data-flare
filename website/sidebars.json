@@ -30,6 +30,9 @@
     "Persisting your results": [
       "qcresultspersistence",
       "metricspersistence"
+    ],
+    "Developer docs": [
+      "developerdocs"
     ]
   }
 }
