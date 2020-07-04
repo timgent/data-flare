@@ -1,0 +1,157 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>metrics - com.github.timgent.sparkdataquality.checks.metrics</title>
+          <meta name="description" content="metrics - com.github.timgent.sparkdataquality.checks.metrics" />
+          <meta name="keywords" content="metrics com.github.timgent.sparkdataquality.checks.metrics" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../index.html';
+            var hash = 'com.github.timgent.sparkdataquality.checks.metrics.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img alt="Package" src="../../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../../package.html" class="extype" name="com">com</a>.<a href="../../../../package.html" class="extype" name="com.github">github</a>.<a href="../../../package.html" class="extype" name="com.github.timgent">timgent</a>.<a href="../../package.html" class="extype" name="com.github.timgent.sparkdataquality">sparkdataquality</a>.<a href="../package.html" class="extype" name="com.github.timgent.sparkdataquality.checks">checks</a></p>
+        <h1>metrics</h1><span class="permalink">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.package" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">metrics</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="DualMetricBasedCheck[MV&lt;:com.github.timgent.sparkdataquality.metrics.MetricValue]extendsMetricsBasedCheckwithProductwithSerializable"></a>
+      <a id="DualMetricBasedCheck[MV&lt;:MetricValue]:DualMetricBasedCheck[MV]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="DualMetricBasedCheck.html"><span class="name">DualMetricBasedCheck</span></a><span class="tparams">[<span name="MV">MV &lt;: <a href="../../metrics/MetricValue.html" class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricValue">MetricValue</a></span>]</span><span class="params">(<span name="dsAMetricDescriptor">dsAMetricDescriptor: <span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricDescriptor">MetricDescriptor</span></span>, <span name="dsBMetricDescriptor">dsBMetricDescriptor: <span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricDescriptor">MetricDescriptor</span></span>, <span name="userDescription">userDescription: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span name="metricComparator">metricComparator: <a href="../../metrics/MetricComparator.html" class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricComparator">MetricComparator</a>[<span class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck.MV">MV</span>]</span>)</span><span class="result"> extends <span class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.MetricsBasedCheck">MetricsBasedCheck</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.package@DualMetricBasedCheck[MV&lt;:com.github.timgent.sparkdataquality.metrics.MetricValue]extendsMetricsBasedCheckwithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A check based on a metric for one dataset compared to a metric on another dataset
+</p><div class="fullcomment"><div class="comment cmt"><p>A check based on a metric for one dataset compared to a metric on another dataset
+</p></div><dl class="paramcmts block"><dt class="param">dsAMetricDescriptor</dt><dd class="cmt"><p>- the metric to be used on dataset a</p></dd><dt class="param">dsBMetricDescriptor</dt><dd class="cmt"><p>- the metric to be used on dataset b</p></dd><dt class="param">userDescription</dt><dd class="cmt"><p>- description of the check</p></dd><dt class="param">metricComparator</dt><dd class="cmt"><p>- comparison function for the metrics which determines if the check passes</p></dd></dl></div>
+    </li><li name="com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="SingleMetricBasedCheck[MV&lt;:com.github.timgent.sparkdataquality.metrics.MetricValue]extendsMetricsBasedCheckwithProductwithSerializable"></a>
+      <a id="SingleMetricBasedCheck[MV&lt;:MetricValue]:SingleMetricBasedCheck[MV]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="SingleMetricBasedCheck.html"><span class="name">SingleMetricBasedCheck</span></a><span class="tparams">[<span name="MV">MV &lt;: <a href="../../metrics/MetricValue.html" class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricValue">MetricValue</a></span>]</span><span class="params">(<span name="metricDescriptor">metricDescriptor: <span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricDescriptor">MetricDescriptor</span></span>, <span name="description">description: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span name="check">check: (<span class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck.MV">MV</span>) ⇒ <a href="../RawCheckResult.html" class="extype" name="com.github.timgent.sparkdataquality.checks.RawCheckResult">RawCheckResult</a></span>)</span><span class="result"> extends <span class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.MetricsBasedCheck">MetricsBasedCheck</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.package@SingleMetricBasedCheck[MV&lt;:com.github.timgent.sparkdataquality.metrics.MetricValue]extendsMetricsBasedCheckwithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A check based on a single metric</p><div class="fullcomment"><div class="comment cmt"><p>A check based on a single metric</p></div><dl class="paramcmts block"><dt class="tparam">MV</dt><dd class="cmt"><p>- the type of the MetricValue that will be calculated in order to complete this check</p></dd><dt class="param">metricDescriptor</dt><dd class="cmt"><p>- describes the metric the check will be done on</p></dd><dt class="param">description</dt><dd class="cmt"><p>- the user friendly description for this check</p></dd><dt class="param">check</dt><dd class="cmt"><p>- the check to be done</p></dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SingleMetricBasedCheck"></a>
+      <a id="SingleMetricBasedCheck:SingleMetricBasedCheck"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="SingleMetricBasedCheck$.html"><span class="name">SingleMetricBasedCheck</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.package@SingleMetricBasedCheck" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>
