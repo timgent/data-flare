@@ -1,3 +1,9 @@
+---
+id: README
+title: Readme
+sidebar_label: Readme
+---
+
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.timgent/spark-data-quality_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.timgent/spark-data-quality_2.11)
 [![javadoc](https://javadoc.io/badge2/com.github.timgent/spark-data-quality_2.11/javadoc.svg)](https://javadoc.io/doc/com.github.timgent/spark-data-quality_2.11)
 ![Build Status](https://github.com/timgent/spark-data-quality/workflows/Scala%20CI/badge.svg)
@@ -27,7 +33,7 @@ you can perform aligns with the `ChecksSuite` above:
 # Getting started
 Add the following to your dependencies:
 ```
-libraryDependencies += "com.github.timgent" % "spark-data-quality_2.11" % "x.x.x"
+libraryDependencies += "com.github.timgent" % "spark-data-quality_2.11" % "@VERSION@"
 ```
 For other build systems like maven, and to check the latest version go to 
 https://search.maven.org/artifact/com.github.timgent/spark-data-quality_2.11
@@ -40,6 +46,10 @@ checkout the [example](src/main/scala/com/github/timgent/sparkdataquality/exampl
 in the API docs and codebase - just look for anything that implements the QCCheck trait. The tests are also a great
 resource to see example usage.
 
+```scala mdoc
+val x = "checking out this invalid scala code..."
+```
+
 ### Running metric based checks without deequ
 We've built in some metric based checks directly to this library due to some limitations with deequ. In time we hope
 to cover the majority of functionality deequ provides. Currently with the build in metrics checks you can:
@@ -51,20 +61,6 @@ or comparing the metric values between datasets
 ElasticSearchMetricsPersister. The advantage of the ElasticSearch persister is that once your metrics are in 
 ElasticSearch you can easily use Kibana to graph them over time and set up dashboards to track your metrics
 
-# Developer info
-
 ## Published with SBT Sonatype
 https://github.com/xerial/sbt-sonatype
-
-To publish a new version do the following in an sbt shell:
-```
-publishSigned
-sonatypeBundleRelease
-```
-
-## Documentation publishing
-From local machine:
-```
-sbt docs/mdoc && cd website && GITHUB_USER=xxxx CURRENT_BRANCH=xxxx USE_SSH=true yarn run publish-gh-pages
-```
 

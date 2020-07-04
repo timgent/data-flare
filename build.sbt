@@ -1,8 +1,10 @@
 import Dependencies._
 import xerial.sbt.Sonatype.GitHubHosting
 
+val libraryVersion = "0.1.6"
+
 ThisBuild / scalaVersion := "2.11.12"
-ThisBuild / version := "0.1.6"
+ThisBuild / version := libraryVersion
 ThisBuild / organization := "com.github.timgent"
 ThisBuild / organizationName := "timgent"
 
@@ -36,6 +38,16 @@ lazy val root = (project in file("."))
         .inLibrary("com.chuusai" %% "shapeless" % "2.3.2")
         .inProject
     )
+  )
+
+lazy val docs = project // new documentation project
+  .in(file("spark-data-quality-docs")) // important: it must not be docs/
+  .dependsOn(root)
+  .enablePlugins(MdocPlugin, DocusaurusPlugin)
+  .settings(
+//    mdocOut := new File("./docs"),
+    mdocIn := new File("docs-source"),
+    mdocVariables := Map("VERSION" -> libraryVersion)
   )
 
 scalacOptions += "-Ypartial-unification"
