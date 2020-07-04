@@ -1,10 +1,11 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.timgent/spark-data-quality_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.timgent/spark-data-quality_2.11)
-[![javadoc](https://javadoc.io/badge2/com.github.timgent/spark-data-quality_2.11/javadoc.svg)](https://javadoc.io/doc/com.github.timgent/spark-data-quality_2.11)
-![Build Status](https://github.com/timgent/spark-data-quality/workflows/Scala%20CI/badge.svg)
+---
+id: intro
+title: Introduction to Spark Data Quality
+sidebar_label: Introduction
+---
 
-# Spark Data Quality
-A data quality library build with spark and deequ, to give you ultimate flexibility and power in ensuring your data
-is of high quality.
+Spark Data Quality is a data quality library built with spark and deequ, to give you ultimate flexibility and power in 
+ensuring your data is of high quality.
 
 # What does this library give you?
 * The ability to neatly define and run quality checks on your data efficiently
