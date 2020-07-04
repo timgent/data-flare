@@ -70,6 +70,11 @@ To update the documentation from the docs-sources folder run:
 sbt docs/mdoc
 ```
 
+To update API docs run:
+```
+sbt docs/unidoc
+```
+
 To run the documentation site locally run:
 ```
 cd website && yarn start

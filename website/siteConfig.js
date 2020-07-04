@@ -20,11 +20,13 @@ const users = [
   },
 ];
 
+const baseUrl = 'https://timgent.github.io/spark-data-quality/'
+
 const siteConfig = {
   title: 'Test Site', // Title for your website.
   tagline: 'A website for testing',
   url: 'https://timgent.github.io/spark-data-quality/', // Your website URL
-  baseUrl: 'https://timgent.github.io/spark-data-quality/', // Base URL for your project */
+  baseUrl: baseUrl, // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: 'https://facebook.github.io',
   //   baseUrl: '/test-site/',
@@ -39,10 +41,14 @@ const siteConfig = {
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
     {doc: 'README', label: 'Docs'},
+    { href: `${baseUrl}api/index.html`, label: 'API'},
 //    {doc: 'doc4', label: 'API'},
 //    {page: 'help', label: 'Help'},
 //    {blog: true, label: 'Blog'},
   ],
+
+// by default Docusaurus combines CSS files in a way that doesn't play nicely with Scaladoc
+  separateCss: ["api"],
 
   // If you have users set above, you add it here:
   users,

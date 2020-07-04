@@ -43,9 +43,14 @@ lazy val root = (project in file("."))
 lazy val docs = project // new documentation project
   .in(file("spark-data-quality-docs")) // important: it must not be docs/
   .dependsOn(root)
-  .enablePlugins(MdocPlugin, DocusaurusPlugin)
+  .enablePlugins(MdocPlugin, DocusaurusPlugin, ScalaUnidocPlugin)
   .settings(
-//    mdocOut := new File("./docs"),
+    moduleName := "spark-data-quality-docs",
+    unidocProjectFilter in (ScalaUnidoc, unidoc) := inProjects(root),
+    target in (ScalaUnidoc, unidoc) := (baseDirectory in LocalRootProject).value / "website" / "static" / "api",
+    cleanFiles += (target in (ScalaUnidoc, unidoc)).value,
+    docusaurusCreateSite := docusaurusCreateSite.dependsOn(unidoc in Compile).value,
+    docusaurusPublishGhpages := docusaurusPublishGhpages.dependsOn(unidoc in Compile).value,
     mdocIn := new File("docs-source"),
     mdocVariables := Map("VERSION" -> libraryVersion)
   )
