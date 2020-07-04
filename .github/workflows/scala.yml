@@ -21,3 +21,5 @@ jobs:
         run: docker run -d -p 9200:9200 -e discovery.type=single-node elasticsearch:7.1.0
       - name: Run tests
         run: sbt test
+      - name: Check documentation builds
+        run: sbt docs/mdoc
