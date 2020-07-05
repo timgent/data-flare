@@ -7,7 +7,7 @@
     <link rel="alternate" href="https://timgent.github.io/spark-data-quality/blog"/>
     <subtitle>The best place to stay up-to-date with the latest Spark Data Quality news and events.</subtitle>
     <logo>https://timgent.github.io/spark-data-quality/img/favicon.ico</logo>
-    <rights>Copyright © 2020 Your Name or Your Company Name</rights>
+    <rights>Copyright © 2020 Tim Gent</rights>
     <entry>
         <title type="html"><![CDATA[New Version 1.0.0]]></title>
         <id>https://timgent.github.io/spark-data-quality/blog/2017/10/24/new-version-1.0.0.html</id>
@@ -16,7 +16,6 @@
         <summary type="html"><![CDATA[<p>This blog post will test file name parsing issues when periods are present.</p> ]]></summary>
         <author>
             <name>Eric Nakagawa</name>
-            <email/>
             <uri>http://twitter.com/ericnakagawa</uri>
         </author>
     </entry>
@@ -28,7 +27,6 @@
         <summary type="html"><![CDATA[<p>This is a test post.</p> <p>A whole bunch of other information.</p> ]]></summary>
         <author>
             <name>Eric Nakagawa</name>
-            <email/>
             <uri>http://twitter.com/ericnakagawa</uri>
         </author>
     </entry>
@@ -42,7 +40,6 @@
 ]]></summary>
         <author>
             <name>Eric Nakagawa</name>
-            <email/>
             <uri>http://twitter.com/ericnakagawa</uri>
         </author>
     </entry>
@@ -55,7 +52,6 @@
 ]]></summary>
         <author>
             <name>Blog Author</name>
-            <email/>
             <uri>http://twitter.com/</uri>
         </author>
     </entry>
@@ -68,7 +64,6 @@
 ]]></summary>
         <author>
             <name>Blog Author</name>
-            <email/>
             <uri>http://twitter.com/</uri>
         </author>
     </entry>
