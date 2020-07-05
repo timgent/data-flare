@@ -4,7 +4,7 @@ import java.time.Instant
 
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.SingleDsDescription
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.SizeMetricDescriptor
+import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.SizeMetric
 import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
 import com.github.timgent.sparkdataquality.metrics.{MetricValue, SimpleMetricDescriptor}
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
@@ -27,19 +27,19 @@ class ElasticSearchMetricsPersisterTest extends AsyncWordSpec with Matchers with
 
       val initialResultsToInsert: Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]] = Map(
         SingleDsDescription("dsA") -> Map(
-          SizeMetricDescriptor().toSimpleMetricDescriptor -> LongMetric(1)
+          SizeMetric().toSimpleMetricDescriptor -> LongMetric(1)
         ),
         SingleDsDescription("dsB") -> Map(
-          SizeMetricDescriptor().toSimpleMetricDescriptor -> LongMetric(1)
+          SizeMetric().toSimpleMetricDescriptor -> LongMetric(1)
         )
       )
       val moreResultsToInsert: Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]] =
         Map(
           SingleDsDescription("dsA") -> Map(
-            SizeMetricDescriptor().toSimpleMetricDescriptor -> LongMetric(2)
+            SizeMetric().toSimpleMetricDescriptor -> LongMetric(2)
           ),
           SingleDsDescription("dsC") -> Map(
-            SizeMetricDescriptor().toSimpleMetricDescriptor -> LongMetric(1)
+            SizeMetric().toSimpleMetricDescriptor -> LongMetric(1)
           )
         )
 

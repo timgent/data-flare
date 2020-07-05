@@ -15,7 +15,7 @@ import org.scalatest.wordspec.AnyWordSpec
 class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Matchers with MockFactory {
 
   "DualMetricBasedCheck" should {
-    val simpleSizeMetric = MetricDescriptor.SizeMetricDescriptor()
+    val simpleSizeMetric = MetricDescriptor.SizeMetric()
     val dualMetricBasedCheck =
       DualMetricBasedCheck[LongMetric](simpleSizeMetric, simpleSizeMetric, "size comparison")(
         MetricComparator.metricsAreEqual
@@ -31,7 +31,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
         QcType.MetricsBasedQualityCheck,
         CheckStatus.Success,
         "metric comparison passed. dsA with LongMetric(2) was compared to dsB with LongMetric(2)",
-        "size comparison. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to SizeMetricDescriptor(MetricFilter(true,no filter)) using comparator of metrics are equal"
+        "size comparison. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to SizeMetric(MetricFilter(true,no filter)) using comparator of metrics are equal"
       )
     }
 
@@ -45,7 +45,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
         QcType.MetricsBasedQualityCheck,
         CheckStatus.Error,
         "metric comparison failed. dsA with LongMetric(2) was compared to dsB with LongMetric(3)",
-        "size comparison. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to SizeMetricDescriptor(MetricFilter(true,no filter)) using comparator of metrics are equal"
+        "size comparison. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to SizeMetric(MetricFilter(true,no filter)) using comparator of metrics are equal"
       )
     }
 
@@ -70,7 +70,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
   "NewSingleMetricsBasedCheck" should {
     val metric = mock[MetricDescriptor]
     val exampleCheck = SingleMetricBasedCheck[LongMetric](metric, "exampleCheck") { metricValue =>
-      val isWithinThreshold = AbsoluteThreshold(2L, 2L).isWithinThreshold(metricValue.value)
+      val isWithinThreshold = AbsoluteThreshold(2L, 2L).isWithinThreshold(metricValue)
       if (isWithinThreshold)
         RawCheckResult(CheckStatus.Success, "it's within the threshold")
       else
@@ -79,7 +79,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
 
     "apply the check when the required metric is provided in the metrics map" in {
       val result =
-        exampleCheck.applyCheckOnMetrics(Map(exampleCheck.metricDescriptor -> LongMetric(2)))
+        exampleCheck.applyCheckOnMetrics(Map(exampleCheck.metric -> LongMetric(2)))
       result.status shouldBe CheckStatus.Success
     }
 
@@ -91,7 +91,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
 
     "fail when the required metric is the wrong type" in {
       val result = exampleCheck.applyCheckOnMetrics(
-        Map(exampleCheck.metricDescriptor -> DoubleMetric(2))
+        Map(exampleCheck.metric -> DoubleMetric(2))
       )
       result.status shouldBe CheckStatus.Error
       result.resultDescription shouldBe "Found metric of the wrong type for this check. Please report this error - this should not occur"
@@ -103,7 +103,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
 
     "apply the check when the required metric is provided in the metrics map" in {
       val result =
-        simpleSizeCheck.applyCheckOnMetrics(Map(simpleSizeCheck.metricDescriptor -> LongMetric(2)))
+        simpleSizeCheck.applyCheckOnMetrics(Map(simpleSizeCheck.metric -> LongMetric(2)))
       result.status shouldBe CheckStatus.Success
     }
 
@@ -115,7 +115,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
 
     "fail when the required metric is the wrong type" in {
       val result = simpleSizeCheck.applyCheckOnMetrics(
-        Map(simpleSizeCheck.metricDescriptor -> DoubleMetric(2))
+        Map(simpleSizeCheck.metric -> DoubleMetric(2))
       )
       result.status shouldBe CheckStatus.Error
       result.resultDescription shouldBe "Found metric of the wrong type for this check. Please report this error - this should not occur"
@@ -126,7 +126,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     "pass a check where the size is within the threshold" in {
       val check = SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter.noFilter)
       val result: CheckResult =
-        check.applyCheckOnMetrics(Map(check.metricDescriptor -> LongMetric(2)))
+        check.applyCheckOnMetrics(Map(check.metric -> LongMetric(2)))
       result shouldBe CheckResult(
         QcType.MetricsBasedQualityCheck,
         CheckStatus.Success,
@@ -139,7 +139,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
       val check =
         SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter(lit(false), "someFilter"))
       val result: CheckResult =
-        check.applyCheckOnMetrics(Map(check.metricDescriptor -> LongMetric(4)))
+        check.applyCheckOnMetrics(Map(check.metric -> LongMetric(4)))
       result shouldBe CheckResult(
         QcType.MetricsBasedQualityCheck,
         CheckStatus.Error,
@@ -157,7 +157,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
         MetricFilter.noFilter
       )
       val result: CheckResult =
-        check.applyCheckOnMetrics(Map(check.metricDescriptor -> DoubleMetric(0.9)))
+        check.applyCheckOnMetrics(Map(check.metric -> DoubleMetric(0.9)))
       result shouldBe CheckResult(
         QcType.MetricsBasedQualityCheck,
         CheckStatus.Success,
@@ -173,7 +173,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
         MetricFilter.noFilter
       )
       val result: CheckResult =
-        check.applyCheckOnMetrics(Map(check.metricDescriptor -> DoubleMetric(0.8)))
+        check.applyCheckOnMetrics(Map(check.metric -> DoubleMetric(0.8)))
       result shouldBe CheckResult(
         QcType.MetricsBasedQualityCheck,
         CheckStatus.Error,

@@ -2,9 +2,9 @@ package com.github.timgent.sparkdataquality.checks.metrics
 
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType, RawCheckResult}
 import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{
-  ComplianceMetricDescriptor,
-  DistinctValuesMetricDescriptor,
-  SizeMetricDescriptor
+  ComplianceMetric,
+  DistinctValuesMetric,
+  SizeMetric
 }
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.metrics.{ComplianceFn, MetricDescriptor, MetricFilter, MetricValue}
@@ -14,16 +14,16 @@ import scala.reflect.ClassTag
 
 /**
   * A check based on a single metric
-  * @param metricDescriptor - describes the metric the check will be done on
+  * @param metric - describes the metric the check will be done on
   * @param description - the user friendly description for this check
   * @param check - the check to be done
   * @tparam MV - the type of the MetricValue that will be calculated in order to complete this check
   */
-case class SingleMetricBasedCheck[MV <: MetricValue](metricDescriptor: MetricDescriptor, description: String)(
-    check: MV => RawCheckResult
+case class SingleMetricBasedCheck[MV <: MetricValue](metric: MetricDescriptor, description: String)(
+    check: MV#T => RawCheckResult
 ) extends MetricsBasedCheck {
   def applyCheck(metric: MV): CheckResult = {
-    check(metric).withDescription(QcType.MetricsBasedQualityCheck, description)
+    check(metric.value).withDescription(QcType.MetricsBasedQualityCheck, description)
   }
 
   // typeTag required here to enable match of metric on type MV. Without class tag this type check would be fruitless
@@ -31,7 +31,7 @@ case class SingleMetricBasedCheck[MV <: MetricValue](metricDescriptor: MetricDes
       metrics: Map[MetricDescriptor, MetricValue]
   )(implicit classTag: ClassTag[MV]): CheckResult = {
     val metricOfInterestOpt: Option[MetricValue] =
-      metrics.get(metricDescriptor).map(metricValue => metricValue)
+      metrics.get(metric).map(metricValue => metricValue)
     metricOfInterestOpt match {
       case Some(metric) =>
         metric match { // TODO: Look into heterogenous maps to avoid this type test - https://github.com/milessabin/shapeless/wiki/Feature-overview:-shapeless-1.2.4#heterogenous-maps
@@ -58,16 +58,16 @@ object SingleMetricBasedCheck {
       description: String,
       threshold: AbsoluteThreshold[MV#T]
   ): SingleMetricBasedCheck[MV] = {
-    SingleMetricBasedCheck(metricDescriptor, description) { metricValue: MV =>
-      if (threshold.isWithinThreshold(metricValue.value)) {
+    SingleMetricBasedCheck(metricDescriptor, description) { metricValue: MV#T =>
+      if (threshold.isWithinThreshold(metricValue)) {
         RawCheckResult(
           CheckStatus.Success,
-          s"${metricDescriptor.metricName} of ${metricValue.value} was within the range $threshold"
+          s"${metricDescriptor.metricName} of ${metricValue} was within the range $threshold"
         )
       } else {
         RawCheckResult(
           CheckStatus.Error,
-          s"${metricDescriptor.metricName} of ${metricValue.value} was outside the range $threshold"
+          s"${metricDescriptor.metricName} of ${metricValue} was outside the range $threshold"
         )
       }
     }
@@ -79,7 +79,7 @@ object SingleMetricBasedCheck {
     * @param filter - filter to be applied before rows are counted
     */
   def sizeCheck(threshold: AbsoluteThreshold[Long], filter: MetricFilter = MetricFilter.noFilter): SingleMetricBasedCheck[LongMetric] =
-    thresholdBasedCheck[LongMetric](SizeMetricDescriptor(filter), s"SizeCheck with filter: ${filter.filterDescription}", threshold)
+    thresholdBasedCheck[LongMetric](SizeMetric(filter), s"SizeCheck with filter: ${filter.filterDescription}", threshold)
 
   /**
     * Checks the fraction of rows that are compliant with the given complianceFn
@@ -93,7 +93,7 @@ object SingleMetricBasedCheck {
       filter: MetricFilter = MetricFilter.noFilter
   ): SingleMetricBasedCheck[DoubleMetric] =
     thresholdBasedCheck[DoubleMetric](
-      ComplianceMetricDescriptor(complianceFn, filter),
+      ComplianceMetric(complianceFn, filter),
       s"ComplianceCheck ${complianceFn.description} with filter: ${filter.filterDescription}",
       threshold
     )
@@ -110,7 +110,7 @@ object SingleMetricBasedCheck {
       filter: MetricFilter = MetricFilter.noFilter
   ): SingleMetricBasedCheck[LongMetric] =
     thresholdBasedCheck[LongMetric](
-      DistinctValuesMetricDescriptor(onColumns, filter),
+      DistinctValuesMetric(onColumns, filter),
       s"DistinctValuesCheck on columns: $onColumns with filter: ${filter.filterDescription}",
       threshold
     )

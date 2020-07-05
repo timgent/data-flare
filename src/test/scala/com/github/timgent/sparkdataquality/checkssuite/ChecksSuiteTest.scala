@@ -79,7 +79,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
         )
         val checkSuiteDescription = "my first metricsCheckSuite"
         val metricsBasedChecksSuite =
-          ChecksSuite(checkSuiteDescription, seqSingleDatasetMetricsChecks = checks, tags = someTags)
+          ChecksSuite(checkSuiteDescription, singleDatasetMetricChecks = checks, tags = someTags)
 
         for {
           checkResults: ChecksSuiteResult <- metricsBasedChecksSuite.run(now)
@@ -122,7 +122,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
         val checkSuiteDescription = "my first metricsCheckSuite"
         val metricsBasedChecksSuite = ChecksSuite(
           checkSuiteDescription,
-          seqSingleDatasetMetricsChecks = singleDatasetChecks,
+          singleDatasetMetricChecks = singleDatasetChecks,
           tags = someTags
         )
 
@@ -156,7 +156,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
     }
     "has dual metric based checks" should {
       "calculate metrics based checks between datasets" in {
-        val simpleSizeMetric = MetricDescriptor.SizeMetricDescriptor()
+        val simpleSizeMetric = MetricDescriptor.SizeMetric()
         val dsA = Seq(
           NumberString(1, "a"),
           NumberString(2, "b"),
@@ -180,7 +180,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
         val checkSuiteDescription = "my first metricsCheckSuite"
         val metricsBasedChecksSuite = ChecksSuite(
           checkSuiteDescription,
-          seqDualDatasetMetricChecks = Seq(dualDatasetChecks),
+          dualDatasetMetricChecks = Seq(dualDatasetChecks),
           tags = someTags
         )
 
@@ -196,7 +196,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
                 CheckStatus.Success,
                 "metric comparison passed. dsA with LongMetric(3) was compared to dsB with LongMetric(3)",
                 "check size metrics are equal. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to " +
-                  "SizeMetricDescriptor(MetricFilter(true,no filter)) using comparator of metrics are equal",
+                  "SizeMetric(MetricFilter(true,no filter)) using comparator of metrics are equal",
                 Some(DualDsDescription("dsA", "dsB"))
               )
             ),
@@ -209,7 +209,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
 
     "has any metrics based checks at all" should {
       "store all metrics in a metrics repository" in {
-        val simpleSizeMetric = MetricDescriptor.SizeMetricDescriptor()
+        val simpleSizeMetric = MetricDescriptor.SizeMetric()
         val dsA = Seq(
           NumberString(1, "a"),
           NumberString(2, "b"),
@@ -245,9 +245,9 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
         val inMemoryMetricsPersister = new InMemoryMetricsPersister
         val metricsBasedChecksSuite = ChecksSuite(
           checkSuiteDescription,
-          seqSingleDatasetMetricsChecks = singleDatasetChecks,
+          singleDatasetMetricChecks = singleDatasetChecks,
           tags = someTags,
-          seqDualDatasetMetricChecks = Seq(dualDatasetChecks),
+          dualDatasetMetricChecks = Seq(dualDatasetChecks),
           metricsPersister = inMemoryMetricsPersister
         )
 
@@ -384,7 +384,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
         }
         val qualityChecks = ChecksSuite(
           "table A vs table B comparison",
-          datasetComparisonChecks = Seq(DatasetComparisonCheckWithDs(datasetPair, Seq(datasetComparisonCheck))),
+          dualDatasetChecks = Seq(DualDatasetCheckWithDs(datasetPair, Seq(datasetComparisonCheck))),
           tags = someTags,
           qcResultsRepository = qcResultsRepository
         )
