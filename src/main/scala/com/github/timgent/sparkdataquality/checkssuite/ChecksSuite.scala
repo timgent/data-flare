@@ -11,16 +11,19 @@ import com.github.timgent.sparkdataquality.checks._
 import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
 import com.github.timgent.sparkdataquality.deequ.DeequHelpers.VerificationResultExtension
 import com.github.timgent.sparkdataquality.deequ.DeequNullMetricsRepository
+import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.DistinctValuesMetric
+import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
 import com.github.timgent.sparkdataquality.metrics.{MetricDescriptor, MetricValue, MetricsCalculator}
 import com.github.timgent.sparkdataquality.repository.{MetricsPersister, NullMetricsPersister, NullQcResultsRepository, QcResultsRepository}
 import com.github.timgent.sparkdataquality.sparkdataquality.DeequMetricsRepository
-import org.apache.spark.sql.Dataset
+import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
+import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 case class SingleDatasetCheckWithDs(dataset: DescribedDataset, checks: Seq[SingleDatasetCheck])
 
-case class DatasetComparisonCheckWithDs(
+case class DualDatasetCheckWithDs(
     datasets: DescribedDatasetPair,
     checks: Seq[DatasetComparisonCheck]
 )
@@ -66,12 +69,12 @@ case class DualDatasetMetricChecks(
 
 /**
   * Main entry point which contains the suite of checks you want to perform
-  * @param checkSuiteDescription - dsecription of the check suite
+  * @param checkSuiteDescription - description of the check suite
   * @param tags - any tags associated with the check suite
-  * @param seqSingleDatasetMetricsChecks - list of metric based checks to perform on single datasets
-  * @param seqDualDatasetMetricChecks - list of metric based checks where the metrics are compared across pairs of datasets
+  * @param singleDatasetMetricChecks - list of metric based checks to perform on single datasets
+  * @param dualDatasetMetricChecks - list of metric based checks where the metrics are compared across pairs of datasets
   * @param singleDatasetChecks - arbitrary checks performed on single datasets
-  * @param datasetComparisonChecks - arbitrary checks performed on pairs of datasets
+  * @param dualDatasetChecks - arbitrary checks performed on pairs of datasets
   * @param arbitraryChecks - any other arbitrary checks
   * @param deequChecks - checks to perform using deequ as the underlying checking mechanism
   * @param metricsPersister - how to persist metrics
@@ -81,10 +84,10 @@ case class DualDatasetMetricChecks(
 case class ChecksSuite(
     checkSuiteDescription: String,
     tags: Map[String, String] = Map.empty,
-    seqSingleDatasetMetricsChecks: Seq[SingleDatasetMetricChecks] = Seq.empty,
-    seqDualDatasetMetricChecks: Seq[DualDatasetMetricChecks] = Seq.empty,
+    singleDatasetMetricChecks: Seq[SingleDatasetMetricChecks] = Seq.empty,
+    dualDatasetMetricChecks: Seq[DualDatasetMetricChecks] = Seq.empty,
     singleDatasetChecks: Seq[SingleDatasetCheckWithDs] = Seq.empty,
-    datasetComparisonChecks: Seq[DatasetComparisonCheckWithDs] = Seq.empty,
+    dualDatasetChecks: Seq[DualDatasetCheckWithDs] = Seq.empty,
     arbitraryChecks: Seq[ArbitraryCheck] = Seq.empty,
     deequChecks: Seq[DeequCheck] = Seq.empty,
     metricsPersister: MetricsPersister = NullMetricsPersister,
@@ -108,7 +111,7 @@ case class ChecksSuite(
       checkResults = check.applyCheck(singleDatasetCheck.dataset)
     } yield checkResults
     val datasetComparisonCheckResults: Seq[CheckResult] = for {
-      datasetComparisonCheck <- datasetComparisonChecks
+      datasetComparisonCheck <- dualDatasetChecks
       check <- datasetComparisonCheck.checks
       checkResults = check.applyCheck(datasetComparisonCheck.datasets)
     } yield checkResults
@@ -163,19 +166,19 @@ case class ChecksSuite(
     val singleDatasetMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] = (for {
       singleDatasetMetricChecks <- seqSingleDatasetMetricsChecks
       describedDataset: DescribedDataset = singleDatasetMetricChecks.describedDataset
-      metricDescriptors = singleDatasetMetricChecks.checks.map(_.metricDescriptor).toList
+      metricDescriptors = singleDatasetMetricChecks.checks.map(_.metric).toList
     } yield (describedDataset, metricDescriptors)).groupBy(_._1).mapValues(_.flatMap(_._2).toList)
 
     val dualDatasetAMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] = (for {
       dualDatasetMetricChecks <- seqDualDatasetMetricChecks
       describedDatasetA: DescribedDataset = dualDatasetMetricChecks.describedDatasetA
-      metricDescriptors = dualDatasetMetricChecks.checks.map(_.dsAMetricDescriptor).toList
+      metricDescriptors = dualDatasetMetricChecks.checks.map(_.dsAMetric).toList
     } yield (describedDatasetA, metricDescriptors)).groupBy(_._1).mapValues(_.flatMap(_._2).toList)
 
     val dualDatasetBMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] = (for {
       dualDatasetMetricChecks <- seqDualDatasetMetricChecks
       describedDatasetB: DescribedDataset = dualDatasetMetricChecks.describedDatasetB
-      metricDescriptors = dualDatasetMetricChecks.checks.map(_.dsBMetricDescriptor).toList
+      metricDescriptors = dualDatasetMetricChecks.checks.map(_.dsBMetric).toList
     } yield (describedDatasetB, metricDescriptors)).groupBy(_._1).mapValues(_.flatMap(_._2).toList)
 
     val allMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] =
@@ -189,7 +192,7 @@ case class ChecksSuite(
       timestamp: Instant
   )(implicit ec: ExecutionContext): Future[Seq[CheckResult]] = {
     val allMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] =
-      getMinimumRequiredMetrics(seqSingleDatasetMetricsChecks, seqDualDatasetMetricChecks)
+      getMinimumRequiredMetrics(singleDatasetMetricChecks, dualDatasetMetricChecks)
     val calculatedMetrics: Map[DescribedDataset, Map[MetricDescriptor, MetricValue]] =
       allMetricDescriptors.map {
         case (describedDataset, metricDescriptors) =>
@@ -212,7 +215,7 @@ case class ChecksSuite(
     for {
       _ <- storedMetricsFut
     } yield {
-      val singleDatasetCheckResults: Seq[CheckResult] = seqSingleDatasetMetricsChecks.flatMap { singleDatasetMetricChecks =>
+      val singleDatasetCheckResults: Seq[CheckResult] = singleDatasetMetricChecks.flatMap { singleDatasetMetricChecks =>
         val checks = singleDatasetMetricChecks.checks
         val datasetDescription = SingleDsDescription(singleDatasetMetricChecks.describedDataset.description)
         val metricsForDs: Map[MetricDescriptor, MetricValue] =
@@ -223,7 +226,7 @@ case class ChecksSuite(
         checkResults
       }
 
-      val dualDatasetCheckResults: Seq[CheckResult] = seqDualDatasetMetricChecks.flatMap { dualDatasetMetricChecks =>
+      val dualDatasetCheckResults: Seq[CheckResult] = dualDatasetMetricChecks.flatMap { dualDatasetMetricChecks =>
         val checks = dualDatasetMetricChecks.checks
         val describedDatasetA = dualDatasetMetricChecks.describedDatasetA
         val describedDatasetB = dualDatasetMetricChecks.describedDatasetB

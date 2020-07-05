@@ -1,6 +1,8 @@
 target/
 .idea
 
+Temp.scala
+
 .DS_Store
 
 node_modules

@@ -14,7 +14,7 @@ class MetricsCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Match
         NumberString(2, "b")
       )
 
-      val sizeMetricDescriptor = MetricDescriptor.SizeMetricDescriptor(MetricFilter.noFilter)
+      val sizeMetricDescriptor = MetricDescriptor.SizeMetric(MetricFilter.noFilter)
 
       val calculatedMetrics: Map[MetricDescriptor, MetricValue] =
         MetricsCalculator.calculateMetrics(ds.toDS, Seq(sizeMetricDescriptor))

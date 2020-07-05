@@ -9,21 +9,21 @@ import scala.reflect.ClassTag
 /**
   * A check based on a metric for one dataset compared to a metric on another dataset
   *
-  * @param dsAMetricDescriptor - the metric to be used on dataset a
-  * @param dsBMetricDescriptor - the metric to be used on dataset b
+  * @param dsAMetric - the metric to be used on dataset a
+  * @param dsBMetric - the metric to be used on dataset b
   * @param metricComparator    - comparison function for the metrics which determines if the check passes
   * @param userDescription     - description of the check
   * @tparam MV
   */
 final case class DualMetricBasedCheck[MV <: MetricValue](
-    dsAMetricDescriptor: MetricDescriptor,
-    dsBMetricDescriptor: MetricDescriptor,
+    dsAMetric: MetricDescriptor,
+    dsBMetric: MetricDescriptor,
     userDescription: String
 )(metricComparator: MetricComparator[MV])
     extends MetricsBasedCheck {
 
   override def description: String =
-    s"$userDescription. Comparing metric ${dsAMetricDescriptor.toSimpleMetricDescriptor} to ${dsBMetricDescriptor} using comparator of ${metricComparator.description}"
+    s"$userDescription. Comparing metric ${dsAMetric.toSimpleMetricDescriptor} to ${dsBMetric} using comparator of ${metricComparator.description}"
 
   override def qcType: QcType = QcType.MetricsBasedQualityCheck
 
@@ -49,8 +49,8 @@ final case class DualMetricBasedCheck[MV <: MetricValue](
       dsBMetrics: Map[MetricDescriptor, MetricValue],
       dualDsDescription: DualDsDescription
   )(implicit classTag: ClassTag[MV]): CheckResult = {
-    val dsAMetricOpt: Option[MetricValue] = dsAMetrics.get(dsAMetricDescriptor)
-    val dsBMetricOpt: Option[MetricValue] = dsBMetrics.get(dsBMetricDescriptor)
+    val dsAMetricOpt: Option[MetricValue] = dsAMetrics.get(dsAMetric)
+    val dsBMetricOpt: Option[MetricValue] = dsBMetrics.get(dsBMetric)
     (dsAMetricOpt, dsBMetricOpt) match {
       case (Some(dsAMetric), Some(dsBMetric)) =>
         (dsAMetric, dsBMetric) match {

@@ -10,10 +10,10 @@ by enabling you to easily store and visualize key metrics for your data and trac
 
 ## How does it work?
 * You define checks in Scala code, giving you complete flexibility with the checks you want to define.
-** Checks can be based on metrics associated with the data, such as the size of a dataset, level of compliance with a
+  * Checks can be based on metrics associated with the data, such as the size of a dataset, level of compliance with a
 particular condition, etc. SDQ runs these checks efficiently, using a single pass over the data to calculate all
 metrics.
-** Checks can be completely arbitrary, enabling you to do more complex checks that couldn't be represented by a data 
+  * Checks can be completely arbitrary, enabling you to do more complex checks that couldn't be represented by a data 
 metric
 * SDQ returns you an object with all the details of the outcomes of your checks, so you can decide how to
 handle them, for example failing your Spark job if the related quality checks are giving errors.
@@ -27,6 +27,18 @@ built-in checks at present. However, please be aware metrics related to Deequ ar
 metrics, and currently Deequ only supports persisting of Deequ metrics as a JSON blob in a file. For this reason we 
 recommend using SDQ checks where possible.
 
+## Comparison to other data quality tools
+SDQ was inspired by other data quality tools such as [Deequ](https://github.com/awslabs/deequ). We've found other
+libraries can make it more challenging to have complex checks, so SDQ tries to give greater flexibility and
+extensibility by:
+
+* SQD allows metrics-based checks to do comparisons between different metrics and datasets, so that you are able to do
+relative comparisons rather than just absolute comparisons.
+* SDQ allows the definition of custom checks as part of your ChecksSuite. While not as performant as the checks based on
+metrics, having the flexibility to include these we feel gives more power and choice.
+* All of SDQ's storage methods are extensible, giving users the ability to store results and metrics wherever they 
+choose
+
 ## Getting started
 Add the following to your dependencies:
 ```
@@ -39,4 +51,5 @@ You can [find the javadocs here](https://www.javadoc.io/doc/com.github.timgent/s
 
 ## An example
 The rest of the documentation will talk through the main features and how to use them. However some find it easier to
-follow an example, so you can [find some example code and explanation here](src/main/scala/com/github/timgent/sparkdataquality/examples).
+follow an example, so you can 
+[find some example code and explanation here](https://github.com/timgent/spark-data-quality/tree/master/src/main/scala/com/github/timgent/sparkdataquality/examples).

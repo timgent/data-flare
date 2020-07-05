@@ -51,7 +51,7 @@ object MetricDescriptor {
     * A metric that calculates the number of rows in your dataset
     * @param filter - filter to be applied before the size is calculated
     */
-  case class SizeMetricDescriptor(filter: MetricFilter = MetricFilter.noFilter) extends MetricDescriptor with Filterable {
+  case class SizeMetric(filter: MetricFilter = MetricFilter.noFilter) extends MetricDescriptor with Filterable {
     override def metricCalculator: SizeMetricCalculator = SizeMetricCalculator(filter)
     override def toSimpleMetricDescriptor: SimpleMetricDescriptor =
       SimpleMetricDescriptor(metricName, Some(filter.filterDescription))
@@ -63,7 +63,7 @@ object MetricDescriptor {
     * A metric that calculates the number of rows in your dataset
     * @param filter - filter to be applied before the size is calculated
     */
-  case class SumValuesMetricDescriptor[MV <: NumericMetricValue: MetricValueConstructor](
+  case class SumValuesMetric[MV <: NumericMetricValue: MetricValueConstructor](
       onColumn: String,
       filter: MetricFilter = MetricFilter.noFilter
   ) extends MetricDescriptor
@@ -80,7 +80,7 @@ object MetricDescriptor {
     * @param complianceFn - the criteria used to check each rows compliance
     * @param filter - a filter to be applied before the compliance fraction is calculated
     */
-  case class ComplianceMetricDescriptor(
+  case class ComplianceMetric(
       complianceFn: ComplianceFn,
       filter: MetricFilter = MetricFilter.noFilter
   ) extends MetricDescriptor
@@ -102,7 +102,7 @@ object MetricDescriptor {
     * @param onColumns - the columns for which you are counting distinct values
     * @param filter - the filter to be applied before the distinct count is calculated
     */
-  case class DistinctValuesMetricDescriptor(
+  case class DistinctValuesMetric(
       onColumns: List[String],
       filter: MetricFilter = MetricFilter.noFilter
   ) extends MetricDescriptor

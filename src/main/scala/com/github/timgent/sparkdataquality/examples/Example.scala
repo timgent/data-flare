@@ -7,7 +7,7 @@ import com.github.timgent.sparkdataquality.checks.{CheckStatus, RawCheckResult, 
 import com.github.timgent.sparkdataquality.checkssuite._
 import com.github.timgent.sparkdataquality.examples.Day1Checks.qcResults
 import com.github.timgent.sparkdataquality.examples.ExampleHelpers.{Customer, Order, _}
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{DistinctValuesMetricDescriptor, SizeMetricDescriptor}
+import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{DistinctValuesMetric, SizeMetric}
 import com.github.timgent.sparkdataquality.metrics.{ComplianceFn, MetricComparator}
 import com.github.timgent.sparkdataquality.repository.{ElasticSearchMetricsPersister, ElasticSearchQcResultsRepository}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
@@ -161,8 +161,8 @@ object Helpers {
         customersWithOrdersDs,
         List(
           DualMetricBasedCheck(
-            SizeMetricDescriptor(),
-            DistinctValuesMetricDescriptor(List("customer_id")),
+            SizeMetric(),
+            DistinctValuesMetric(List("customer_id")),
             "Keep all customers"
           )(MetricComparator.metricsAreEqual)
         )
@@ -172,8 +172,8 @@ object Helpers {
         customersWithOrdersDs,
         List(
           DualMetricBasedCheck(
-            SizeMetricDescriptor(),
-            DistinctValuesMetricDescriptor(List("order_id")),
+            SizeMetric(),
+            DistinctValuesMetric(List("order_id")),
             "Keep all orders"
           )(MetricComparator.metricsAreEqual)
         )
@@ -194,8 +194,8 @@ object Helpers {
 
     val checksSuite = ChecksSuite(
       "Customers and orders check suite",
-      seqSingleDatasetMetricsChecks = singleDsMetricChecks,
-      seqDualDatasetMetricChecks = dualDsMetricChecks,
+      singleDatasetMetricChecks = singleDsMetricChecks,
+      dualDatasetMetricChecks = dualDsMetricChecks,
       metricsPersister = esMetricsPersister,
       singleDatasetChecks = List(SingleDatasetCheckWithDs(customerDs, List(expectedCustomerColumnsCheck))),
       qcResultsRepository = qcResultsRepository
