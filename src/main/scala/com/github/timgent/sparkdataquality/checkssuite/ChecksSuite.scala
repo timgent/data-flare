@@ -11,7 +11,7 @@ import com.github.timgent.sparkdataquality.checks._
 import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
 import com.github.timgent.sparkdataquality.deequ.DeequHelpers.VerificationResultExtension
 import com.github.timgent.sparkdataquality.deequ.DeequNullMetricsRepository
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.DistinctValuesMetric
+import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.CountDistinctValuesMetric
 import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
 import com.github.timgent.sparkdataquality.metrics.{MetricDescriptor, MetricValue, MetricsCalculator}
 import com.github.timgent.sparkdataquality.repository.{MetricsPersister, NullMetricsPersister, NullQcResultsRepository, QcResultsRepository}
