@@ -17,7 +17,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
   "DualMetricBasedCheck" should {
     val simpleSizeMetric = MetricDescriptor.SizeMetric()
     val dualMetricBasedCheck =
-      DualMetricBasedCheck[LongMetric](simpleSizeMetric, simpleSizeMetric, "size comparison")(
+      DualMetricBasedCheck[LongMetric](simpleSizeMetric, simpleSizeMetric, "size comparison",
         MetricComparator.metricsAreEqual
       )
     val dualDsDescription = DualDsDescription("dsA", "dsB")

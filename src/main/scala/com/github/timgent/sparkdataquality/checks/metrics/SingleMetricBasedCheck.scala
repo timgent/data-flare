@@ -3,7 +3,7 @@ package com.github.timgent.sparkdataquality.checks.metrics
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType, RawCheckResult}
 import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{
   ComplianceMetric,
-  DistinctValuesMetric,
+  CountDistinctValuesMetric,
   SizeMetric
 }
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
@@ -110,7 +110,7 @@ object SingleMetricBasedCheck {
       filter: MetricFilter = MetricFilter.noFilter
   ): SingleMetricBasedCheck[LongMetric] =
     thresholdBasedCheck[LongMetric](
-      DistinctValuesMetric(onColumns, filter),
+      CountDistinctValuesMetric(onColumns, filter),
       s"DistinctValuesCheck on columns: $onColumns with filter: ${filter.filterDescription}",
       threshold
     )

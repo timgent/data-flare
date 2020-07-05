@@ -18,8 +18,8 @@ import scala.reflect.ClassTag
 final case class DualMetricBasedCheck[MV <: MetricValue](
     dsAMetric: MetricDescriptor,
     dsBMetric: MetricDescriptor,
-    userDescription: String
-)(metricComparator: MetricComparator[MV])
+    userDescription: String,
+    metricComparator: MetricComparator[MV])
     extends MetricsBasedCheck {
 
   override def description: String =
@@ -55,7 +55,7 @@ final case class DualMetricBasedCheck[MV <: MetricValue](
       case (Some(dsAMetric), Some(dsBMetric)) =>
         (dsAMetric, dsBMetric) match {
           case (dsAMetric: MV, dsBMetric: MV) =>
-            getCheckResult(metricComparator.fn(dsAMetric, dsBMetric), dsAMetric, dsBMetric, dualDsDescription)
+            getCheckResult(metricComparator.fn(dsAMetric.value, dsBMetric.value), dsAMetric, dsBMetric, dualDsDescription)
           case _ => metricTypeErrorResult
         }
       case _ => metricNotPresentErrorResult

@@ -168,7 +168,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
           NumberString(3, "c")
         ).toDS
         val metricChecks = Seq(
-          DualMetricBasedCheck(simpleSizeMetric, simpleSizeMetric, "check size metrics are equal")(
+          DualMetricBasedCheck(simpleSizeMetric, simpleSizeMetric, "check size metrics are equal",
             MetricComparator.metricsAreEqual
           )
         )
@@ -223,7 +223,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
           NumberString(1, "a")
         ).toDS
         val dualMetricChecks = Seq(
-          DualMetricBasedCheck(simpleSizeMetric, simpleSizeMetric, "check size metrics are equal")(
+          DualMetricBasedCheck(simpleSizeMetric, simpleSizeMetric, "check size metrics are equal",
             MetricComparator.metricsAreEqual
           )
         )

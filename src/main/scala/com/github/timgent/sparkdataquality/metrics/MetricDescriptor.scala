@@ -102,7 +102,7 @@ object MetricDescriptor {
     * @param onColumns - the columns for which you are counting distinct values
     * @param filter - the filter to be applied before the distinct count is calculated
     */
-  case class DistinctValuesMetric(
+  case class CountDistinctValuesMetric(
       onColumns: List[String],
       filter: MetricFilter = MetricFilter.noFilter
   ) extends MetricDescriptor

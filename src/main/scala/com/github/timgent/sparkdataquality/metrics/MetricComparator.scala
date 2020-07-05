@@ -6,7 +6,7 @@ package com.github.timgent.sparkdataquality.metrics
   * @param fn - the function which compares 2 metrics and returns true is the comparison passes, otherwise returns false
   * @tparam MV - the type of the metric values being compared
   */
-case class MetricComparator[MV <: MetricValue](description: String, fn: (MV, MV) => Boolean)
+case class MetricComparator[MV <: MetricValue](description: String, fn: (MV#T, MV#T) => Boolean)
 
 /**
   * Object for some helper functions to help with metric comparisons
