@@ -42,7 +42,7 @@ choose
 ## Getting started
 Add the following to your dependencies:
 ```
-libraryDependencies += "com.github.timgent" % "spark-data-quality_2.11" % "x.x.x"
+libraryDependencies += "com.github.timgent" % "spark-data-quality_2.11" % "@VERSION@"
 ```
 For other build systems like maven, and to check the latest version go to 
 https://search.maven.org/artifact/com.github.timgent/spark-data-quality_2.11
