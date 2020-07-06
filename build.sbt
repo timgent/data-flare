@@ -1,7 +1,7 @@
 import Dependencies._
 import xerial.sbt.Sonatype.GitHubHosting
 
-val libraryVersion = "0.1.6"
+val libraryVersion = "0.1.7"
 
 ThisBuild / scalaVersion := "2.11.12"
 ThisBuild / version := libraryVersion
