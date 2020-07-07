@@ -20,6 +20,8 @@ jobs:
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 #          PASSPHRASE: ${{ secrets.PASSPHRASE }}
+      - name: GPG required exports
+        run: export GPG_TTY=$(tty)
       - name: publishSigned
         run: sbt publishSigned
       - name: Push to sonatype
