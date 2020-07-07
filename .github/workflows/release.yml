@@ -19,7 +19,7 @@ jobs:
         uses: crazy-max/ghaction-import-gpg@v2
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-#          PASSPHRASE: ${{ secrets.PASSPHRASE }}
+          PASSPHRASE: ${{ secrets.PASSPHRASE }}
       - name: GPG required exports
         run: export GPG_TTY=$(tty)
       - name: publishSigned
