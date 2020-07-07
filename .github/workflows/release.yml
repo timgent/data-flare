@@ -1,4 +1,4 @@
-name: Scala CI
+name: Release
 
 on:
   release:
@@ -14,18 +14,19 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: TESTING
-        run: sbt sbtVersion
-      - name: TESTING 2
-        run: ls ~/.sbt
-      - name: TESTING 3
-        run: cd ~ & pwd
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v2
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           PASSPHRASE: ${{ secrets.PASSPHRASE }}
+      - name: Setup sonatype credentials
+        run: |
+          echo "credentials += Credentials("Sonatype Nexus Repository Manager",
+            "oss.sonatype.org",
+            "${{ secrets.SONATYPE_USERNAME }}",
+            "${{ secrets.SONATYPE_PASSWORD }}"
+          )"
       - name: publishSigned
         run: sbt publishSigned
       - name: Push to sonatype
