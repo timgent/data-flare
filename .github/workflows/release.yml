@@ -26,7 +26,7 @@ jobs:
             "oss.sonatype.org",
             "${{ secrets.SONATYPE_USERNAME }}",
             "${{ secrets.SONATYPE_PASSWORD }}"
-          )" > ~/.sbt/1.0/sonatype.sbt
+          )" > ./github_action_sbt_settings.sbt
       - name: publishSigned
         run: sbt publishSigned
       - name: Push to sonatype
