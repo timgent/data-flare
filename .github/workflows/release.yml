@@ -14,10 +14,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: debugging
-        run: echo $HOME
-      - name: debugging2
-        run: cd ~ && pwd
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v2
@@ -26,7 +22,7 @@ jobs:
           PASSPHRASE: ${{ secrets.PASSPHRASE }}
       - name: Setup sonatype credentials
         run: |
-          cat <<EOT >> testing123
+          cat <<EOT >> github_action_sbt_settings.sbt
           credentials += Credentials("Sonatype Nexus Repository Manager",
               "oss.sonatype.org",
               "${{ secrets.SONATYPE_USERNAME }}",
