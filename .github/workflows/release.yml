@@ -22,10 +22,10 @@ jobs:
           PASSPHRASE: ${{ secrets.PASSPHRASE }}
       - name: Setup sonatype credentials
         run: |
-          echo "credentials += Credentials("Sonatype Nexus Repository Manager",
-            "oss.sonatype.org",
-            "${{ secrets.SONATYPE_USERNAME }}",
-            "${{ secrets.SONATYPE_PASSWORD }}"
+          echo "credentials += Credentials(\""Sonatype Nexus Repository Manager\"",
+            \""oss.sonatype.org\"",
+            \""${{ secrets.SONATYPE_USERNAME }}\"",
+            \""${{ secrets.SONATYPE_PASSWORD }}\""
           )" > ./github_action_sbt_settings.sbt
       - name: publishSigned
         run: sbt publishSigned
