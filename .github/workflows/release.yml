@@ -3,7 +3,8 @@ name: Scala CI
 on:
   release:
     types: [published, created, edited]
-
+  push:
+    branches: [release-ci]
 jobs:
   build:
     runs-on: ubuntu-latest
