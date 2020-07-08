@@ -8,8 +8,7 @@ https://github.com/xerial/sbt-sonatype
 
 To publish a new version do the following in an sbt shell:
 ```
-publishSigned
-sonatypeBundleRelease
+release
 ```
 
 ## Documentation creation and publishing

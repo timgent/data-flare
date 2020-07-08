@@ -1,7 +1,7 @@
 import Dependencies._
 import xerial.sbt.Sonatype.GitHubHosting
 
-val libraryVersion = "0.1.7"
+val libraryVersion = "0.1.8-SNAPSHOT"
 
 ThisBuild / scalaVersion := "2.11.12"
 ThisBuild / version := libraryVersion
@@ -69,3 +69,23 @@ publishTo := sonatypePublishToBundle.value
 sonatypeProfileName := "com.github.timgent"
 publishMavenStyle := true
 sonatypeProjectHosting := Some(GitHubHosting("timgent", "spark-data-quality", "tim.gent@gmail.com"))
+
+import ReleaseTransformations._
+
+releaseCrossBuild := false // true if you cross-build the project for multiple Scala versions
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  // For non cross-build projects, use releaseStepCommand("publishSigned")
+  // For cross-build projects, use releaseStepCommand("+publishSigned")
+  releaseStepCommandAndRemaining("publishSigned"),
+  releaseStepCommand("sonatypeBundleRelease"),
+  setNextVersion,
+  commitNextVersion,
+  pushChanges
+)
