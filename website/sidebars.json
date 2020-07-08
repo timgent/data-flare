@@ -15,16 +15,7 @@
           "availablemetrics"
         ]
       },
-      {
-        "type": "subcategory",
-        "label": "Arbitrary checks",
-        "ids": [
-          "arbchecksintro",
-          "arbcheckssingleds",
-          "arbchecksdualds",
-          "arbchecksother"
-        ]
-      },
+      "arbchecks",
       "deequchecks"
     ],
     "Persisting your results": [

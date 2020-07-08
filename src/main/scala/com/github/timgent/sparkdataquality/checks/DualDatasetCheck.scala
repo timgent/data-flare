@@ -1,13 +1,12 @@
 package com.github.timgent.sparkdataquality.checks
 
-import com.github.timgent.sparkdataquality.checks.DatasourceDescription.DualDsDescription
 import com.github.timgent.sparkdataquality.checkssuite.DescribedDatasetPair
 import org.apache.spark.sql.Dataset
 
 /**
   * Check for comparing a pair of datasets
   */
-trait DatasetComparisonCheck extends QCCheck {
+trait DualDatasetCheck extends QCCheck {
   def description: String
 
   override def qcType: QcType = QcType.DatasetComparisonQualityCheck
@@ -15,14 +14,14 @@ trait DatasetComparisonCheck extends QCCheck {
   def applyCheck(dsPair: DescribedDatasetPair): CheckResult
 }
 
-object DatasetComparisonCheck {
+object DualDatasetCheck {
 
   case class DatasetPair(ds: Dataset[_], dsToCompare: Dataset[_])
 
   def apply(
       checkDescription: String
-  )(check: DatasetPair => RawCheckResult): DatasetComparisonCheck = {
-    new DatasetComparisonCheck {
+  )(check: DatasetPair => RawCheckResult): DualDatasetCheck = {
+    new DualDatasetCheck {
       override def description: String = checkDescription
 
       override def applyCheck(dsPair: DescribedDatasetPair): CheckResult = {
