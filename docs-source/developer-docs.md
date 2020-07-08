@@ -3,6 +3,17 @@ id: developerdocs
 title: Developer documentation
 sidebar_label: Developer documentation
 ---
+## Running the tests
+1. Spin up an ElasticSearch instance locally, for example with docker you could do:
+```bash
+docker run -p 9200:9200 -p 9300:9300 -e discovery.type=single-node elasticsearch:7.1.0
+```
+
+2. Run the tests as usual with sbt
+```bash
+sbt test
+```
+
 ## Published with SBT Sonatype
 https://github.com/xerial/sbt-sonatype
 
