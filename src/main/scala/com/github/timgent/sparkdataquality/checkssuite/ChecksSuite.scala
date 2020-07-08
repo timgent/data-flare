@@ -5,7 +5,7 @@ import java.time.Instant
 import cats.implicits._
 import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.{VerificationRunBuilder, VerificationSuite}
-import com.github.timgent.sparkdataquality.checks.DatasetComparisonCheck.DatasetPair
+import com.github.timgent.sparkdataquality.checks.DualDatasetCheck.DatasetPair
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, SingleDsDescription}
 import com.github.timgent.sparkdataquality.checks._
 import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
@@ -25,7 +25,7 @@ case class SingleDatasetCheckWithDs(dataset: DescribedDataset, checks: Seq[Singl
 
 case class DualDatasetCheckWithDs(
     datasets: DescribedDatasetPair,
-    checks: Seq[DatasetComparisonCheck]
+    checks: Seq[DualDatasetCheck]
 )
 
 case class DescribedDatasetPair(dataset: DescribedDataset, datasetToCompare: DescribedDataset) {

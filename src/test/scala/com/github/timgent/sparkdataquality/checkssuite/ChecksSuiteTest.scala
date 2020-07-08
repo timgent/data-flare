@@ -8,14 +8,14 @@ import com.amazon.deequ.checks.{Check, CheckLevel}
 import com.amazon.deequ.metrics.{DoubleMetric, Entity}
 import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.repository.memory.InMemoryMetricsRepository
-import com.github.timgent.sparkdataquality.checks.DatasetComparisonCheck.DatasetPair
+import com.github.timgent.sparkdataquality.checks.DualDatasetCheck.DatasetPair
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, SingleDsDescription}
 import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
 import com.github.timgent.sparkdataquality.checks.{
   ArbitraryCheck,
   CheckResult,
   CheckStatus,
-  DatasetComparisonCheck,
+  DualDatasetCheck,
   DeequQCCheck,
   QcType,
   RawCheckResult,
@@ -378,7 +378,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
         val datasetPair = DescribedDatasetPair(testDataset, datasetToCompare)
         val qcResultsRepository = new InMemoryQcResultsRepository
 
-        val datasetComparisonCheck = DatasetComparisonCheck("Table counts equal") {
+        val datasetComparisonCheck = DualDatasetCheck("Table counts equal") {
           case DatasetPair(ds, dsToCompare) =>
             RawCheckResult(CheckStatus.Error, "counts were not equal")
         }
