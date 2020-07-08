@@ -3,8 +3,9 @@ id: qcresultspersistence
 title: Persisting results from your checks
 sidebar_label: Persisting results from your checks
 ---
-To persist the results from your check simply pass in a `QcResultsRepository` to your `ChecksSuite`. You can either use
- one of the provided implementations or extend `QcResultsRepository` if you wish to use some other storage solution.
+To persist the results from your `ChecksSuite` simply pass in a `QcResultsRepository` to your `ChecksSuite`. You can 
+either use one of the provided implementations or extend `QcResultsRepository` if you wish to use some other storage 
+solution.
 
 Example:
 ```scala mdoc:compile-only
