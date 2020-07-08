@@ -2,6 +2,7 @@ import Dependencies._
 import xerial.sbt.Sonatype.GitHubHosting
 
 val libraryVersion = "0.1.8-SNAPSHOT"
+val publishedVersion = libraryVersion.replaceAll("-SNAPSHOT", "")
 
 ThisBuild / scalaVersion := "2.11.12"
 ThisBuild / version := libraryVersion
@@ -52,7 +53,7 @@ lazy val docs = project // new documentation project
     docusaurusCreateSite := docusaurusCreateSite.dependsOn(unidoc in Compile).value,
     docusaurusPublishGhpages := docusaurusPublishGhpages.dependsOn(unidoc in Compile).value,
     mdocIn := new File("docs-source"),
-    mdocVariables := Map("VERSION" -> libraryVersion)
+    mdocVariables := Map("VERSION" -> publishedVersion)
   )
 
 scalacOptions += "-Ypartial-unification"
