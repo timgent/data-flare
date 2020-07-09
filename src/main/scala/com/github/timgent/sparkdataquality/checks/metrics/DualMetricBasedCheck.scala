@@ -23,7 +23,7 @@ final case class DualMetricBasedCheck[MV <: MetricValue](
     extends MetricsBasedCheck {
 
   override def description: String =
-    s"$userDescription. Comparing metric ${dsAMetric.toSimpleMetricDescriptor} to ${dsBMetric} using comparator of ${metricComparator.description}"
+    s"$userDescription. Comparing metric ${dsAMetric.toSimpleMetricDescriptor} to ${dsBMetric.toSimpleMetricDescriptor} using comparator of ${metricComparator.description}"
 
   override def qcType: QcType = QcType.MetricsBasedQualityCheck
 
