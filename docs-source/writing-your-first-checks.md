@@ -12,12 +12,9 @@ import com.github.timgent.sparkdataquality.checkssuite.ChecksSuite
 val myFirstChecksSuite = ChecksSuite(
     checkSuiteDescription = "myFirstChecksSuite",
     tags = ???,
-    singleDatasetMetricChecks = ???,
-    dualDatasetMetricChecks = ???,
-    singleDatasetChecks = ???,
-    dualDatasetChecks = ???,
+    singleDsChecks = ???,
+    dualDsChecks = ???,
     arbitraryChecks = ???,
-    deequChecks = ???,
     metricsPersister = ???,
     deequMetricsRepository = ???,
     qcResultsRepository = ???,
@@ -36,7 +33,7 @@ Let's look at a simple example where we run some performant metric-based checks 
 ```scala mdoc:compile-only
   import java.time.Instant
 
-  import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck
+  import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck
   import com.github.timgent.sparkdataquality.checkssuite._
   import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
   import org.apache.spark.SparkConf
@@ -53,17 +50,15 @@ Let's look at a simple example where we run some performant metric-based checks 
     NumberString(2, "b"),
     NumberString(3, "c")
   ).toDS
-  val numberStrings: DescribedDataset = DescribedDataset(ds, "numberStrings")
+  val numberStrings: DescribedDs = DescribedDs(ds, "numberStrings")
   val simpleChecksSuite: ChecksSuite = ChecksSuite(
     checkSuiteDescription = "simpleChecksSuite",
-    singleDatasetMetricChecks = Seq(
-      SingleDatasetMetricChecks(
-        numberStrings,
+    singleDsChecks = Map(
+        numberStrings ->
         Seq(
-          SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(3, 5)),
-          SingleMetricBasedCheck.distinctValuesCheck(AbsoluteThreshold(2, 5), List("num")))
+          SingleMetricCheck.sizeCheck(AbsoluteThreshold(3, 5)),
+          SingleMetricCheck.distinctValuesCheck(AbsoluteThreshold(2, 5), List("num")))
       )
-    )
   )
   val qcResults: Future[ChecksSuiteResult] = simpleChecksSuite.run(Instant.now)
 ```

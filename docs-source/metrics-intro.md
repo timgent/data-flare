@@ -15,7 +15,4 @@ data quality issues may be coming from.
 
 There are 2 types of checks that use metrics. Both of them enable you to define a metric you want to check, and then
 perform some validation on them. You'll also find a number of helper methods available to help you perform common
-metric checks more concisely. The arguments to a ChecksSuite you will need to provide to use metrics based checks are:
-
-* singleDatasetMetricChecks
-* dualDatasetMetricChecks
+metric checks more concisely.

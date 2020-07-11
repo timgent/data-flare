@@ -53,10 +53,10 @@ object Day1Data {
     numberOfPennySweets = Math.abs(rand.nextInt)
     item = s"$numberOfPennySweets penny sweets"
   } yield Order(orderId, customerId, item)
-  val customerDs = DescribedDataset(customers.toDS, "customers")
-  val orderDs = DescribedDataset(orders.toDS, "orders")
+  val customerDs = DescribedDs(customers.toDS, "customers")
+  val orderDs = DescribedDs(orders.toDS, "orders")
   val customersWithOrdersDs =
-    DescribedDataset(customerDs.ds.join(orderDs.ds, List("customer_id"), "left"), "customerOrders")
+    DescribedDs(customerDs.ds.join(orderDs.ds, List("customer_id"), "left"), "customerOrders")
 
   def showData = {
     customerDs.ds.show(10, false)
@@ -80,10 +80,10 @@ object Day2Data {
     numberOfPennySweets = Math.abs(rand.nextInt)
     item = s"$numberOfPennySweets penny sweets"
   } yield Order(orderId, customerId, item)
-  val customerDs = DescribedDataset(customers.toDS, "customers")
-  val orderDs = DescribedDataset(orders.toDS, "orders")
+  val customerDs = DescribedDs(customers.toDS, "customers")
+  val orderDs = DescribedDs(orders.toDS, "orders")
   val customersWithOrdersDs =
-    DescribedDataset(customerDs.ds.join(orderDs.ds, List("customer_id"), "left"), "customerOrders")
+    DescribedDs(customerDs.ds.join(orderDs.ds, List("customer_id"), "left"), "customerOrders")
 
   def showData = {
     customerDs.ds.show(10, false)
@@ -107,10 +107,10 @@ object Day3Data {
     numberOfPennySweets = Math.abs(rand.nextInt)
     item = s"$numberOfPennySweets penny sweets"
   } yield Order(orderId, customerId, item)
-  val customerDs = DescribedDataset(customers.toDS, "customers")
-  val orderDs = DescribedDataset(orders.toDS, "orders")
+  val customerDs = DescribedDs(customers.toDS, "customers")
+  val orderDs = DescribedDs(orders.toDS, "orders")
   val customersWithOrdersDs =
-    DescribedDataset(customerDs.ds.join(orderDs.ds, List("customer_id"), "inner"), "customerOrders")
+    DescribedDs(customerDs.ds.join(orderDs.ds, List("customer_id"), "inner"), "customerOrders")
 
   def showData = {
 
@@ -133,9 +133,9 @@ object Helpers {
     ElasticSearchMetricsPersister(List("http://127.0.0.1:9200"), "order_metrics")
 
   def getCheckSuite(
-      orderDs: DescribedDataset,
-      customerDs: DescribedDataset,
-      customersWithOrdersDs: DescribedDataset
+                     orderDs: DescribedDs,
+                     customerDs: DescribedDs,
+                     customersWithOrdersDs: DescribedDs
   ): ChecksSuite = {
 
     val expectedCustomerColumnsCheck = ArbSingleDsCheck("correctColumns") { ds =>
@@ -165,7 +165,7 @@ object Helpers {
     )
 
     val dualDsMetricChecks = Map(
-      DescribedDatasetPair(customerDs, customersWithOrdersDs) ->
+      DescribedDsPair(customerDs, customersWithOrdersDs) ->
         List(
           DualMetricCheck(
             SizeMetric(),
@@ -174,7 +174,7 @@ object Helpers {
             MetricComparator.metricsAreEqual
           )
         ),
-      DescribedDatasetPair(orderDs, customersWithOrdersDs) ->
+      DescribedDsPair(orderDs, customersWithOrdersDs) ->
         List(
           DualMetricCheck(SizeMetric(), CountDistinctValuesMetric(List("order_id")), "Keep all orders", MetricComparator.metricsAreEqual)
         )

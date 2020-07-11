@@ -2,7 +2,7 @@ package com.github.timgent.sparkdataquality.checks
 
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.SingleDsDescription
 import com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck
-import com.github.timgent.sparkdataquality.checkssuite.DescribedDataset
+import com.github.timgent.sparkdataquality.checkssuite.DescribedDs
 import org.apache.spark.sql.Dataset
 
 /**
@@ -13,7 +13,7 @@ trait ArbSingleDsCheck extends SingleDsCheck {
 
   override def qcType: QcType = QcType.SingleDatasetQualityCheck
 
-  def applyCheck(ds: DescribedDataset): CheckResult
+  def applyCheck(ds: DescribedDs): CheckResult
 }
 
 object ArbSingleDsCheck {
@@ -21,7 +21,7 @@ object ArbSingleDsCheck {
     new ArbSingleDsCheck {
       override def description: String = checkDescription
 
-      override def applyCheck(dataset: DescribedDataset): CheckResult =
+      override def applyCheck(dataset: DescribedDs): CheckResult =
         check(dataset.ds).withDescription(qcType, checkDescription, Some(SingleDsDescription(dataset.description)))
     }
   }

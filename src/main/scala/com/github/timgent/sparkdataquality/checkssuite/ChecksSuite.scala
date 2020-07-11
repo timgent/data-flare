@@ -24,14 +24,15 @@ import scala.concurrent.{ExecutionContext, Future}
   * @param ds - the dataset
   * @param description - description of the dataset
   */
-case class DescribedDataset(ds: Dataset[_], description: String)
+case class DescribedDs(ds: Dataset[_], description: String)
 
 /**
-  * A pair of [[DescribedDataset]]s
+  * A pair of [[DescribedDs]]s
+ *
   * @param ds - the first described dataset
   * @param dsToCompare - the second described dataset
   */
-case class DescribedDatasetPair(ds: DescribedDataset, dsToCompare: DescribedDataset) {
+case class DescribedDsPair(ds: DescribedDs, dsToCompare: DescribedDs) {
   def datasourceDescription: Option[DualDsDescription] = Some(DualDsDescription(ds.description, dsToCompare.description))
 
   private[sparkdataquality] def rawDatasetPair = DatasetPair(ds.ds, dsToCompare.ds)
@@ -49,38 +50,38 @@ case class DescribedDatasetPair(ds: DescribedDataset, dsToCompare: DescribedData
   * @param checkResultCombiner - how the overall result status should be calculated
   */
 case class ChecksSuite(
-    checkSuiteDescription: String,
-    tags: Map[String, String] = Map.empty,
-    singleDsChecks: Map[DescribedDataset, Seq[SingleDsCheck]] = Map.empty,
-    dualDsChecks: Map[DescribedDatasetPair, Seq[DualDsQCCheck]] = Map.empty,
-    arbitraryChecks: Seq[ArbitraryCheck] = Seq.empty,
-    metricsPersister: MetricsPersister = NullMetricsPersister,
-    deequMetricsRepository: DeequMetricsRepository = new DeequNullMetricsRepository,
-    qcResultsRepository: QcResultsRepository = new NullQcResultsRepository,
-    checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
+                        checkSuiteDescription: String,
+                        tags: Map[String, String] = Map.empty,
+                        singleDsChecks: Map[DescribedDs, Seq[SingleDsCheck]] = Map.empty,
+                        dualDsChecks: Map[DescribedDsPair, Seq[DualDsQCCheck]] = Map.empty,
+                        arbitraryChecks: Seq[ArbitraryCheck] = Seq.empty,
+                        metricsPersister: MetricsPersister = NullMetricsPersister,
+                        deequMetricsRepository: DeequMetricsRepository = new DeequNullMetricsRepository,
+                        qcResultsRepository: QcResultsRepository = new NullQcResultsRepository,
+                        checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
 ) extends ChecksSuiteBase {
 
-  private val arbSingleDsChecks: Map[DescribedDataset, Seq[ArbSingleDsCheck]] = singleDsChecks.map { case (dds, checks) =>
+  private val arbSingleDsChecks: Map[DescribedDs, Seq[ArbSingleDsCheck]] = singleDsChecks.map { case (dds, checks) =>
     val relevantChecks = checks.collect { case check: ArbSingleDsCheck => check }
     (dds, relevantChecks)
   }
 
-  private val singleMetricChecks: Map[DescribedDataset, Seq[SingleMetricCheck[_]]]  = singleDsChecks.map { case (dds, checks) =>
+  private val singleMetricChecks: Map[DescribedDs, Seq[SingleMetricCheck[_]]]  = singleDsChecks.map { case (dds, checks) =>
     val relevantChecks = checks.collect { case check: SingleMetricCheck[_] => check }
     (dds, relevantChecks)
   }
 
-  private val deequChecks: Map[DescribedDataset, Seq[DeequQCCheck]] = singleDsChecks.map { case (dds, checks) =>
+  private val deequChecks: Map[DescribedDs, Seq[DeequQCCheck]] = singleDsChecks.map { case (dds, checks) =>
     val relevantChecks = checks.collect { case check: DeequQCCheck => check }
     (dds, relevantChecks)
   }
 
-  private val arbDualDsChecks: Map[DescribedDatasetPair, Seq[ArbDualDsCheck]] = dualDsChecks.map { case (ddsPair, checks) =>
+  private val arbDualDsChecks: Map[DescribedDsPair, Seq[ArbDualDsCheck]] = dualDsChecks.map { case (ddsPair, checks) =>
     val relevantChecks = checks.collect { case check: ArbDualDsCheck => check}
     (ddsPair, relevantChecks)
   }
 
-  private val dualMetricChecks: Map[DescribedDatasetPair, Seq[DualMetricCheck[_]]] = dualDsChecks.map { case (ddsPair, checks) =>
+  private val dualMetricChecks: Map[DescribedDsPair, Seq[DualMetricCheck[_]]] = dualDsChecks.map { case (ddsPair, checks) =>
     val relevantChecks = checks.collect { case check: DualMetricCheck[_] => check}
     (ddsPair, relevantChecks)
   }
@@ -126,9 +127,9 @@ case class ChecksSuite(
   }
 
   private def getDeequCheckResults(
-      deequChecks: Map[DescribedDataset, Seq[DeequQCCheck]],
-      timestamp: Instant,
-      tags: Map[String, String]
+                                    deequChecks: Map[DescribedDs, Seq[DeequQCCheck]],
+                                    timestamp: Instant,
+                                    tags: Map[String, String]
   ): Seq[CheckResult] = {
     for {
       (dds, checks) <- deequChecks.toSeq
@@ -148,27 +149,27 @@ case class ChecksSuite(
     * Calculates the minimum required metrics to calculate this check suite
     */
   private def getMinimumRequiredMetrics(
-      seqSingleDatasetMetricsChecks: Map[DescribedDataset, Seq[SingleMetricCheck[_]]],
-      seqDualDatasetMetricChecks: Map[DescribedDatasetPair, Seq[DualMetricCheck[_]]]
-  ): Map[DescribedDataset, List[MetricDescriptor]] = {
-    val singleDatasetMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] = (for {
+                                         seqSingleDatasetMetricsChecks: Map[DescribedDs, Seq[SingleMetricCheck[_]]],
+                                         seqDualDatasetMetricChecks: Map[DescribedDsPair, Seq[DualMetricCheck[_]]]
+  ): Map[DescribedDs, List[MetricDescriptor]] = {
+    val singleDatasetMetricDescriptors: Map[DescribedDs, List[MetricDescriptor]] = (for {
       (dds, checks) <- seqSingleDatasetMetricsChecks
       metricDescriptors = checks.map(_.metric).toList
     } yield (dds, metricDescriptors)).groupBy(_._1).mapValues(_.flatMap(_._2).toList)
 
-    val dualDatasetAMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] = (for {
+    val dualDatasetAMetricDescriptors: Map[DescribedDs, List[MetricDescriptor]] = (for {
       (ddsPair, checks) <- seqDualDatasetMetricChecks
-      describedDatasetA: DescribedDataset = ddsPair.ds
+      describedDatasetA: DescribedDs = ddsPair.ds
       metricDescriptors = checks.map(_.dsMetric).toList
     } yield (describedDatasetA, metricDescriptors)).groupBy(_._1).mapValues(_.flatMap(_._2).toList)
 
-    val dualDatasetBMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] = (for {
+    val dualDatasetBMetricDescriptors: Map[DescribedDs, List[MetricDescriptor]] = (for {
       (ddsPair, checks) <- seqDualDatasetMetricChecks
-      describedDatasetB: DescribedDataset = ddsPair.dsToCompare
+      describedDatasetB: DescribedDs = ddsPair.dsToCompare
       metricDescriptors = checks.map(_.dsToCompareMetric).toList
     } yield (describedDatasetB, metricDescriptors)).groupBy(_._1).mapValues(_.flatMap(_._2).toList)
 
-    val allMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] =
+    val allMetricDescriptors: Map[DescribedDs, List[MetricDescriptor]] =
       (singleDatasetMetricDescriptors |+| dualDatasetAMetricDescriptors |+| dualDatasetBMetricDescriptors)
         .mapValues(_.distinct)
 
@@ -178,9 +179,9 @@ case class ChecksSuite(
   private def runMetricBasedChecks(
       timestamp: Instant
   )(implicit ec: ExecutionContext): Future[Seq[CheckResult]] = {
-    val allMetricDescriptors: Map[DescribedDataset, List[MetricDescriptor]] =
+    val allMetricDescriptors: Map[DescribedDs, List[MetricDescriptor]] =
       getMinimumRequiredMetrics(singleMetricChecks, dualMetricChecks)
-    val calculatedMetrics: Map[DescribedDataset, Map[MetricDescriptor, MetricValue]] =
+    val calculatedMetrics: Map[DescribedDs, Map[MetricDescriptor, MetricValue]] =
       allMetricDescriptors.map {
         case (describedDataset, metricDescriptors) =>
           val metricValues: Map[MetricDescriptor, MetricValue] =

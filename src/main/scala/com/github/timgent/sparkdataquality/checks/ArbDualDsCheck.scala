@@ -1,7 +1,7 @@
 package com.github.timgent.sparkdataquality.checks
 
 import com.github.timgent.sparkdataquality.checks.QCCheck.DualDsQCCheck
-import com.github.timgent.sparkdataquality.checkssuite.DescribedDatasetPair
+import com.github.timgent.sparkdataquality.checkssuite.DescribedDsPair
 import org.apache.spark.sql.Dataset
 
 /**
@@ -12,7 +12,7 @@ trait ArbDualDsCheck extends DualDsQCCheck {
 
   override def qcType: QcType = QcType.DatasetComparisonQualityCheck
 
-  def applyCheck(dsPair: DescribedDatasetPair): CheckResult
+  def applyCheck(dsPair: DescribedDsPair): CheckResult
 }
 
 object ArbDualDsCheck {
@@ -25,7 +25,7 @@ object ArbDualDsCheck {
     new ArbDualDsCheck {
       override def description: String = checkDescription
 
-      override def applyCheck(dsPair: DescribedDatasetPair): CheckResult = {
+      override def applyCheck(dsPair: DescribedDsPair): CheckResult = {
         check(dsPair.rawDatasetPair)
           .withDescription(qcType, checkDescription, dsPair.datasourceDescription)
       }
