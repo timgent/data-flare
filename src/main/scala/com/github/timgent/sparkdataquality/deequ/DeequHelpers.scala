@@ -3,6 +3,7 @@ package com.github.timgent.sparkdataquality.deequ
 import java.time.Instant
 
 import com.amazon.deequ.VerificationResult
+import com.github.timgent.sparkdataquality.checks.CheckDescription.SimpleCheckDescription
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType}
 import com.github.timgent.sparkdataquality.checkssuite.CheckSuiteStatus.{Success, Warning}
 import com.github.timgent.sparkdataquality.checkssuite.{CheckSuiteStatus, ChecksSuiteResult}
@@ -33,7 +34,7 @@ object DeequHelpers {
             QcType.DeequQualityCheck,
             deequCheckResult.status.toCheckStatus,
             checkResultDescription,
-            deequCheck.description
+            SimpleCheckDescription(deequCheck.description)
           )
       }.toSeq
       ChecksSuiteResult( // Do we want to add deequ constraint results to the checks suite result too? It's another level compared to what we have elsewhere. Could refactor to match deequ's way of doing things
@@ -56,7 +57,7 @@ object DeequHelpers {
             QcType.DeequQualityCheck,
             deequCheckResult.status.toCheckStatus,
             checkResultDescription,
-            deequCheck.description
+            SimpleCheckDescription(deequCheck.description)
           )
       }.toSeq
     }

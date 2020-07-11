@@ -1,12 +1,29 @@
 package com.github.timgent.sparkdataquality.checks
 
+import com.github.timgent.sparkdataquality.metrics.SimpleMetricDescriptor
 import enumeratum._
+
+sealed trait CheckDescription
+
+object CheckDescription {
+  case class SimpleCheckDescription(desc: String) extends CheckDescription
+  case class DualMetricCheckDescription(
+      desc: String,
+      dsMetric: SimpleMetricDescriptor,
+      dsToCompareMetric: SimpleMetricDescriptor,
+      metricComparator: String
+  ) extends CheckDescription
+  case class SingleMetricCheckDescription(
+      desc: String,
+      dsMetric: SimpleMetricDescriptor
+  ) extends CheckDescription
+}
 
 /**
   * Represents a check to be done
   */
 trait QCCheck {
-  def description: String
+  def description: CheckDescription
 
   def qcType: QcType
 }

@@ -9,21 +9,13 @@ import com.amazon.deequ.metrics.{DoubleMetric, Entity}
 import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.repository.memory.InMemoryMetricsRepository
 import com.github.timgent.sparkdataquality.checks.ArbDualDsCheck.DatasetPair
+import com.github.timgent.sparkdataquality.checks.CheckDescription.{DualMetricCheckDescription, SingleMetricCheckDescription}
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, SingleDsDescription}
 import com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck
 import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricCheck, SingleMetricCheck}
-import com.github.timgent.sparkdataquality.checks.{
-  ArbDualDsCheck,
-  ArbSingleDsCheck,
-  ArbitraryCheck,
-  CheckResult,
-  CheckStatus,
-  DeequQCCheck,
-  QcType,
-  RawCheckResult
-}
+import com.github.timgent.sparkdataquality.checks.{ArbDualDsCheck, ArbSingleDsCheck, ArbitraryCheck, CheckResult, CheckStatus, DeequQCCheck, QcType, RawCheckResult}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
-import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter}
+import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter, SimpleMetricDescriptor}
 import com.github.timgent.sparkdataquality.repository.{InMemoryMetricsPersister, InMemoryQcResultsRepository}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
@@ -91,7 +83,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
                 QcType.SingleMetricCheck,
                 CheckStatus.Success,
                 "Size of 2 was within the range between 2 and 2",
-                "SizeCheck with filter: no filter",
+                SingleMetricCheckDescription("SizeCheck", SimpleMetricDescriptor("Size", Some("no filter"))),
                 Some(SingleDsDescription(datasourceDescription))
               )
             ),
@@ -136,14 +128,14 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
                 QcType.SingleMetricCheck,
                 CheckStatus.Success,
                 "Size of 2 was within the range between 2 and 2",
-                "SizeCheck with filter: no filter",
+                SingleMetricCheckDescription("SizeCheck", SimpleMetricDescriptor("Size", Some("no filter"))),
                 Some(SingleDsDescription("dsA"))
               ),
               CheckResult(
                 QcType.SingleMetricCheck,
                 CheckStatus.Error,
                 "Size of 3 was outside the range between 2 and 2",
-                "SizeCheck with filter: no filter",
+                SingleMetricCheckDescription("SizeCheck", SimpleMetricDescriptor("Size", Some("no filter"))),
                 Some(SingleDsDescription("dsB"))
               )
             ),
@@ -188,11 +180,14 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
             checkSuiteDescription,
             Seq(
               CheckResult(
-                QcType.SingleMetricCheck,
+                QcType.DualMetricCheck,
                 CheckStatus.Success,
                 "metric comparison passed. dsA with LongMetric(3) was compared to dsB with LongMetric(3)",
-                "check size metrics are equal. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) " +
-                  "to SimpleMetricDescriptor(Size,Some(no filter),None,None) using comparator of metrics are equal",
+                DualMetricCheckDescription("check size metrics are equal",
+                  SimpleMetricDescriptor("Size",Some("no filter"),None,None),
+                  SimpleMetricDescriptor("Size",Some("no filter"),None,None),
+                  "metrics are equal"
+                ),
                 Some(DualDsDescription("dsA", "dsB"))
               )
             ),
