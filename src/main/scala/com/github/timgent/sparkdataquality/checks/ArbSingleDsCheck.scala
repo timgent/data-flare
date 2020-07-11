@@ -11,7 +11,7 @@ import org.apache.spark.sql.Dataset
 trait ArbSingleDsCheck extends SingleDsCheck {
   def description: String
 
-  override def qcType: QcType = QcType.SingleDatasetQualityCheck
+  override def qcType: QcType = QcType.ArbSingleDsCheck
 
   def applyCheck(ds: DescribedDs): CheckResult
 }

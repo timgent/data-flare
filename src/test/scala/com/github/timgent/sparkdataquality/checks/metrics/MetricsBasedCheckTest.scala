@@ -28,7 +28,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
         dualDsDescription
       )
       checkResult shouldBe CheckResult(
-        QcType.MetricsBasedQualityCheck,
+        QcType.SingleMetricCheck,
         CheckStatus.Success,
         "metric comparison passed. dsA with LongMetric(2) was compared to dsB with LongMetric(2)",
         "size comparison. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to SimpleMetricDescriptor(Size,Some(no filter),None,None) using comparator of metrics are equal"
@@ -42,7 +42,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
         dualDsDescription
       )
       checkResult shouldBe CheckResult(
-        QcType.MetricsBasedQualityCheck,
+        QcType.SingleMetricCheck,
         CheckStatus.Error,
         "metric comparison failed. dsA with LongMetric(2) was compared to dsB with LongMetric(3)",
         "size comparison. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to SimpleMetricDescriptor(Size,Some(no filter),None,None) using comparator of metrics are equal"
@@ -127,7 +127,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
       val result: CheckResult =
         check.applyCheckOnMetrics(Map(check.metric -> LongMetric(2)))
       result shouldBe CheckResult(
-        QcType.MetricsBasedQualityCheck,
+        QcType.SingleMetricCheck,
         CheckStatus.Success,
         "Size of 2 was within the range between 0 and 3",
         "SizeCheck with filter: no filter"
@@ -140,7 +140,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
       val result: CheckResult =
         check.applyCheckOnMetrics(Map(check.metric -> LongMetric(4)))
       result shouldBe CheckResult(
-        QcType.MetricsBasedQualityCheck,
+        QcType.SingleMetricCheck,
         CheckStatus.Error,
         "Size of 4 was outside the range between 0 and 3",
         "SizeCheck with filter: someFilter"
@@ -158,7 +158,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
       val result: CheckResult =
         check.applyCheckOnMetrics(Map(check.metric -> DoubleMetric(0.9)))
       result shouldBe CheckResult(
-        QcType.MetricsBasedQualityCheck,
+        QcType.SingleMetricCheck,
         CheckStatus.Success,
         "Compliance of 0.9 was within the range between 0.9 and 1.0",
         "ComplianceCheck someComplianceFn with filter: no filter"
@@ -174,7 +174,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
       val result: CheckResult =
         check.applyCheckOnMetrics(Map(check.metric -> DoubleMetric(0.8)))
       result shouldBe CheckResult(
-        QcType.MetricsBasedQualityCheck,
+        QcType.SingleMetricCheck,
         CheckStatus.Error,
         "Compliance of 0.8 was outside the range between 0.9 and 1.0",
         "ComplianceCheck someComplianceFn with filter: no filter"

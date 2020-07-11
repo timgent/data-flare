@@ -2,7 +2,7 @@ package com.github.timgent.sparkdataquality.repository
 
 import com.fortysevendeg.scalacheck.datetime.jdk8.ArbitraryJdk8.arbInstantJdk8
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, OtherDsDescription, SingleDsDescription}
-import com.github.timgent.sparkdataquality.checks.QcType.{DatasetComparisonQualityCheck, SingleDatasetQualityCheck}
+import com.github.timgent.sparkdataquality.checks.QcType.{ArbDualDsCheck, ArbSingleDsCheck}
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, DatasourceDescription, QcType}
 import com.github.timgent.sparkdataquality.checkssuite.CheckSuiteStatus.{Error, Success}
 import com.github.timgent.sparkdataquality.checkssuite.{CheckSuiteStatus, ChecksSuiteResult}
@@ -53,17 +53,17 @@ class ElasticSearchQcResultsRepositoryTest
         new ElasticSearchQcResultsRepository(client, someIndex)
 
       val checkResultA1 =
-        generateRawCheckResult(SingleDatasetQualityCheck, "A1", CheckStatus.Success)
+        generateRawCheckResult(ArbSingleDsCheck, "A1", CheckStatus.Success)
       val checkResultA2 =
-        generateRawCheckResult(SingleDatasetQualityCheck, "A2", CheckStatus.Success)
+        generateRawCheckResult(ArbSingleDsCheck, "A2", CheckStatus.Success)
       val checkResultB1 =
-        generateRawCheckResult(DatasetComparisonQualityCheck, "B1", CheckStatus.Error)
+        generateRawCheckResult(ArbDualDsCheck, "B1", CheckStatus.Error)
       val checkResultB2 =
-        generateRawCheckResult(DatasetComparisonQualityCheck, "B2", CheckStatus.Error)
+        generateRawCheckResult(ArbDualDsCheck, "B2", CheckStatus.Error)
       val checkResultB1Success =
-        generateRawCheckResult(DatasetComparisonQualityCheck, "B1", CheckStatus.Error)
+        generateRawCheckResult(ArbDualDsCheck, "B1", CheckStatus.Error)
       val checkResultB2Success =
-        generateRawCheckResult(DatasetComparisonQualityCheck, "B2", CheckStatus.Error)
+        generateRawCheckResult(ArbDualDsCheck, "B2", CheckStatus.Error)
       val initialResultsToInsert: List[ChecksSuiteResult] = List(
         ChecksSuiteResult(
           Success,
@@ -111,13 +111,13 @@ class ElasticSearchQcResultsRepositoryTest
         "someCheckSuiteDescription",
         Seq(
           CheckResult(
-            QcType.MetricsBasedQualityCheck,
+            QcType.SingleMetricCheck,
             CheckStatus.Success,
             "someResultDescriptionA",
             "someCheckDescriptionA",
             Some(SingleDsDescription("someDatasourceDescription"))
           ),
-          CheckResult(QcType.SingleDatasetQualityCheck, CheckStatus.Error, "someResultDescriptionB", "someCheckDescriptionB", None)
+          CheckResult(QcType.ArbSingleDsCheck, CheckStatus.Error, "someResultDescriptionB", "someCheckDescriptionB", None)
         ),
         now,
         Map("someTagKey" -> "someTagValue")

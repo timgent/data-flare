@@ -10,7 +10,7 @@ import org.apache.spark.sql.Dataset
 trait ArbDualDsCheck extends DualDsQCCheck {
   def description: String
 
-  override def qcType: QcType = QcType.DatasetComparisonQualityCheck
+  override def qcType: QcType = QcType.ArbDualDsCheck
 
   def applyCheck(dsPair: DescribedDsPair): CheckResult
 }

@@ -26,7 +26,7 @@ final case class DualMetricCheck[MV <: MetricValue](
   override def description: String =
     s"$userDescription. Comparing metric ${dsMetric.toSimpleMetricDescriptor} to ${dsToCompareMetric.toSimpleMetricDescriptor} using comparator of ${metricComparator.description}"
 
-  override def qcType: QcType = QcType.MetricsBasedQualityCheck
+  override def qcType: QcType = QcType.DualMetricCheck
 
   private def getCheckResult(checkPassed: Boolean, dsAMetric: MV, dsBMetric: MV, dualDsDescription: DualDsDescription): CheckResult = {
     if (checkPassed)

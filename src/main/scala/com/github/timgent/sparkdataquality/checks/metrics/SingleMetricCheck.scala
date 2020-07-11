@@ -20,7 +20,7 @@ case class SingleMetricCheck[MV <: MetricValue](metric: MetricDescriptor, descri
     check: MV#T => RawCheckResult
 ) extends MetricsBasedCheck with SingleDsCheck {
   def applyCheck(metric: MV): CheckResult = {
-    check(metric.value).withDescription(QcType.MetricsBasedQualityCheck, description)
+    check(metric.value).withDescription(QcType.SingleMetricCheck, description)
   }
 
   // typeTag required here to enable match of metric on type MV. Without class tag this type check would be fruitless

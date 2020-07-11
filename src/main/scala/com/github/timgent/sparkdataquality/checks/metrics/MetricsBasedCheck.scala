@@ -4,7 +4,7 @@ import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QCC
 
 private[sparkdataquality] trait MetricsBasedCheck extends QCCheck {
 
-  override def qcType: QcType = QcType.MetricsBasedQualityCheck
+  override def qcType: QcType = QcType.SingleMetricCheck
 
   protected final def metricTypeErrorResult: CheckResult =
     CheckResult(

@@ -6,7 +6,7 @@ package com.github.timgent.sparkdataquality.checks
 trait ArbitraryCheck extends QCCheck {
   def description: String
 
-  override def qcType: QcType = QcType.ArbitraryQualityCheck
+  override def qcType: QcType = QcType.ArbitraryCheck
 
   def applyCheck: CheckResult
 }

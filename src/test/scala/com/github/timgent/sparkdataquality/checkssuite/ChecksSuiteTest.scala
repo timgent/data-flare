@@ -88,7 +88,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
             checkSuiteDescription,
             Seq(
               CheckResult(
-                QcType.MetricsBasedQualityCheck,
+                QcType.SingleMetricCheck,
                 CheckStatus.Success,
                 "Size of 2 was within the range between 2 and 2",
                 "SizeCheck with filter: no filter",
@@ -133,14 +133,14 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
             checkSuiteDescription,
             Seq(
               CheckResult(
-                QcType.MetricsBasedQualityCheck,
+                QcType.SingleMetricCheck,
                 CheckStatus.Success,
                 "Size of 2 was within the range between 2 and 2",
                 "SizeCheck with filter: no filter",
                 Some(SingleDsDescription("dsA"))
               ),
               CheckResult(
-                QcType.MetricsBasedQualityCheck,
+                QcType.SingleMetricCheck,
                 CheckStatus.Error,
                 "Size of 3 was outside the range between 2 and 2",
                 "SizeCheck with filter: no filter",
@@ -188,7 +188,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
             checkSuiteDescription,
             Seq(
               CheckResult(
-                QcType.MetricsBasedQualityCheck,
+                QcType.SingleMetricCheck,
                 CheckStatus.Success,
                 "metric comparison passed. dsA with LongMetric(3) was compared to dsB with LongMetric(3)",
                 "check size metrics are equal. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) " +
@@ -338,7 +338,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
             resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
             checkResults = Seq(
               CheckResult(
-                QcType.SingleDatasetQualityCheck,
+                QcType.ArbSingleDsCheck,
                 CheckStatus.Error,
                 "someSingleDatasetCheck was not successful",
                 singleDatasetCheck.description,
@@ -386,7 +386,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
             resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
             checkResults = Seq(
               CheckResult(
-                QcType.DatasetComparisonQualityCheck,
+                QcType.ArbDualDsCheck,
                 CheckStatus.Error,
                 "counts were not equal",
                 datasetComparisonCheck.description,
@@ -433,7 +433,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
             resultDescription = "0 checks were successful. 1 checks gave errors. 0 checks gave warnings",
             checkResults = Seq(
               CheckResult(
-                QcType.ArbitraryQualityCheck,
+                QcType.ArbitraryCheck,
                 CheckStatus.Error,
                 "The arbitrary check failed!",
                 arbitraryCheck.description
