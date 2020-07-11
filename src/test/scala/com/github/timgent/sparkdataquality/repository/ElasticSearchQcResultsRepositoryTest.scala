@@ -1,21 +1,27 @@
 package com.github.timgent.sparkdataquality.repository
 
 import com.fortysevendeg.scalacheck.datetime.jdk8.ArbitraryJdk8.arbInstantJdk8
+import com.github.timgent.sparkdataquality.checks.CheckDescription.{
+  DualMetricCheckDescription,
+  SimpleCheckDescription,
+  SingleMetricCheckDescription
+}
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, OtherDsDescription, SingleDsDescription}
-import com.github.timgent.sparkdataquality.checks.QcType.{DatasetComparisonQualityCheck, SingleDatasetQualityCheck}
-import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, DatasourceDescription, QcType}
+import com.github.timgent.sparkdataquality.checks.QcType.{ArbDualDsCheck, ArbSingleDsCheck}
+import com.github.timgent.sparkdataquality.checks.{CheckDescription, CheckResult, CheckStatus, DatasourceDescription, QcType}
 import com.github.timgent.sparkdataquality.checkssuite.CheckSuiteStatus.{Error, Success}
 import com.github.timgent.sparkdataquality.checkssuite.{CheckSuiteStatus, ChecksSuiteResult}
+import com.github.timgent.sparkdataquality.generators.Generators.arbSimpleMetricDescriptor
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
 import com.sksamuel.elastic4s.testkit.DockerTests
 import io.circe.parser._
 import io.circe.syntax._
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import org.scalacheck.Arbitrary.arbitrary
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -30,6 +36,12 @@ class ElasticSearchQcResultsRepositoryTest
 
   implicit val checkSuiteStatusArb = Arbitrary(Gen.oneOf(CheckSuiteStatus.values))
   implicit val checkStatusArb = Arbitrary(Gen.oneOf(CheckStatus.values))
+  implicit val simpleCheckDescriptionArb = Arbitrary(Gen.resultOf(SimpleCheckDescription))
+  implicit val dualMetricCheckDescriptionArb = Arbitrary(Gen.resultOf(DualMetricCheckDescription))
+  implicit val singleMetricCheckDescriptionArb = Arbitrary(Gen.resultOf(SingleMetricCheckDescription))
+  implicit val checkDescriptionArb: Arbitrary[CheckDescription] = Arbitrary(
+    Gen.oneOf(arbitrary[SimpleCheckDescription], arbitrary[DualMetricCheckDescription], arbitrary[SingleMetricCheckDescription])
+  )
   implicit val qcTypeArb = Arbitrary(Gen.oneOf(QcType.values))
   implicit val singleDsDescriptionArb = Arbitrary(Gen.resultOf(SingleDsDescription))
   implicit val dualDsDescriptionArb = Arbitrary(Gen.resultOf(DualDsDescription))
@@ -42,7 +54,7 @@ class ElasticSearchQcResultsRepositoryTest
 
   "ElasticSearchQcResultsRepository.save" should {
     def generateRawCheckResult(qcType: QcType, suffix: String, status: CheckStatus) =
-      CheckResult(qcType, status, s"checkResult$suffix", s"checkDescription$suffix")
+      CheckResult(qcType, status, s"checkResult$suffix", SimpleCheckDescription(s"checkDescription$suffix"))
 
     val someIndex = "index_name"
     implicit val patienceConfig: PatienceConfig = PatienceConfig(5 seconds, 1 second)
@@ -53,17 +65,17 @@ class ElasticSearchQcResultsRepositoryTest
         new ElasticSearchQcResultsRepository(client, someIndex)
 
       val checkResultA1 =
-        generateRawCheckResult(SingleDatasetQualityCheck, "A1", CheckStatus.Success)
+        generateRawCheckResult(ArbSingleDsCheck, "A1", CheckStatus.Success)
       val checkResultA2 =
-        generateRawCheckResult(SingleDatasetQualityCheck, "A2", CheckStatus.Success)
+        generateRawCheckResult(ArbSingleDsCheck, "A2", CheckStatus.Success)
       val checkResultB1 =
-        generateRawCheckResult(DatasetComparisonQualityCheck, "B1", CheckStatus.Error)
+        generateRawCheckResult(ArbDualDsCheck, "B1", CheckStatus.Error)
       val checkResultB2 =
-        generateRawCheckResult(DatasetComparisonQualityCheck, "B2", CheckStatus.Error)
+        generateRawCheckResult(ArbDualDsCheck, "B2", CheckStatus.Error)
       val checkResultB1Success =
-        generateRawCheckResult(DatasetComparisonQualityCheck, "B1", CheckStatus.Error)
+        generateRawCheckResult(ArbDualDsCheck, "B1", CheckStatus.Error)
       val checkResultB2Success =
-        generateRawCheckResult(DatasetComparisonQualityCheck, "B2", CheckStatus.Error)
+        generateRawCheckResult(ArbDualDsCheck, "B2", CheckStatus.Error)
       val initialResultsToInsert: List[ChecksSuiteResult] = List(
         ChecksSuiteResult(
           Success,
@@ -111,13 +123,19 @@ class ElasticSearchQcResultsRepositoryTest
         "someCheckSuiteDescription",
         Seq(
           CheckResult(
-            QcType.MetricsBasedQualityCheck,
+            QcType.SingleMetricCheck,
             CheckStatus.Success,
             "someResultDescriptionA",
-            "someCheckDescriptionA",
+            SimpleCheckDescription("someCheckDescriptionA"),
             Some(SingleDsDescription("someDatasourceDescription"))
           ),
-          CheckResult(QcType.SingleDatasetQualityCheck, CheckStatus.Error, "someResultDescriptionB", "someCheckDescriptionB", None)
+          CheckResult(
+            QcType.ArbSingleDsCheck,
+            CheckStatus.Error,
+            "someResultDescriptionB",
+            SimpleCheckDescription("someCheckDescriptionB"),
+            None
+          )
         ),
         now,
         Map("someTagKey" -> "someTagValue")
@@ -129,20 +147,26 @@ class ElasticSearchQcResultsRepositoryTest
            |  "checkSuiteDescription" : "someCheckSuiteDescription",
            |  "checkResults" : [
            |    {
-           |      "qcType" : "MetricsBasedQualityCheck",
+           |      "qcType" : "SingleMetricCheck",
            |      "status" : "Success",
            |      "resultDescription" : "someResultDescriptionA",
-           |      "checkDescription" : "someCheckDescriptionA",
+           |      "checkDescription" : {
+           |        "desc" : "someCheckDescriptionA",
+           |        "type" : "SimpleCheckDescription"
+           |      },
            |      "datasourceDescription" : {
            |        "type": "SingleDs",
            |        "datasource": "someDatasourceDescription"
            |      }
            |    },
            |    {
-           |      "qcType" : "SingleDatasetQualityCheck",
+           |      "qcType" : "ArbSingleDsCheck",
            |      "status" : "Error",
            |      "resultDescription" : "someResultDescriptionB",
-           |      "checkDescription" : "someCheckDescriptionB",
+           |      "checkDescription" : {
+           |        "desc" : "someCheckDescriptionB",
+           |        "type" : "SimpleCheckDescription"
+           |      },
            |      "datasourceDescription" : null
            |    }
            |  ],

@@ -12,10 +12,9 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import com.github.timgent.sparkdataquality.generators.Generators.arbSimpleMetricDescriptor
 
 class EsMetricsDocumentTest extends AnyWordSpec with Matchers with ScalaCheckDrivenPropertyChecks {
-
-  private implicit val arbSimpleMetricDescriptor: Arbitrary[SimpleMetricDescriptor] = Arbitrary(Gen.resultOf(SimpleMetricDescriptor))
   private val longMetricGen = Gen.resultOf(LongMetric)
   private val doubleMetricGen = Gen.resultOf(DoubleMetric)
   private implicit val arbMetricValue: Arbitrary[MetricValue] = Arbitrary(Gen.oneOf(longMetricGen, doubleMetricGen))

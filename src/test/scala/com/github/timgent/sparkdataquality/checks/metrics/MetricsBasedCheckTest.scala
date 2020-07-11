@@ -1,9 +1,10 @@
 package com.github.timgent.sparkdataquality.checks.metrics
 
+import com.github.timgent.sparkdataquality.checks.CheckDescription.{DualMetricCheckDescription, SingleMetricCheckDescription}
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.DualDsDescription
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType, RawCheckResult}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
-import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter}
+import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter, SimpleMetricDescriptor}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
 import com.holdenkarau.spark.testing.DatasetSuiteBase
@@ -17,9 +18,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
   "DualMetricCheck" should {
     val simpleSizeMetric = MetricDescriptor.SizeMetric()
     val dualMetricBasedCheck =
-      DualMetricCheck[LongMetric](simpleSizeMetric, simpleSizeMetric, "size comparison",
-        MetricComparator.metricsAreEqual
-      )
+      DualMetricCheck[LongMetric](simpleSizeMetric, simpleSizeMetric, "size comparison", MetricComparator.metricsAreEqual)
     val dualDsDescription = DualDsDescription("dsA", "dsB")
     "pass the check when the required metrics are provided in the metrics map and they meet the comparator criteria" in {
       val checkResult: CheckResult = dualMetricBasedCheck.applyCheckOnMetrics(
@@ -28,10 +27,15 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
         dualDsDescription
       )
       checkResult shouldBe CheckResult(
-        QcType.MetricsBasedQualityCheck,
+        QcType.DualMetricCheck,
         CheckStatus.Success,
         "metric comparison passed. dsA with LongMetric(2) was compared to dsB with LongMetric(2)",
-        "size comparison. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to SimpleMetricDescriptor(Size,Some(no filter),None,None) using comparator of metrics are equal"
+        DualMetricCheckDescription(
+          "size comparison",
+          SimpleMetricDescriptor("Size", Some("no filter"), None, None),
+          SimpleMetricDescriptor("Size", Some("no filter"), None, None),
+          "metrics are equal"
+        )
       )
     }
 
@@ -42,10 +46,15 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
         dualDsDescription
       )
       checkResult shouldBe CheckResult(
-        QcType.MetricsBasedQualityCheck,
+        QcType.DualMetricCheck,
         CheckStatus.Error,
         "metric comparison failed. dsA with LongMetric(2) was compared to dsB with LongMetric(3)",
-        "size comparison. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to SimpleMetricDescriptor(Size,Some(no filter),None,None) using comparator of metrics are equal"
+        DualMetricCheckDescription(
+          "size comparison",
+          SimpleMetricDescriptor("Size", Some("no filter"), None, None),
+          SimpleMetricDescriptor("Size", Some("no filter"), None, None),
+          "metrics are equal"
+        )
       )
     }
 
@@ -67,7 +76,8 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
   }
 
   "SingleMetricCheck" should {
-    val metric = mock[MetricDescriptor]
+    val metric = stub[MetricDescriptor]
+    (metric.toSimpleMetricDescriptor _).when().returns(mock[SimpleMetricDescriptor])
     val exampleCheck = SingleMetricCheck[LongMetric](metric, "exampleCheck") { metricValue =>
       val isWithinThreshold = AbsoluteThreshold(2L, 2L).isWithinThreshold(metricValue)
       if (isWithinThreshold)
@@ -127,10 +137,10 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
       val result: CheckResult =
         check.applyCheckOnMetrics(Map(check.metric -> LongMetric(2)))
       result shouldBe CheckResult(
-        QcType.MetricsBasedQualityCheck,
+        QcType.SingleMetricCheck,
         CheckStatus.Success,
         "Size of 2 was within the range between 0 and 3",
-        "SizeCheck with filter: no filter"
+        SingleMetricCheckDescription("SizeCheck", SimpleMetricDescriptor("Size", Some("no filter")))
       )
     }
 
@@ -140,10 +150,10 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
       val result: CheckResult =
         check.applyCheckOnMetrics(Map(check.metric -> LongMetric(4)))
       result shouldBe CheckResult(
-        QcType.MetricsBasedQualityCheck,
+        QcType.SingleMetricCheck,
         CheckStatus.Error,
         "Size of 4 was outside the range between 0 and 3",
-        "SizeCheck with filter: someFilter"
+        SingleMetricCheckDescription("SizeCheck", SimpleMetricDescriptor("Size", Some("someFilter")))
       )
     }
   }
@@ -158,10 +168,13 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
       val result: CheckResult =
         check.applyCheckOnMetrics(Map(check.metric -> DoubleMetric(0.9)))
       result shouldBe CheckResult(
-        QcType.MetricsBasedQualityCheck,
+        QcType.SingleMetricCheck,
         CheckStatus.Success,
         "Compliance of 0.9 was within the range between 0.9 and 1.0",
-        "ComplianceCheck someComplianceFn with filter: no filter"
+        SingleMetricCheckDescription(
+          "ComplianceCheck",
+          SimpleMetricDescriptor("Compliance", Some("no filter"), complianceDescription = Some("someComplianceFn"))
+        )
       )
     }
 
@@ -174,10 +187,13 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
       val result: CheckResult =
         check.applyCheckOnMetrics(Map(check.metric -> DoubleMetric(0.8)))
       result shouldBe CheckResult(
-        QcType.MetricsBasedQualityCheck,
+        QcType.SingleMetricCheck,
         CheckStatus.Error,
         "Compliance of 0.8 was outside the range between 0.9 and 1.0",
-        "ComplianceCheck someComplianceFn with filter: no filter"
+        SingleMetricCheckDescription(
+          "ComplianceCheck",
+          SimpleMetricDescriptor("Compliance", Some("no filter"), complianceDescription = Some("someComplianceFn"))
+        )
       )
     }
   }

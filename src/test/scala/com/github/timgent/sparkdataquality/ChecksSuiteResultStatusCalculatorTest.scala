@@ -10,7 +10,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class ChecksSuiteResultStatusCalculatorTest extends AnyWordSpec with Matchers {
   "getWorstCheckStatus" should {
-    val qcType = QcType.MetricsBasedQualityCheck
+    val qcType = QcType.SingleMetricCheck
     val successfulCheckResult = CheckResult(qcType, CheckStatus.Success, "", someCheck.description)
     val errorCheckResult = CheckResult(qcType, CheckStatus.Error, "", someCheck.description)
     val warningCheckResult = CheckResult(qcType, CheckStatus.Warning, "", someCheck.description)

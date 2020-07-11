@@ -1,7 +1,8 @@
 package com.github.timgent.sparkdataquality.checks.metrics
 
+import com.github.timgent.sparkdataquality.checks.CheckDescription.SingleMetricCheckDescription
 import com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck
-import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType, RawCheckResult}
+import com.github.timgent.sparkdataquality.checks.{CheckDescription, CheckResult, CheckStatus, QcType, RawCheckResult}
 import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{ComplianceMetric, CountDistinctValuesMetric, SizeMetric}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.metrics.{ComplianceFn, MetricDescriptor, MetricFilter, MetricValue}
@@ -12,15 +13,19 @@ import scala.reflect.ClassTag
 /**
   * A check based on a single metric
   * @param metric - describes the metric the check will be done on
-  * @param description - the user friendly description for this check
+  * @param checkDescription - the user friendly description for this check
   * @param check - the check to be done
   * @tparam MV - the type of the MetricValue that will be calculated in order to complete this check
   */
-case class SingleMetricCheck[MV <: MetricValue](metric: MetricDescriptor, description: String)(
+case class SingleMetricCheck[MV <: MetricValue](metric: MetricDescriptor, checkDescription: String)(
     check: MV#T => RawCheckResult
-) extends MetricsBasedCheck with SingleDsCheck {
+) extends MetricsBasedCheck
+    with SingleDsCheck {
+
+  override def description: CheckDescription = SingleMetricCheckDescription(checkDescription, metric.toSimpleMetricDescriptor)
+
   def applyCheck(metric: MV): CheckResult = {
-    check(metric.value).withDescription(QcType.MetricsBasedQualityCheck, description)
+    check(metric.value).withDescription(QcType.SingleMetricCheck, description)
   }
 
   // typeTag required here to enable match of metric on type MV. Without class tag this type check would be fruitless
@@ -76,7 +81,7 @@ object SingleMetricCheck {
     * @param filter - filter to be applied before rows are counted
     */
   def sizeCheck(threshold: AbsoluteThreshold[Long], filter: MetricFilter = MetricFilter.noFilter): SingleMetricCheck[LongMetric] =
-    thresholdBasedCheck[LongMetric](SizeMetric(filter), s"SizeCheck with filter: ${filter.filterDescription}", threshold)
+    thresholdBasedCheck[LongMetric](SizeMetric(filter), s"SizeCheck", threshold)
 
   /**
     * Checks the fraction of rows that are compliant with the given complianceFn
@@ -91,7 +96,7 @@ object SingleMetricCheck {
   ): SingleMetricCheck[DoubleMetric] =
     thresholdBasedCheck[DoubleMetric](
       ComplianceMetric(complianceFn, filter),
-      s"ComplianceCheck ${complianceFn.description} with filter: ${filter.filterDescription}",
+      s"ComplianceCheck",
       threshold
     )
 

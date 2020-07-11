@@ -23,17 +23,7 @@ private[repository] case class EsMetricsDocument(
 )
 
 private object EsMetricsDocument {
-  private implicit val metricDescriptorEncoder: Encoder[SimpleMetricDescriptor] = new Encoder[SimpleMetricDescriptor] {
-    override def apply(a: SimpleMetricDescriptor): Json = {
-      val fields: List[(String, Json)] = List(
-        Some("metricName" -> a.metricName.asJson),
-        a.filterDescription.map(fd => "filterDescription" -> fd.asJson),
-        a.complianceDescription.map(cd => "complianceDescription" -> cd.asJson),
-        a.onColumns.map(oc => "onColumns" -> oc.asJson)
-      ).flatten
-      Json.obj(fields: _*)
-    }
-  }
+  import CommonEncoders.{metricDescriptorEncoder, metricDescriptorDecoder}
   private implicit val metricValueEncoder: Encoder[MetricValue] = new Encoder[MetricValue] {
     override def apply(a: MetricValue): Json = {
       a match {
@@ -42,7 +32,6 @@ private object EsMetricsDocument {
       }
     }
   }
-  private implicit val metricDescriptorDecoder: Decoder[SimpleMetricDescriptor] = deriveDecoder[SimpleMetricDescriptor]
   private implicit val metricValueDecoder: Decoder[MetricValue] = new Decoder[MetricValue] {
     override def apply(c: HCursor): Decoder.Result[MetricValue] = {
       for {
