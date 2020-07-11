@@ -93,14 +93,14 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="ChecksSuite.html"><span class="name">ChecksSuite</span></a><span class="params">(<span name="checkSuiteDescription">checkSuiteDescription: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="tags">tags: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>, <span name="singleDatasetMetricChecks">singleDatasetMetricChecks: <span class="extype" name="scala.Seq">Seq</span>[<a href="SingleDatasetMetricChecks.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.SingleDatasetMetricChecks">SingleDatasetMetricChecks</a>] = <span class="symbol">Seq.empty</span></span>, <span name="dualDatasetMetricChecks">dualDatasetMetricChecks: <span class="extype" name="scala.Seq">Seq</span>[<a href="DualDatasetMetricChecks.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DualDatasetMetricChecks">DualDatasetMetricChecks</a>] = <span class="symbol">Seq.empty</span></span>, <span name="singleDatasetChecks">singleDatasetChecks: <span class="extype" name="scala.Seq">Seq</span>[<a href="SingleDatasetCheckWithDs.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.SingleDatasetCheckWithDs">SingleDatasetCheckWithDs</a>] = <span class="symbol">Seq.empty</span></span>, <span name="dualDatasetChecks">dualDatasetChecks: <span class="extype" name="scala.Seq">Seq</span>[<a href="DualDatasetCheckWithDs.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DualDatasetCheckWithDs">DualDatasetCheckWithDs</a>] = <span class="symbol">Seq.empty</span></span>, <span name="arbitraryChecks">arbitraryChecks: <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/ArbitraryCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.ArbitraryCheck">ArbitraryCheck</a>] = <span class="symbol">Seq.empty</span></span>, <span name="deequChecks">deequChecks: <span class="extype" name="scala.Seq">Seq</span>[<a href="DeequCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DeequCheck">DeequCheck</a>] = <span class="symbol">Seq.empty</span></span>, <span name="metricsPersister">metricsPersister: <a href="../repository/MetricsPersister.html" class="extype" name="com.github.timgent.sparkdataquality.repository.MetricsPersister">MetricsPersister</a> = <span class="symbol"><span class="name"><a href="../../../../package.html">NullMetricsPersister</a></span></span></span>, <span name="deequMetricsRepository">deequMetricsRepository: <a href="../package$$sparkdataquality$.html#DeequMetricsRepository=com.amazon.deequ.repository.MetricsRepository" class="extmbr" name="com.github.timgent.sparkdataquality.sparkdataquality.DeequMetricsRepository">DeequMetricsRepository</a> = <span class="symbol"><span class="name"><a href="../../../../package.html">new DeequNullMetricsRepository</a></span></span></span>, <span name="qcResultsRepository">qcResultsRepository: <a href="../repository/QcResultsRepository.html" class="extype" name="com.github.timgent.sparkdataquality.repository.QcResultsRepository">QcResultsRepository</a> = <span class="symbol"><span class="name"><a href="../../../../package.html">new NullQcResultsRepository</a></span></span></span>, <span name="checkResultCombiner">checkResultCombiner: (<span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/CheckResult.html" class="extype" name="com.github.timgent.sparkdataquality.checks.CheckResult">CheckResult</a>]) ⇒ <a href="CheckSuiteStatus.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.CheckSuiteStatus">CheckSuiteStatus</a> = <span class="defval" name='<span class="name"><a href="ChecksSuiteResultStatusCalculator$.html">ChecksSuiteResultStatusCalculator.getWorstCheckStatus</a></span>'>...</span></span>)</span><span class="result"> extends <a href="ChecksSuiteBase.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.ChecksSuiteBase">ChecksSuiteBase</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="ChecksSuite.html"><span class="name">ChecksSuite</span></a><span class="params">(<span name="checkSuiteDescription">checkSuiteDescription: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="tags">tags: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>, <span name="singleDsChecks">singleDsChecks: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="DescribedDs.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DescribedDs">DescribedDs</a>, <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/QCCheck$$SingleDsCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck">SingleDsCheck</a>]] = <span class="symbol">Map.empty</span></span>, <span name="dualDsChecks">dualDsChecks: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="DescribedDsPair.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DescribedDsPair">DescribedDsPair</a>, <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/QCCheck$$DualDsQCCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck.DualDsQCCheck">DualDsQCCheck</a>]] = <span class="symbol">Map.empty</span></span>, <span name="arbitraryChecks">arbitraryChecks: <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/ArbitraryCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.ArbitraryCheck">ArbitraryCheck</a>] = <span class="symbol">Seq.empty</span></span>, <span name="metricsPersister">metricsPersister: <a href="../repository/MetricsPersister.html" class="extype" name="com.github.timgent.sparkdataquality.repository.MetricsPersister">MetricsPersister</a> = <span class="symbol"><span class="name"><a href="../../../../package.html">NullMetricsPersister</a></span></span></span>, <span name="deequMetricsRepository">deequMetricsRepository: <a href="../package$$sparkdataquality$.html#DeequMetricsRepository=com.amazon.deequ.repository.MetricsRepository" class="extmbr" name="com.github.timgent.sparkdataquality.sparkdataquality.DeequMetricsRepository">DeequMetricsRepository</a> = <span class="symbol"><span class="name"><a href="../../../../package.html">new DeequNullMetricsRepository</a></span></span></span>, <span name="qcResultsRepository">qcResultsRepository: <a href="../repository/QcResultsRepository.html" class="extype" name="com.github.timgent.sparkdataquality.repository.QcResultsRepository">QcResultsRepository</a> = <span class="symbol"><span class="name"><a href="../../../../package.html">new NullQcResultsRepository</a></span></span></span>, <span name="checkResultCombiner">checkResultCombiner: (<span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/CheckResult.html" class="extype" name="com.github.timgent.sparkdataquality.checks.CheckResult">CheckResult</a>]) ⇒ <a href="CheckSuiteStatus.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.CheckSuiteStatus">CheckSuiteStatus</a> = <span class="defval" name='<span class="name"><a href="ChecksSuiteResultStatusCalculator$.html">ChecksSuiteResultStatusCalculator.getWorstCheckStatus</a></span>'>...</span></span>)</span><span class="result"> extends <a href="ChecksSuiteBase.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.ChecksSuiteBase">ChecksSuiteBase</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checkssuite.package@ChecksSuiteextendsChecksSuiteBasewithProductwithSerializable" title="Permalink" target="_top">
         <img src="../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Main entry point which contains the suite of checks you want to perform</p><div class="fullcomment"><div class="comment cmt"><p>Main entry point which contains the suite of checks you want to perform</p></div><dl class="paramcmts block"><dt class="param">checkSuiteDescription</dt><dd class="cmt"><p>- description of the check suite</p></dd><dt class="param">tags</dt><dd class="cmt"><p>- any tags associated with the check suite</p></dd><dt class="param">singleDatasetMetricChecks</dt><dd class="cmt"><p>- list of metric based checks to perform on single datasets</p></dd><dt class="param">dualDatasetMetricChecks</dt><dd class="cmt"><p>- list of metric based checks where the metrics are compared across pairs of datasets</p></dd><dt class="param">singleDatasetChecks</dt><dd class="cmt"><p>- arbitrary checks performed on single datasets</p></dd><dt class="param">dualDatasetChecks</dt><dd class="cmt"><p>- arbitrary checks performed on pairs of datasets</p></dd><dt class="param">arbitraryChecks</dt><dd class="cmt"><p>- any other arbitrary checks</p></dd><dt class="param">deequChecks</dt><dd class="cmt"><p>- checks to perform using deequ as the underlying checking mechanism</p></dd><dt class="param">metricsPersister</dt><dd class="cmt"><p>- how to persist metrics</p></dd><dt class="param">deequMetricsRepository</dt><dd class="cmt"><p>- how to persist deequ's metrics</p></dd><dt class="param">checkResultCombiner</dt><dd class="cmt"><p>- how the overall result status should be calculated</p></dd></dl></div>
+      <p class="shortcomment cmt">Main entry point which contains the suite of checks you want to perform</p><div class="fullcomment"><div class="comment cmt"><p>Main entry point which contains the suite of checks you want to perform</p></div><dl class="paramcmts block"><dt class="param">checkSuiteDescription</dt><dd class="cmt"><p>- description of the check suite</p></dd><dt class="param">tags</dt><dd class="cmt"><p>- any tags associated with the check suite</p></dd><dt class="param">singleDsChecks</dt><dd class="cmt"><p>- map from a single dataset to a list of checks on that dataset</p></dd><dt class="param">dualDsChecks</dt><dd class="cmt"><p>- map from a pair of datasets to a list of checks to do on that pair of datasets</p></dd><dt class="param">arbitraryChecks</dt><dd class="cmt"><p>- any other arbitrary checks</p></dd><dt class="param">metricsPersister</dt><dd class="cmt"><p>- how to persist metrics</p></dd><dt class="param">deequMetricsRepository</dt><dd class="cmt"><p>- how to persist deequ's metrics</p></dd><dt class="param">checkResultCombiner</dt><dd class="cmt"><p>- how the overall result status should be calculated</p></dd></dl></div>
     </li><li name="com.github.timgent.sparkdataquality.checkssuite.ChecksSuiteBase" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="ChecksSuiteBaseextendsAnyRef"></a>
       <a id="ChecksSuiteBase:ChecksSuiteBase"></a>
@@ -153,125 +153,42 @@
       </a>
     </span>
       
-    </li><li name="com.github.timgent.sparkdataquality.checkssuite.DeequCheck" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DeequCheckextendsProductwithSerializable"></a>
-      <a id="DeequCheck:DeequCheck"></a>
+    </li><li name="com.github.timgent.sparkdataquality.checkssuite.DescribedDs" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="DescribedDsextendsProductwithSerializable"></a>
+      <a id="DescribedDs:DescribedDs"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DeequCheck.html"><span class="name">DeequCheck</span></a><span class="params">(<span name="describedDataset">describedDataset: <a href="DescribedDataset.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DescribedDataset">DescribedDataset</a></span>, <span name="checks">checks: <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/DeequQCCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.DeequQCCheck">DeequQCCheck</a>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DescribedDs.html"><span class="name">DescribedDs</span></a><span class="params">(<span name="ds">ds: <span class="extype" name="org.apache.spark.sql.Dataset">Dataset</span>[_]</span>, <span name="description">description: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checkssuite.package@DeequCheckextendsProductwithSerializable" title="Permalink" target="_top">
-        <img src="../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="com.github.timgent.sparkdataquality.checkssuite.DescribedDataset" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="DescribedDatasetextendsProductwithSerializable"></a>
-      <a id="DescribedDataset:DescribedDataset"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="DescribedDataset.html"><span class="name">DescribedDataset</span></a><span class="params">(<span name="ds">ds: <span class="extype" name="org.apache.spark.sql.Dataset">Dataset</span>[_]</span>, <span name="description">description: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checkssuite.package@DescribedDatasetextendsProductwithSerializable" title="Permalink" target="_top">
+      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checkssuite.package@DescribedDsextendsProductwithSerializable" title="Permalink" target="_top">
         <img src="../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">A dataset with description</p><div class="fullcomment"><div class="comment cmt"><p>A dataset with description</p></div><dl class="paramcmts block"><dt class="param">ds</dt><dd class="cmt"><p>- the dataset</p></dd><dt class="param">description</dt><dd class="cmt"><p>- description of the dataset</p></dd></dl></div>
-    </li><li name="com.github.timgent.sparkdataquality.checkssuite.DescribedDatasetPair" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DescribedDatasetPairextendsProductwithSerializable"></a>
-      <a id="DescribedDatasetPair:DescribedDatasetPair"></a>
+    </li><li name="com.github.timgent.sparkdataquality.checkssuite.DescribedDsPair" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="DescribedDsPairextendsProductwithSerializable"></a>
+      <a id="DescribedDsPair:DescribedDsPair"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DescribedDatasetPair.html"><span class="name">DescribedDatasetPair</span></a><span class="params">(<span name="dataset">dataset: <a href="DescribedDataset.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DescribedDataset">DescribedDataset</a></span>, <span name="datasetToCompare">datasetToCompare: <a href="DescribedDataset.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DescribedDataset">DescribedDataset</a></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DescribedDsPair.html"><span class="name">DescribedDsPair</span></a><span class="params">(<span name="ds">ds: <a href="DescribedDs.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DescribedDs">DescribedDs</a></span>, <span name="dsToCompare">dsToCompare: <a href="DescribedDs.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DescribedDs">DescribedDs</a></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checkssuite.package@DescribedDatasetPairextendsProductwithSerializable" title="Permalink" target="_top">
+      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checkssuite.package@DescribedDsPairextendsProductwithSerializable" title="Permalink" target="_top">
         <img src="../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="com.github.timgent.sparkdataquality.checkssuite.DualDatasetCheckWithDs" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DualDatasetCheckWithDsextendsProductwithSerializable"></a>
-      <a id="DualDatasetCheckWithDs:DualDatasetCheckWithDs"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="DualDatasetCheckWithDs.html"><span class="name">DualDatasetCheckWithDs</span></a><span class="params">(<span name="datasets">datasets: <a href="DescribedDatasetPair.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DescribedDatasetPair">DescribedDatasetPair</a></span>, <span name="checks">checks: <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/DualDatasetCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.DualDatasetCheck">DualDatasetCheck</a>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checkssuite.package@DualDatasetCheckWithDsextendsProductwithSerializable" title="Permalink" target="_top">
-        <img src="../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="com.github.timgent.sparkdataquality.checkssuite.DualDatasetMetricChecks" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="DualDatasetMetricChecksextendsProductwithSerializable"></a>
-      <a id="DualDatasetMetricChecks:DualDatasetMetricChecks"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="DualDatasetMetricChecks.html"><span class="name">DualDatasetMetricChecks</span></a><span class="params">(<span name="describedDatasetA">describedDatasetA: <a href="DescribedDataset.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DescribedDataset">DescribedDataset</a></span>, <span name="describedDatasetB">describedDatasetB: <a href="DescribedDataset.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DescribedDataset">DescribedDataset</a></span>, <span name="checks">checks: <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/metrics/DualMetricBasedCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck">DualMetricBasedCheck</a>[_]]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checkssuite.package@DualDatasetMetricChecksextendsProductwithSerializable" title="Permalink" target="_top">
-        <img src="../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">List of DualMetricBasedChecks to be run on a pair of datasets</p><div class="fullcomment"><div class="comment cmt"><p>List of DualMetricBasedChecks to be run on a pair of datasets</p></div><dl class="paramcmts block"><dt class="param">describedDatasetA</dt><dd class="cmt"><p>- the first dataset that is part of the comparison</p></dd><dt class="param">describedDatasetB</dt><dd class="cmt"><p>- the second dataset that is part of the comparison</p></dd><dt class="param">checks</dt><dd class="cmt"><p>- the checks to be done on the datasets</p></dd></dl></div>
-    </li><li name="com.github.timgent.sparkdataquality.checkssuite.SingleDatasetCheckWithDs" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SingleDatasetCheckWithDsextendsProductwithSerializable"></a>
-      <a id="SingleDatasetCheckWithDs:SingleDatasetCheckWithDs"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="SingleDatasetCheckWithDs.html"><span class="name">SingleDatasetCheckWithDs</span></a><span class="params">(<span name="dataset">dataset: <a href="DescribedDataset.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DescribedDataset">DescribedDataset</a></span>, <span name="checks">checks: <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/SingleDatasetCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.SingleDatasetCheck">SingleDatasetCheck</a>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checkssuite.package@SingleDatasetCheckWithDsextendsProductwithSerializable" title="Permalink" target="_top">
-        <img src="../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="com.github.timgent.sparkdataquality.checkssuite.SingleDatasetMetricChecks" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="SingleDatasetMetricChecksextendsProductwithSerializable"></a>
-      <a id="SingleDatasetMetricChecks:SingleDatasetMetricChecks"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="SingleDatasetMetricChecks.html"><span class="name">SingleDatasetMetricChecks</span></a><span class="params">(<span name="describedDataset">describedDataset: <a href="DescribedDataset.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DescribedDataset">DescribedDataset</a></span>, <span name="checks">checks: <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/metrics/SingleMetricBasedCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.SingleMetricBasedCheck">SingleMetricBasedCheck</a>[_]] = <span class="symbol">Seq.empty</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checkssuite.package@SingleDatasetMetricChecksextendsProductwithSerializable" title="Permalink" target="_top">
-        <img src="../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">List of SingleMetricBasedChecks to be run on a single dataset</p><div class="fullcomment"><div class="comment cmt"><p>List of SingleMetricBasedChecks to be run on a single dataset</p></div><dl class="paramcmts block"><dt class="param">describedDataset</dt><dd class="cmt"><p>- the dataset the checks are being run on</p></dd><dt class="param">checks</dt><dd class="cmt"><p>- a list of checks to be run</p></dd></dl></div>
+      <p class="shortcomment cmt">A pair of <a href="DescribedDs.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DescribedDs">DescribedDs</a>s
+</p><div class="fullcomment"><div class="comment cmt"><p>A pair of <a href="DescribedDs.html" class="extype" name="com.github.timgent.sparkdataquality.checkssuite.DescribedDs">DescribedDs</a>s
+</p></div><dl class="paramcmts block"><dt class="param">ds</dt><dd class="cmt"><p>- the first described dataset</p></dd><dt class="param">dsToCompare</dt><dd class="cmt"><p>- the second described dataset</p></dd></dl></div>
     </li></ol>
             </div>
 

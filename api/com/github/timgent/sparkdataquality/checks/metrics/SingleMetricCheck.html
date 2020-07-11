@@ -1,9 +1,9 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>DualMetricBasedCheck - com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck</title>
-          <meta name="description" content="DualMetricBasedCheck - com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck" />
-          <meta name="keywords" content="DualMetricBasedCheck com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck" />
+          <title>SingleMetricCheck - com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck</title>
+          <meta name="description" content="SingleMetricCheck - com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck" />
+          <meta name="keywords" content="SingleMetricCheck com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -16,7 +16,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../index.html';
-            var hash = 'com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck';
+            var hash = 'com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -28,12 +28,14 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img alt="Class" src="../../../../../../lib/class_big.png" />
+        <a href="SingleMetricCheck$.html" title="See companion object"><img alt="Class/Object" src="../../../../../../lib/class_to_object_big.png" /></a>
         <p id="owner"><a href="../../../../../package.html" class="extype" name="com">com</a>.<a href="../../../../package.html" class="extype" name="com.github">github</a>.<a href="../../../package.html" class="extype" name="com.github.timgent">timgent</a>.<a href="../../package.html" class="extype" name="com.github.timgent.sparkdataquality">sparkdataquality</a>.<a href="../package.html" class="extype" name="com.github.timgent.sparkdataquality.checks">checks</a>.<a href="package.html" class="extype" name="com.github.timgent.sparkdataquality.checks.metrics">metrics</a></p>
-        <h1>DualMetricBasedCheck</h1><h3><span class="morelinks"><div>Related Doc:
-            <a href="package.html" class="extype" name="com.github.timgent.sparkdataquality.checks.metrics">package metrics</a>
+        <h1><a href="SingleMetricCheck$.html" title="See companion object">SingleMetricCheck</a></h1><h3><span class="morelinks"><div>
+            Related Docs:
+            <a href="SingleMetricCheck$.html" title="See companion object">object SingleMetricCheck</a>
+            | <a href="package.html" class="extype" name="com.github.timgent.sparkdataquality.checks.metrics">package metrics</a>
           </div></span></h3><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -41,18 +43,17 @@
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
-        <span class="modifier">final </span>
+        <span class="modifier"></span>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">DualMetricBasedCheck</span><span class="tparams">[<span name="MV">MV &lt;: <a href="../../metrics/MetricValue.html" class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricValue">MetricValue</a></span>]</span><span class="params">(<span name="dsAMetric">dsAMetric: <span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricDescriptor">MetricDescriptor</span></span>, <span name="dsBMetric">dsBMetric: <span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricDescriptor">MetricDescriptor</span></span>, <span name="userDescription">userDescription: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="metricComparator">metricComparator: <a href="../../metrics/MetricComparator.html" class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricComparator">MetricComparator</a>[<span class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck.MV">MV</span>]</span>)</span><span class="result"> extends <span class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.MetricsBasedCheck">MetricsBasedCheck</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">SingleMetricCheck</span><span class="tparams">[<span name="MV">MV &lt;: <a href="../../metrics/MetricValue.html" class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricValue">MetricValue</a></span>]</span><span class="params">(<span name="metric">metric: <span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricDescriptor">MetricDescriptor</span></span>, <span name="description">description: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span name="check">check: (<span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricValue.T">MV.T</span>) ⇒ <a href="../RawCheckResult.html" class="extype" name="com.github.timgent.sparkdataquality.checks.RawCheckResult">RawCheckResult</a></span>)</span><span class="result"> extends <span class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.MetricsBasedCheck">MetricsBasedCheck</span> with <a href="../QCCheck$$SingleDsCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck">SingleDsCheck</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>A check based on a metric for one dataset compared to a metric on another dataset
-</p></div><dl class="paramcmts block"><dt class="param">dsAMetric</dt><dd class="cmt"><p>- the metric to be used on dataset a</p></dd><dt class="param">dsBMetric</dt><dd class="cmt"><p>- the metric to be used on dataset b</p></dd><dt class="param">userDescription</dt><dd class="cmt"><p>- description of the check</p></dd><dt class="param">metricComparator</dt><dd class="cmt"><p>- comparison function for the metrics which determines if the check passes</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>A check based on a single metric</p></div><dl class="paramcmts block"><dt class="tparam">MV</dt><dd class="cmt"><p>- the type of the MetricValue that will be calculated in order to complete this check</p></dd><dt class="param">metric</dt><dd class="cmt"><p>- describes the metric the check will be done on</p></dd><dt class="param">description</dt><dd class="cmt"><p>- the user friendly description for this check</p></dd><dt class="param">check</dt><dd class="cmt"><p>- the check to be done</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <span class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.MetricsBasedCheck">MetricsBasedCheck</span>, <a href="../QCCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck">QCCheck</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../QCCheck$$SingleDsCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck">SingleDsCheck</a>, <span class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.MetricsBasedCheck">MetricsBasedCheck</span>, <a href="../QCCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck">QCCheck</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -70,7 +71,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck"><span>DualMetricBasedCheck</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="com.github.timgent.sparkdataquality.checks.metrics.MetricsBasedCheck"><span>MetricsBasedCheck</span></li><li class="in" name="com.github.timgent.sparkdataquality.checks.QCCheck"><span>QCCheck</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck"><span>SingleMetricCheck</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck"><span>SingleDsCheck</span></li><li class="in" name="com.github.timgent.sparkdataquality.checks.metrics.MetricsBasedCheck"><span>MetricsBasedCheck</span></li><li class="in" name="com.github.timgent.sparkdataquality.checks.QCCheck"><span>QCCheck</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -89,23 +90,23 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(dsAMetric:com.github.timgent.sparkdataquality.metrics.MetricDescriptor,dsBMetric:com.github.timgent.sparkdataquality.metrics.MetricDescriptor,userDescription:String,metricComparator:com.github.timgent.sparkdataquality.metrics.MetricComparator[MV]):com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck[MV]"></a>
-      <a id="&lt;init&gt;:DualMetricBasedCheck[MV]"></a>
+              <ol><li name="com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="&lt;init&gt;(metric:com.github.timgent.sparkdataquality.metrics.MetricDescriptor,description:String)(check:MV#T=&gt;com.github.timgent.sparkdataquality.checks.RawCheckResult):com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck[MV]"></a>
+      <a id="&lt;init&gt;:SingleMetricCheck[MV]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">DualMetricBasedCheck</span><span class="params">(<span name="dsAMetric">dsAMetric: <span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricDescriptor">MetricDescriptor</span></span>, <span name="dsBMetric">dsBMetric: <span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricDescriptor">MetricDescriptor</span></span>, <span name="userDescription">userDescription: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="metricComparator">metricComparator: <a href="../../metrics/MetricComparator.html" class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricComparator">MetricComparator</a>[<span class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck.MV">MV</span>]</span>)</span>
+        <span class="name">SingleMetricCheck</span><span class="params">(<span name="metric">metric: <span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricDescriptor">MetricDescriptor</span></span>, <span name="description">description: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span name="check">check: (<span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricValue.T">MV.T</span>) ⇒ <a href="../RawCheckResult.html" class="extype" name="com.github.timgent.sparkdataquality.checks.RawCheckResult">RawCheckResult</a></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@&lt;init&gt;(dsAMetric:com.github.timgent.sparkdataquality.metrics.MetricDescriptor,dsBMetric:com.github.timgent.sparkdataquality.metrics.MetricDescriptor,userDescription:String,metricComparator:com.github.timgent.sparkdataquality.metrics.MetricComparator[MV]):com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck[MV]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@&lt;init&gt;(metric:com.github.timgent.sparkdataquality.metrics.MetricDescriptor,description:String)(check:MV#T=&gt;com.github.timgent.sparkdataquality.checks.RawCheckResult):com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck[MV]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dsAMetric</dt><dd class="cmt"><p>- the metric to be used on dataset a</p></dd><dt class="param">dsBMetric</dt><dd class="cmt"><p>- the metric to be used on dataset b</p></dd><dt class="param">userDescription</dt><dd class="cmt"><p>- description of the check</p></dd><dt class="param">metricComparator</dt><dd class="cmt"><p>- comparison function for the metrics which determines if the check passes</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">metric</dt><dd class="cmt"><p>- describes the metric the check will be done on</p></dd><dt class="param">description</dt><dd class="cmt"><p>- the user friendly description for this check</p></dd><dt class="param">check</dt><dd class="cmt"><p>- the check to be done</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -127,7 +128,7 @@
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@!=(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -144,7 +145,7 @@
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@##():Int" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@##():Int" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -161,24 +162,24 @@
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@==(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@==(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck#applyCheckOnMetrics" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="applyCheckOnMetrics(dsAMetrics:Map[com.github.timgent.sparkdataquality.metrics.MetricDescriptor,com.github.timgent.sparkdataquality.metrics.MetricValue],dsBMetrics:Map[com.github.timgent.sparkdataquality.metrics.MetricDescriptor,com.github.timgent.sparkdataquality.metrics.MetricValue],dualDsDescription:com.github.timgent.sparkdataquality.checks.DatasourceDescription.DualDsDescription)(implicitclassTag:scala.reflect.ClassTag[MV]):com.github.timgent.sparkdataquality.checks.CheckResult"></a>
-      <a id="applyCheckOnMetrics(Map[MetricDescriptor,MetricValue],Map[MetricDescriptor,MetricValue],DualDsDescription)(ClassTag[MV]):CheckResult"></a>
+    </li><li name="com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck#applyCheck" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="applyCheck(metric:MV):com.github.timgent.sparkdataquality.checks.CheckResult"></a>
+      <a id="applyCheck(MV):CheckResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">applyCheckOnMetrics</span><span class="params">(<span name="dsAMetrics">dsAMetrics: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricDescriptor">MetricDescriptor</span>, <a href="../../metrics/MetricValue.html" class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricValue">MetricValue</a>]</span>, <span name="dsBMetrics">dsBMetrics: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricDescriptor">MetricDescriptor</span>, <a href="../../metrics/MetricValue.html" class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricValue">MetricValue</a>]</span>, <span name="dualDsDescription">dualDsDescription: <a href="../DatasourceDescription$$DualDsDescription.html" class="extype" name="com.github.timgent.sparkdataquality.checks.DatasourceDescription.DualDsDescription">DualDsDescription</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="classTag">classTag: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck.MV">MV</span>]</span>)</span><span class="result">: <a href="../CheckResult.html" class="extype" name="com.github.timgent.sparkdataquality.checks.CheckResult">CheckResult</a></span>
+        <span class="name">applyCheck</span><span class="params">(<span name="metric">metric: <span class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck.MV">MV</span></span>)</span><span class="result">: <a href="../CheckResult.html" class="extype" name="com.github.timgent.sparkdataquality.checks.CheckResult">CheckResult</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@applyCheckOnMetrics(dsAMetrics:Map[com.github.timgent.sparkdataquality.metrics.MetricDescriptor,com.github.timgent.sparkdataquality.metrics.MetricValue],dsBMetrics:Map[com.github.timgent.sparkdataquality.metrics.MetricDescriptor,com.github.timgent.sparkdataquality.metrics.MetricValue],dualDsDescription:com.github.timgent.sparkdataquality.checks.DatasourceDescription.DualDsDescription)(implicitclassTag:scala.reflect.ClassTag[MV]):com.github.timgent.sparkdataquality.checks.CheckResult" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@applyCheck(metric:MV):com.github.timgent.sparkdataquality.checks.CheckResult" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -195,7 +196,7 @@
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@asInstanceOf[T0]:T0" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -212,7 +213,7 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@clone():Object" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@clone():Object" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -223,57 +224,23 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck#description" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck#description" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="description:String"></a>
       <a id="description:String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">def</span>
+        <span class="kind">val</span>
       </span>
       <span class="symbol">
         <span class="name">description</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@description:String" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@description:String" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck">DualMetricBasedCheck</a> → <a href="../QCCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck">QCCheck</a></dd></dl></div>
-    </li><li name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck#dsAMetric" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="dsAMetric:com.github.timgent.sparkdataquality.metrics.MetricDescriptor"></a>
-      <a id="dsAMetric:MetricDescriptor"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">dsAMetric</span><span class="result">: <span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricDescriptor">MetricDescriptor</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@dsAMetric:com.github.timgent.sparkdataquality.metrics.MetricDescriptor" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">- the metric to be used on dataset a</p>
-    </li><li name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck#dsBMetric" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="dsBMetric:com.github.timgent.sparkdataquality.metrics.MetricDescriptor"></a>
-      <a id="dsBMetric:MetricDescriptor"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">dsBMetric</span><span class="result">: <span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricDescriptor">MetricDescriptor</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@dsBMetric:com.github.timgent.sparkdataquality.metrics.MetricDescriptor" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">- the metric to be used on dataset b</p>
+      <p class="shortcomment cmt">- the user friendly description for this check</p><div class="fullcomment"><div class="comment cmt"><p>- the user friendly description for this check</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck">SingleMetricCheck</a> → <a href="../QCCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck">QCCheck</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -286,7 +253,7 @@
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -303,7 +270,7 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@finalize():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@finalize():Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -326,7 +293,7 @@
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@getClass():Class[_]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@getClass():Class[_]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -343,28 +310,28 @@
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck#metricComparator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="metricComparator:com.github.timgent.sparkdataquality.metrics.MetricComparator[MV]"></a>
-      <a id="metricComparator:MetricComparator[MV]"></a>
+    </li><li name="com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck#metric" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="metric:com.github.timgent.sparkdataquality.metrics.MetricDescriptor"></a>
+      <a id="metric:MetricDescriptor"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">metricComparator</span><span class="result">: <a href="../../metrics/MetricComparator.html" class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricComparator">MetricComparator</a>[<span class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck.MV">MV</span>]</span>
+        <span class="name">metric</span><span class="result">: <span class="extype" name="com.github.timgent.sparkdataquality.metrics.MetricDescriptor">MetricDescriptor</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@metricComparator:com.github.timgent.sparkdataquality.metrics.MetricComparator[MV]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@metric:com.github.timgent.sparkdataquality.metrics.MetricDescriptor" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">- comparison function for the metrics which determines if the check passes</p>
+      <p class="shortcomment cmt">- describes the metric the check will be done on</p>
     </li><li name="com.github.timgent.sparkdataquality.checks.metrics.MetricsBasedCheck#metricNotPresentErrorResult" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="metricNotPresentErrorResult:com.github.timgent.sparkdataquality.checks.CheckResult"></a>
       <a id="metricNotPresentErrorResult:CheckResult"></a>
@@ -377,7 +344,7 @@
         <span class="name">metricNotPresentErrorResult</span><span class="result">: <a href="../CheckResult.html" class="extype" name="com.github.timgent.sparkdataquality.checks.CheckResult">CheckResult</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@metricNotPresentErrorResult:com.github.timgent.sparkdataquality.checks.CheckResult" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@metricNotPresentErrorResult:com.github.timgent.sparkdataquality.checks.CheckResult" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -394,7 +361,7 @@
         <span class="name">metricTypeErrorResult</span><span class="result">: <a href="../CheckResult.html" class="extype" name="com.github.timgent.sparkdataquality.checks.CheckResult">CheckResult</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@metricTypeErrorResult:com.github.timgent.sparkdataquality.checks.CheckResult" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@metricTypeErrorResult:com.github.timgent.sparkdataquality.checks.CheckResult" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -411,7 +378,7 @@
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -428,7 +395,7 @@
         <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@notify():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@notify():Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -445,12 +412,12 @@
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@notifyAll():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@notifyAll():Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck#qcType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.github.timgent.sparkdataquality.checks.metrics.MetricsBasedCheck#qcType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="qcType:com.github.timgent.sparkdataquality.checks.QcType"></a>
       <a id="qcType:QcType"></a>
       <h4 class="signature">
@@ -462,11 +429,11 @@
         <span class="name">qcType</span><span class="result">: <span class="extype" name="com.github.timgent.sparkdataquality.checks.QcType">QcType</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@qcType:com.github.timgent.sparkdataquality.checks.QcType" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@qcType:com.github.timgent.sparkdataquality.checks.QcType" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck">DualMetricBasedCheck</a> → MetricsBasedCheck → <a href="../QCCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck">QCCheck</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>MetricsBasedCheck → <a href="../QCCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck">QCCheck</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -479,28 +446,11 @@
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck#userDescription" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="userDescription:String"></a>
-      <a id="userDescription:String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">userDescription</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@userDescription:String" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">- description of the check</p>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -513,7 +463,7 @@
         <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@wait():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@wait():Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -536,7 +486,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -559,7 +509,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.DualMetricBasedCheck@wait(x$1:Long):Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck@wait(x$1:Long):Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -587,6 +537,8 @@
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck">
+              <h3>Inherited from <a href="../QCCheck$$SingleDsCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck">SingleDsCheck</a></h3>
             </div><div class="parent" name="com.github.timgent.sparkdataquality.checks.metrics.MetricsBasedCheck">
               <h3>Inherited from <span class="extype" name="com.github.timgent.sparkdataquality.checks.metrics.MetricsBasedCheck">MetricsBasedCheck</span></h3>
             </div><div class="parent" name="com.github.timgent.sparkdataquality.checks.QCCheck">

@@ -62,12 +62,9 @@ check status. For example:</p>
 <span class="hljs-keyword">val</span> myFirstChecksSuite = <span class="hljs-type">ChecksSuite</span>(
     checkSuiteDescription = <span class="hljs-string">"myFirstChecksSuite"</span>,
     tags = ???,
-    singleDatasetMetricChecks = ???,
-    dualDatasetMetricChecks = ???,
-    singleDatasetChecks = ???,
-    dualDatasetChecks = ???,
+    singleDsChecks = ???,
+    dualDsChecks = ???,
     arbitraryChecks = ???,
-    deequChecks = ???,
     metricsPersister = ???,
     deequMetricsRepository = ???,
     qcResultsRepository = ???,
@@ -83,7 +80,7 @@ use the worst status for any individual checks as the overall status for the <co
 <p>Let's look at a simple example where we run some performant metric-based checks a single Dataset.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> java.time.<span class="hljs-type">Instant</span>
 
-  <span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.checks.metrics.<span class="hljs-type">SingleMetricBasedCheck</span>
+  <span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.checks.metrics.<span class="hljs-type">SingleMetricCheck</span>
   <span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.checkssuite._
   <span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.thresholds.<span class="hljs-type">AbsoluteThreshold</span>
   <span class="hljs-keyword">import</span> org.apache.spark.<span class="hljs-type">SparkConf</span>
@@ -100,17 +97,15 @@ use the worst status for any individual checks as the overall status for the <co
     <span class="hljs-type">NumberString</span>(<span class="hljs-number">2</span>, <span class="hljs-string">"b"</span>),
     <span class="hljs-type">NumberString</span>(<span class="hljs-number">3</span>, <span class="hljs-string">"c"</span>)
   ).toDS
-  <span class="hljs-keyword">val</span> numberStrings: <span class="hljs-type">DescribedDataset</span> = <span class="hljs-type">DescribedDataset</span>(ds, <span class="hljs-string">"numberStrings"</span>)
+  <span class="hljs-keyword">val</span> numberStrings: <span class="hljs-type">DescribedDs</span> = <span class="hljs-type">DescribedDs</span>(ds, <span class="hljs-string">"numberStrings"</span>)
   <span class="hljs-keyword">val</span> simpleChecksSuite: <span class="hljs-type">ChecksSuite</span> = <span class="hljs-type">ChecksSuite</span>(
     checkSuiteDescription = <span class="hljs-string">"simpleChecksSuite"</span>,
-    singleDatasetMetricChecks = <span class="hljs-type">Seq</span>(
-      <span class="hljs-type">SingleDatasetMetricChecks</span>(
-        numberStrings,
+    singleDsChecks = <span class="hljs-type">Map</span>(
+        numberStrings -&gt;
         <span class="hljs-type">Seq</span>(
-          <span class="hljs-type">SingleMetricBasedCheck</span>.sizeCheck(<span class="hljs-type">AbsoluteThreshold</span>(<span class="hljs-number">3</span>, <span class="hljs-number">5</span>)),
-          <span class="hljs-type">SingleMetricBasedCheck</span>.distinctValuesCheck(<span class="hljs-type">AbsoluteThreshold</span>(<span class="hljs-number">2</span>, <span class="hljs-number">5</span>), <span class="hljs-type">List</span>(<span class="hljs-string">"num"</span>)))
+          <span class="hljs-type">SingleMetricCheck</span>.sizeCheck(<span class="hljs-type">AbsoluteThreshold</span>(<span class="hljs-number">3</span>, <span class="hljs-number">5</span>)),
+          <span class="hljs-type">SingleMetricCheck</span>.distinctValuesCheck(<span class="hljs-type">AbsoluteThreshold</span>(<span class="hljs-number">2</span>, <span class="hljs-number">5</span>), <span class="hljs-type">List</span>(<span class="hljs-string">"num"</span>)))
       )
-    )
   )
   <span class="hljs-keyword">val</span> qcResults: <span class="hljs-type">Future</span>[<span class="hljs-type">ChecksSuiteResult</span>] = simpleChecksSuite.run(<span class="hljs-type">Instant</span>.now)
 </code></pre>

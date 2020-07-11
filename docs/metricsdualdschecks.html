@@ -56,25 +56,22 @@
             });
         </script></nav></div><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 id="__docusaurus" class="postHeaderTitle">Metrics based checks on a pair of Datasets</h1></header><article><div><span><h2><a class="anchor" aria-hidden="true" id="performing-metric-based-checks-on-a-pair-of-datasets"></a><a href="#performing-metric-based-checks-on-a-pair-of-datasets" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Performing metric based checks on a pair of datasets</h2>
 <p>To perform metric based checks on a pair of Datasets you will need to pass a
-<code>dualDatasetMetricChecks</code> argument to your ChecksSuite.</p>
+<code>dualDsChecks</code> argument to your ChecksSuite.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.checkssuite._
 <span class="hljs-keyword">val</span> checksSuite = <span class="hljs-type">ChecksSuite</span>(
   <span class="hljs-string">"someChecksSuite"</span>, 
-  dualDatasetMetricChecks = ???
+  dualDsChecks = ???
 )
 </code></pre>
-<p>You will need to pass in a sequence of <code>DualDatasetMetricChecks</code>. A <code>DualDatasetMetricChecks</code> class consists of:</p>
-<ol>
-<li>A pair of <code>DescribedDataset</code> (A and B) - contains the Datasets for the checks to be performed on.</li>
-<li>A list of <code>DualMetricBasedCheck</code>.</li>
-</ol>
-<h2><a class="anchor" aria-hidden="true" id="how-to-create-a-dualmetricbasedcheck"></a><a href="#how-to-create-a-dualmetricbasedcheck" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>How to create a DualMetricBasedCheck</h2>
-<p>You can create a <code>DualMetricBasedCheck</code> by specifying the metric you want to compare for each dataset, and providing
+<p>You will need to pass in a <code>Map[DescribedDsPair, DualDsCheck]</code>. The keys represent the pair of datasets that they
+checks will be performed on. The values represent the checks to be done on the pair of datasets.</p>
+<h2><a class="anchor" aria-hidden="true" id="how-to-create-a-dualmetriccheck"></a><a href="#how-to-create-a-dualmetriccheck" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>How to create a DualMetricCheck</h2>
+<p>You can create a <code>DualMetricCheck</code> by specifying the metric you want to compare for each dataset, and providing
 a MetricComparator that describes what comparison to do between the 2 metrics. For example:</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.checks.metrics.<span class="hljs-type">DualMetricBasedCheck</span>
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.checks.metrics.<span class="hljs-type">DualMetricCheck</span>
 <span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.metrics.<span class="hljs-type">MetricComparator</span>
 <span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.metrics.<span class="hljs-type">MetricDescriptor</span>._
-<span class="hljs-type">DualMetricBasedCheck</span>(<span class="hljs-type">SizeMetric</span>(), <span class="hljs-type">CountDistinctValuesMetric</span>(onColumns = <span class="hljs-type">List</span>(<span class="hljs-string">"someColumn"</span>)), <span class="hljs-string">"dsA size is equal to dsB size"</span>,
+<span class="hljs-type">DualMetricCheck</span>(<span class="hljs-type">SizeMetric</span>(), <span class="hljs-type">CountDistinctValuesMetric</span>(onColumns = <span class="hljs-type">List</span>(<span class="hljs-string">"someColumn"</span>)), <span class="hljs-string">"dsA size is equal to dsB size"</span>,
   <span class="hljs-type">MetricComparator</span>.metricsAreEqual
 )
 </code></pre>
@@ -84,16 +81,16 @@ a MetricComparator that describes what comparison to do between the 2 metrics. F
 <span class="hljs-keyword">val</span> metricBIsDoubleMetricA = <span class="hljs-type">MetricComparator</span>[<span class="hljs-type">LongMetric</span>](<span class="hljs-string">"metricBIsDoubleMetricA"</span>, (metricA, metricB) =&gt; metricB == metricA * <span class="hljs-number">2</span>)
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="putting-it-all-together"></a><a href="#putting-it-all-together" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Putting it all together</h2>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.checks.metrics.<span class="hljs-type">DualMetricBasedCheck</span>
-<span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.checkssuite.{<span class="hljs-type">ChecksSuite</span>, <span class="hljs-type">DescribedDataset</span>, <span class="hljs-type">DualDatasetMetricChecks</span>, <span class="hljs-type">SingleDatasetMetricChecks</span>}
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.checks.metrics.<span class="hljs-type">DualMetricCheck</span>
+<span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.checkssuite.{<span class="hljs-type">ChecksSuite</span>, <span class="hljs-type">DescribedDs</span>, <span class="hljs-type">DescribedDsPair</span>}
 <span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.metrics.<span class="hljs-type">MetricComparator</span>
 <span class="hljs-keyword">import</span> com.github.timgent.sparkdataquality.metrics.<span class="hljs-type">MetricDescriptor</span>.{<span class="hljs-type">CountDistinctValuesMetric</span>, <span class="hljs-type">SizeMetric</span>}
 <span class="hljs-keyword">import</span> org.apache.spark.sql.<span class="hljs-type">DataFrame</span>
 <span class="hljs-keyword">val</span> myDsA: <span class="hljs-type">DataFrame</span> = ???
 <span class="hljs-keyword">val</span> myDsB: <span class="hljs-type">DataFrame</span> = ???
-<span class="hljs-keyword">val</span> myDescribedDsA: <span class="hljs-type">DescribedDataset</span> = <span class="hljs-type">DescribedDataset</span>(myDsA, <span class="hljs-string">"myDs"</span>)
-<span class="hljs-keyword">val</span> myDescribedDsB: <span class="hljs-type">DescribedDataset</span> = <span class="hljs-type">DescribedDataset</span>(myDsB, <span class="hljs-string">"myDs"</span>)
-<span class="hljs-keyword">val</span> myDualMetricCheck = <span class="hljs-type">DualMetricBasedCheck</span>(
+<span class="hljs-keyword">val</span> myDescribedDsA: <span class="hljs-type">DescribedDs</span> = <span class="hljs-type">DescribedDs</span>(myDsA, <span class="hljs-string">"myDs"</span>)
+<span class="hljs-keyword">val</span> myDescribedDsB: <span class="hljs-type">DescribedDs</span> = <span class="hljs-type">DescribedDs</span>(myDsB, <span class="hljs-string">"myDs"</span>)
+<span class="hljs-keyword">val</span> myDualMetricCheck = <span class="hljs-type">DualMetricCheck</span>(
   <span class="hljs-type">SizeMetric</span>(),
   <span class="hljs-type">CountDistinctValuesMetric</span>(onColumns = <span class="hljs-type">List</span>(<span class="hljs-string">"someColumn"</span>)),
   <span class="hljs-string">"dsA size is equal to dsB size"</span>,
@@ -101,9 +98,9 @@ a MetricComparator that describes what comparison to do between the 2 metrics. F
 )
 <span class="hljs-keyword">val</span> checksSuite = <span class="hljs-type">ChecksSuite</span>(
   <span class="hljs-string">"someChecksSuite"</span>,
-  dualDatasetMetricChecks = <span class="hljs-type">Seq</span>(
-    <span class="hljs-type">DualDatasetMetricChecks</span>(myDescribedDsA, myDescribedDsB, <span class="hljs-type">Seq</span>(myDualMetricCheck))
+  dualDsChecks = <span class="hljs-type">Map</span>(
+    <span class="hljs-type">DescribedDsPair</span>(myDescribedDsA, myDescribedDsB) -&gt; <span class="hljs-type">Seq</span>(myDualMetricCheck)
   )
 )
 </code></pre>
-</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/spark-data-quality/docs/metricssingledschecks"><span class="arrow-prev">← </span><span>Metrics based checks on a single Dataset</span></a><a class="docs-next button" href="/spark-data-quality/docs/availablemetrics"><span>Available metrics</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#performing-metric-based-checks-on-a-pair-of-datasets">Performing metric based checks on a pair of datasets</a></li><li><a href="#how-to-create-a-dualmetricbasedcheck">How to create a DualMetricBasedCheck</a></li><li><a href="#putting-it-all-together">Putting it all together</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/spark-data-quality/" class="nav-home"><img src="/spark-data-quality/img/favicon.ico" alt="Spark Data Quality" width="66" height="58"/></a><div><h5>Docs</h5><a href="/spark-data-quality/docs/intro.html">Getting Started</a><a href="/spark-data-quality/api/index.html">API Reference</a></div><div><h5>Community</h5><a href="https://stackoverflow.com/questions/tagged/" target="spark-data-quality" rel="noreferrer noopener">Stack Overflow</a></div><div><h5>More</h5><a href="https://github.com/timgent/spark-data-quality">GitHub</a><a class="github-button" href="https://github.com/timgent/spark-data-quality" data-icon="octicon-star" aria-label="Star timgent/spark-data-quality on GitHub">Star</a></div></section></footer></div></body></html>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/spark-data-quality/docs/metricssingledschecks"><span class="arrow-prev">← </span><span>Metrics based checks on a single Dataset</span></a><a class="docs-next button" href="/spark-data-quality/docs/availablemetrics"><span>Available metrics</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#performing-metric-based-checks-on-a-pair-of-datasets">Performing metric based checks on a pair of datasets</a></li><li><a href="#how-to-create-a-dualmetriccheck">How to create a DualMetricCheck</a></li><li><a href="#putting-it-all-together">Putting it all together</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/spark-data-quality/" class="nav-home"><img src="/spark-data-quality/img/favicon.ico" alt="Spark Data Quality" width="66" height="58"/></a><div><h5>Docs</h5><a href="/spark-data-quality/docs/intro.html">Getting Started</a><a href="/spark-data-quality/api/index.html">API Reference</a></div><div><h5>Community</h5><a href="https://stackoverflow.com/questions/tagged/" target="spark-data-quality" rel="noreferrer noopener">Stack Overflow</a></div><div><h5>More</h5><a href="https://github.com/timgent/spark-data-quality">GitHub</a><a class="github-button" href="https://github.com/timgent/spark-data-quality" data-icon="octicon-star" aria-label="Star timgent/spark-data-quality on GitHub">Star</a></div></section></footer></div></body></html>

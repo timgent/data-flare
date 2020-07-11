@@ -66,7 +66,43 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.github.timgent.sparkdataquality.checks.ArbitraryCheck" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+              <ol><li name="com.github.timgent.sparkdataquality.checks.ArbDualDsCheck" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ArbDualDsCheckextendsQCCheck.DualDsQCCheck"></a>
+      <a id="ArbDualDsCheck:ArbDualDsCheck"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ArbDualDsCheck.html"><span class="name">ArbDualDsCheck</span></a><span class="result"> extends <a href="QCCheck$$DualDsQCCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck.DualDsQCCheck">DualDsQCCheck</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checks.package@ArbDualDsCheckextendsQCCheck.DualDsQCCheck" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Check for comparing a pair of datasets
+</p>
+    </li><li name="com.github.timgent.sparkdataquality.checks.ArbSingleDsCheck" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ArbSingleDsCheckextendsQCCheck.SingleDsCheck"></a>
+      <a id="ArbSingleDsCheck:ArbSingleDsCheck"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ArbSingleDsCheck.html"><span class="name">ArbSingleDsCheck</span></a><span class="result"> extends <a href="QCCheck$$SingleDsCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck">SingleDsCheck</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checks.package@ArbSingleDsCheckextendsQCCheck.SingleDsCheck" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A check to be done on a single dataset
+</p>
+    </li><li name="com.github.timgent.sparkdataquality.checks.ArbitraryCheck" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="ArbitraryCheckextendsQCCheck"></a>
       <a id="ArbitraryCheck:ArbitraryCheck"></a>
       <h4 class="signature">
@@ -137,7 +173,7 @@
     </span>
       
     </li><li name="com.github.timgent.sparkdataquality.checks.DeequQCCheck" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DeequQCCheckextendsQCCheckwithProductwithSerializable"></a>
+      <a id="DeequQCCheckextendsQCCheck.SingleDsCheckwithProductwithSerializable"></a>
       <a id="DeequQCCheck:DeequQCCheck"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -145,32 +181,14 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DeequQCCheck.html"><span class="name">DeequQCCheck</span></a><span class="params">(<span name="check">check: <a href="../package$$sparkdataquality$.html#DeequCheck=com.amazon.deequ.checks.Check" class="extmbr" name="com.github.timgent.sparkdataquality.sparkdataquality.DeequCheck">DeequCheck</a></span>)</span><span class="result"> extends <a href="QCCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck">QCCheck</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DeequQCCheck.html"><span class="name">DeequQCCheck</span></a><span class="params">(<span name="check">check: <a href="../package$$sparkdataquality$.html#DeequCheck=com.amazon.deequ.checks.Check" class="extmbr" name="com.github.timgent.sparkdataquality.sparkdataquality.DeequCheck">DeequCheck</a></span>)</span><span class="result"> extends <a href="QCCheck$$SingleDsCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck">SingleDsCheck</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checks.package@DeequQCCheckextendsQCCheckwithProductwithSerializable" title="Permalink" target="_top">
+      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checks.package@DeequQCCheckextendsQCCheck.SingleDsCheckwithProductwithSerializable" title="Permalink" target="_top">
         <img src="../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Light wrapper for a deequ check</p>
-    </li><li name="com.github.timgent.sparkdataquality.checks.DualDatasetCheck" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="DualDatasetCheckextendsQCCheck"></a>
-      <a id="DualDatasetCheck:DualDatasetCheck"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="DualDatasetCheck.html"><span class="name">DualDatasetCheck</span></a><span class="result"> extends <a href="QCCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck">QCCheck</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checks.package@DualDatasetCheckextendsQCCheck" title="Permalink" target="_top">
-        <img src="../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Check for comparing a pair of datasets
-</p>
     </li><li name="com.github.timgent.sparkdataquality.checks.QCCheck" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="QCCheckextendsAnyRef"></a>
       <a id="QCCheck:QCCheck"></a>
@@ -208,24 +226,6 @@
       <p class="shortcomment cmt">Check result without additional information about datasource and check description
 </p><div class="fullcomment"><div class="comment cmt"><p>Check result without additional information about datasource and check description
 </p></div><dl class="paramcmts block"><dt class="param">status</dt><dd class="cmt"><p>- status of the check</p></dd><dt class="param">resultDescription</dt><dd class="cmt"><p>- description of the check result</p></dd></dl></div>
-    </li><li name="com.github.timgent.sparkdataquality.checks.SingleDatasetCheck" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="SingleDatasetCheckextendsQCCheck"></a>
-      <a id="SingleDatasetCheck:SingleDatasetCheck"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="SingleDatasetCheck.html"><span class="name">SingleDatasetCheck</span></a><span class="result"> extends <a href="QCCheck.html" class="extype" name="com.github.timgent.sparkdataquality.checks.QCCheck">QCCheck</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checks.package@SingleDatasetCheckextendsQCCheck" title="Permalink" target="_top">
-        <img src="../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">A check to be done on a single dataset
-</p>
     </li></ol>
             </div>
 
@@ -233,7 +233,41 @@
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="com.github.timgent.sparkdataquality.checks.ArbitraryCheck" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.github.timgent.sparkdataquality.checks.ArbDualDsCheck" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ArbDualDsCheck"></a>
+      <a id="ArbDualDsCheck:ArbDualDsCheck"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ArbDualDsCheck$.html"><span class="name">ArbDualDsCheck</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checks.package@ArbDualDsCheck" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.github.timgent.sparkdataquality.checks.ArbSingleDsCheck" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ArbSingleDsCheck"></a>
+      <a id="ArbSingleDsCheck:ArbSingleDsCheck"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ArbSingleDsCheck$.html"><span class="name">ArbSingleDsCheck</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checks.package@ArbSingleDsCheck" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.github.timgent.sparkdataquality.checks.ArbitraryCheck" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ArbitraryCheck"></a>
       <a id="ArbitraryCheck:ArbitraryCheck"></a>
       <h4 class="signature">
@@ -284,36 +318,19 @@
       </a>
     </span>
       
-    </li><li name="com.github.timgent.sparkdataquality.checks.DualDatasetCheck" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DualDatasetCheck"></a>
-      <a id="DualDatasetCheck:DualDatasetCheck"></a>
+    </li><li name="com.github.timgent.sparkdataquality.checks.QCCheck" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="QCCheck"></a>
+      <a id="QCCheck:QCCheck"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="DualDatasetCheck$.html"><span class="name">DualDatasetCheck</span></a>
+        <a href="QCCheck$.html"><span class="name">QCCheck</span></a>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checks.package@DualDatasetCheck" title="Permalink" target="_top">
-        <img src="../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="com.github.timgent.sparkdataquality.checks.SingleDatasetCheck" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SingleDatasetCheck"></a>
-      <a id="SingleDatasetCheck:SingleDatasetCheck"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="SingleDatasetCheck$.html"><span class="name">SingleDatasetCheck</span></a>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checks.package@SingleDatasetCheck" title="Permalink" target="_top">
+      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checks.package@QCCheck" title="Permalink" target="_top">
         <img src="../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
