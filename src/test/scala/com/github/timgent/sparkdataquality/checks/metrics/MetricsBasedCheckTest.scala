@@ -14,7 +14,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Matchers with MockFactory {
 
-  "DualMetricBasedCheck" should {
+  "DualMetricCheck" should {
     val simpleSizeMetric = MetricDescriptor.SizeMetric()
     val dualMetricBasedCheck =
       DualMetricCheck[LongMetric](simpleSizeMetric, simpleSizeMetric, "size comparison",
@@ -66,8 +66,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     }
   }
 
-  // TODO: Remove "New" prefix and replace all existing SingleMetricBasedChecks with this one
-  "NewSingleMetricsBasedCheck" should {
+  "SingleMetricCheck" should {
     val metric = mock[MetricDescriptor]
     val exampleCheck = SingleMetricCheck[LongMetric](metric, "exampleCheck") { metricValue =>
       val isWithinThreshold = AbsoluteThreshold(2L, 2L).isWithinThreshold(metricValue)
@@ -98,7 +97,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     }
   }
 
-  "SingleMetricBasedCheck for any check type" should {
+  "SingleMetricCheck for any check type" should {
     val simpleSizeCheck = SingleMetricCheck.sizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter.noFilter)
 
     "apply the check when the required metric is provided in the metrics map" in {
@@ -122,7 +121,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     }
   }
 
-  "SingleMetricBasedCheck.sizeCheck" should {
+  "SingleMetricCheck.sizeCheck" should {
     "pass a check where the size is within the threshold" in {
       val check = SingleMetricCheck.sizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter.noFilter)
       val result: CheckResult =
@@ -149,7 +148,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     }
   }
 
-  "SingleMetricBasedCheck.complianceCheck" should {
+  "SingleMetricCheck.complianceCheck" should {
     "pass a check where the compliance rate is within the threshold" in {
       val check = SingleMetricCheck.complianceCheck(
         AbsoluteThreshold(Some(0.9), Some(1d)),
