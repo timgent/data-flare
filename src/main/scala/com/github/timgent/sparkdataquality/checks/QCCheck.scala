@@ -11,6 +11,11 @@ trait QCCheck {
   def qcType: QcType
 }
 
+object QCCheck {
+  trait SingleDsCheck extends QCCheck
+  trait DualDsQCCheck extends QCCheck
+}
+
 /**
   * Represents the resulting status of a check
   */

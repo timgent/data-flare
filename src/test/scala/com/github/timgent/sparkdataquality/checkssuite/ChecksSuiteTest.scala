@@ -8,18 +8,19 @@ import com.amazon.deequ.checks.{Check, CheckLevel}
 import com.amazon.deequ.metrics.{DoubleMetric, Entity}
 import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.repository.memory.InMemoryMetricsRepository
-import com.github.timgent.sparkdataquality.checks.DualDatasetCheck.DatasetPair
+import com.github.timgent.sparkdataquality.checks.ArbDualDsCheck.DatasetPair
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, SingleDsDescription}
-import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
+import com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck
+import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricCheck, SingleMetricCheck}
 import com.github.timgent.sparkdataquality.checks.{
+  ArbDualDsCheck,
+  ArbSingleDsCheck,
   ArbitraryCheck,
   CheckResult,
   CheckStatus,
-  DualDatasetCheck,
   DeequQCCheck,
   QcType,
-  RawCheckResult,
-  SingleDatasetCheck
+  RawCheckResult
 }
 import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
 import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter}
@@ -68,18 +69,16 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
           NumberString(1, "a"),
           NumberString(2, "b")
         ).toDS
-        val checks: Seq[SingleDatasetMetricChecks] = Seq(
-          SingleDatasetMetricChecks(
-            DescribedDataset(ds, datasourceDescription),
+        val checks: Map[DescribedDs, Seq[SingleMetricCheck[LongMetric]]] = Map(
+          DescribedDs(ds, datasourceDescription) ->
             Seq(
-              SingleMetricBasedCheck
+              SingleMetricCheck
                 .sizeCheck(AbsoluteThreshold(Some(2L), Some(2L)), MetricFilter.noFilter)
             )
-          )
         )
         val checkSuiteDescription = "my first metricsCheckSuite"
         val metricsBasedChecksSuite =
-          ChecksSuite(checkSuiteDescription, singleDatasetMetricChecks = checks, tags = someTags)
+          ChecksSuite(checkSuiteDescription, singleDsChecks = checks, tags = someTags)
 
         for {
           checkResults: ChecksSuiteResult <- metricsBasedChecksSuite.run(now)
@@ -112,17 +111,17 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
           NumberString(2, "b"),
           NumberString(3, "c")
         )
-        val checks: Seq[SingleMetricBasedCheck[_]] = Seq(
-          SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(2L), Some(2L)), MetricFilter.noFilter)
+        val checks: Seq[SingleMetricCheck[_]] = Seq(
+          SingleMetricCheck.sizeCheck(AbsoluteThreshold(Some(2L), Some(2L)), MetricFilter.noFilter)
         )
-        val singleDatasetChecks = Seq(
-          SingleDatasetMetricChecks(DescribedDataset(dsA.toDS, "dsA"), checks),
-          SingleDatasetMetricChecks(DescribedDataset(dsB.toDS, "dsB"), checks)
+        val singleDatasetChecks = Map(
+          DescribedDs(dsA.toDS, "dsA") -> checks,
+          DescribedDs(dsB.toDS, "dsB") -> checks
         )
         val checkSuiteDescription = "my first metricsCheckSuite"
         val metricsBasedChecksSuite = ChecksSuite(
           checkSuiteDescription,
-          singleDatasetMetricChecks = singleDatasetChecks,
+          singleDsChecks = singleDatasetChecks,
           tags = someTags
         )
 
@@ -168,19 +167,16 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
           NumberString(3, "c")
         ).toDS
         val metricChecks = Seq(
-          DualMetricBasedCheck(simpleSizeMetric, simpleSizeMetric, "check size metrics are equal",
-            MetricComparator.metricsAreEqual
-          )
+          DualMetricCheck(simpleSizeMetric, simpleSizeMetric, "check size metrics are equal", MetricComparator.metricsAreEqual)
         )
-        val dualDatasetChecks = DualDatasetMetricChecks(
-          DescribedDataset(dsA, "dsA"),
-          DescribedDataset(dsB, "dsB"),
-          metricChecks
+        val dualDatasetChecks = Map(
+          DescribedDsPair(DescribedDs(dsA, "dsA"), DescribedDs(dsB, "dsB")) ->
+            metricChecks
         )
         val checkSuiteDescription = "my first metricsCheckSuite"
         val metricsBasedChecksSuite = ChecksSuite(
           checkSuiteDescription,
-          dualDatasetMetricChecks = Seq(dualDatasetChecks),
+          dualDsChecks = dualDatasetChecks,
           tags = someTags
         )
 
@@ -195,8 +191,8 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
                 QcType.MetricsBasedQualityCheck,
                 CheckStatus.Success,
                 "metric comparison passed. dsA with LongMetric(3) was compared to dsB with LongMetric(3)",
-                "check size metrics are equal. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to " +
-                  "SizeMetric(MetricFilter(true,no filter)) using comparator of metrics are equal",
+                "check size metrics are equal. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) " +
+                  "to SimpleMetricDescriptor(Size,Some(no filter),None,None) using comparator of metrics are equal",
                 Some(DualDsDescription("dsA", "dsB"))
               )
             ),
@@ -223,31 +219,23 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
           NumberString(1, "a")
         ).toDS
         val dualMetricChecks = Seq(
-          DualMetricBasedCheck(simpleSizeMetric, simpleSizeMetric, "check size metrics are equal",
-            MetricComparator.metricsAreEqual
-          )
+          DualMetricCheck(simpleSizeMetric, simpleSizeMetric, "check size metrics are equal", MetricComparator.metricsAreEqual)
         )
-        val dualDatasetChecks = DualDatasetMetricChecks(
-          DescribedDataset(dsA, "dsA"),
-          DescribedDataset(dsB, "dsB"),
-          dualMetricChecks
-        )
-        val singleDatasetChecks: Seq[SingleDatasetMetricChecks] = Seq(
-          SingleDatasetMetricChecks(
-            DescribedDataset(dsC, "dsC"),
+        val dualDatasetChecks = Map(DescribedDsPair(DescribedDs(dsA, "dsA"), DescribedDs(dsB, "dsB")) -> dualMetricChecks)
+        val singleDatasetChecks: Map[DescribedDs, Seq[SingleMetricCheck[LongMetric]]] = Map(
+          DescribedDs(dsC, "dsC") ->
             Seq(
-              SingleMetricBasedCheck
+              SingleMetricCheck
                 .sizeCheck(AbsoluteThreshold(Some(2L), Some(2L)), MetricFilter.noFilter)
             )
-          )
         )
         val checkSuiteDescription = "my first metricsCheckSuite"
         val inMemoryMetricsPersister = new InMemoryMetricsPersister
         val metricsBasedChecksSuite = ChecksSuite(
           checkSuiteDescription,
-          singleDatasetMetricChecks = singleDatasetChecks,
+          singleDsChecks = singleDatasetChecks,
           tags = someTags,
-          dualDatasetMetricChecks = Seq(dualDatasetChecks),
+          dualDsChecks = dualDatasetChecks,
           metricsPersister = inMemoryMetricsPersister
         )
 
@@ -272,7 +260,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
 
     "contains deequ checks" should {
       "be able to do the deequ quality checks and store check results and underlying metrics in a repository" in {
-        val testDataset = DescribedDataset(
+        val testDataset = DescribedDs(
           List((1, "a"), (2, "b"), (3, "c")).map(TestDataClass.tupled).toDF,
           "testDataset"
         )
@@ -282,7 +270,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
         val deequQcConstraint = DeequQCCheck(Check(CheckLevel.Error, "size check").hasSize(_ == 3))
         val qualityChecks = ChecksSuite(
           checkSuiteDescription = "sample deequ checks",
-          deequChecks = Seq(DeequCheck(testDataset, Seq(deequQcConstraint))),
+          singleDsChecks = Map(testDataset -> Seq(deequQcConstraint)),
           tags = someTags,
           deequMetricsRepository = deequMetricsRepository,
           qcResultsRepository = qcResultsRepository
@@ -327,16 +315,14 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
         val qcResultsRepository = new InMemoryQcResultsRepository
         val checkDescription = "DB: X, table: Y"
 
-        val singleDatasetCheck = SingleDatasetCheck("someSingleDatasetCheck") { dataset =>
+        val singleDatasetCheck = ArbSingleDsCheck("someSingleDatasetCheck") { dataset =>
           RawCheckResult(CheckStatus.Error, "someSingleDatasetCheck was not successful")
         }
         val checks = Seq(singleDatasetCheck)
 
         val qualityChecks = ChecksSuite(
           checkDescription,
-          singleDatasetChecks = Seq(
-            SingleDatasetCheckWithDs(DescribedDataset(testDataset, datasourceDescription), checks)
-          ),
+          singleDsChecks = Map(DescribedDs(testDataset, datasourceDescription) -> checks),
           tags = someTags,
           qcResultsRepository = qcResultsRepository
         )
@@ -367,24 +353,24 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
 
     "contains dual dataset checks" should {
       "run custom 2 table checks and store results in a repository" in {
-        val testDataset = DescribedDataset(
+        val testDataset = DescribedDs(
           List((1, "a"), (2, "b"), (3, "c")).map(TestDataClass.tupled).toDS,
           "testDataset"
         )
-        val datasetToCompare = DescribedDataset(
+        val datasetToCompare = DescribedDs(
           List((1, "a"), (2, "b"), (3, "c"), (4, "d")).map(TestDataClass.tupled).toDS,
           "datasetToCompare"
         )
-        val datasetPair = DescribedDatasetPair(testDataset, datasetToCompare)
+        val datasetPair = DescribedDsPair(testDataset, datasetToCompare)
         val qcResultsRepository = new InMemoryQcResultsRepository
 
-        val datasetComparisonCheck = DualDatasetCheck("Table counts equal") {
+        val datasetComparisonCheck = ArbDualDsCheck("Table counts equal") {
           case DatasetPair(ds, dsToCompare) =>
             RawCheckResult(CheckStatus.Error, "counts were not equal")
         }
         val qualityChecks = ChecksSuite(
           "table A vs table B comparison",
-          dualDatasetChecks = Seq(DualDatasetCheckWithDs(datasetPair, Seq(datasetComparisonCheck))),
+          dualDsChecks = Map(datasetPair -> Seq(datasetComparisonCheck)),
           tags = someTags,
           qcResultsRepository = qcResultsRepository
         )
