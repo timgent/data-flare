@@ -1,13 +1,14 @@
 package com.github.timgent.sparkdataquality.checks
 
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.SingleDsDescription
+import com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck
 import com.github.timgent.sparkdataquality.checkssuite.DescribedDataset
 import org.apache.spark.sql.Dataset
 
 /**
   * A check to be done on a single dataset
   */
-trait SingleDatasetCheck extends QCCheck {
+trait ArbSingleDsCheck extends SingleDsCheck {
   def description: String
 
   override def qcType: QcType = QcType.SingleDatasetQualityCheck
@@ -15,9 +16,9 @@ trait SingleDatasetCheck extends QCCheck {
   def applyCheck(ds: DescribedDataset): CheckResult
 }
 
-object SingleDatasetCheck {
-  def apply(checkDescription: String)(check: Dataset[_] => RawCheckResult): SingleDatasetCheck = {
-    new SingleDatasetCheck {
+object ArbSingleDsCheck {
+  def apply(checkDescription: String)(check: Dataset[_] => RawCheckResult): ArbSingleDsCheck = {
+    new ArbSingleDsCheck {
       override def description: String = checkDescription
 
       override def applyCheck(dataset: DescribedDataset): CheckResult =

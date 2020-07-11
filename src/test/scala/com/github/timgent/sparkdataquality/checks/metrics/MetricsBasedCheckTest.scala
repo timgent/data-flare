@@ -17,7 +17,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
   "DualMetricBasedCheck" should {
     val simpleSizeMetric = MetricDescriptor.SizeMetric()
     val dualMetricBasedCheck =
-      DualMetricBasedCheck[LongMetric](simpleSizeMetric, simpleSizeMetric, "size comparison",
+      DualMetricCheck[LongMetric](simpleSizeMetric, simpleSizeMetric, "size comparison",
         MetricComparator.metricsAreEqual
       )
     val dualDsDescription = DualDsDescription("dsA", "dsB")
@@ -31,7 +31,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
         QcType.MetricsBasedQualityCheck,
         CheckStatus.Success,
         "metric comparison passed. dsA with LongMetric(2) was compared to dsB with LongMetric(2)",
-        "size comparison. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to SizeMetric(MetricFilter(true,no filter)) using comparator of metrics are equal"
+        "size comparison. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to SimpleMetricDescriptor(Size,Some(no filter),None,None) using comparator of metrics are equal"
       )
     }
 
@@ -45,7 +45,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
         QcType.MetricsBasedQualityCheck,
         CheckStatus.Error,
         "metric comparison failed. dsA with LongMetric(2) was compared to dsB with LongMetric(3)",
-        "size comparison. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to SizeMetric(MetricFilter(true,no filter)) using comparator of metrics are equal"
+        "size comparison. Comparing metric SimpleMetricDescriptor(Size,Some(no filter),None,None) to SimpleMetricDescriptor(Size,Some(no filter),None,None) using comparator of metrics are equal"
       )
     }
 
@@ -69,7 +69,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
   // TODO: Remove "New" prefix and replace all existing SingleMetricBasedChecks with this one
   "NewSingleMetricsBasedCheck" should {
     val metric = mock[MetricDescriptor]
-    val exampleCheck = SingleMetricBasedCheck[LongMetric](metric, "exampleCheck") { metricValue =>
+    val exampleCheck = SingleMetricCheck[LongMetric](metric, "exampleCheck") { metricValue =>
       val isWithinThreshold = AbsoluteThreshold(2L, 2L).isWithinThreshold(metricValue)
       if (isWithinThreshold)
         RawCheckResult(CheckStatus.Success, "it's within the threshold")
@@ -99,7 +99,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
   }
 
   "SingleMetricBasedCheck for any check type" should {
-    val simpleSizeCheck = SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter.noFilter)
+    val simpleSizeCheck = SingleMetricCheck.sizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter.noFilter)
 
     "apply the check when the required metric is provided in the metrics map" in {
       val result =
@@ -124,7 +124,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
 
   "SingleMetricBasedCheck.sizeCheck" should {
     "pass a check where the size is within the threshold" in {
-      val check = SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter.noFilter)
+      val check = SingleMetricCheck.sizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter.noFilter)
       val result: CheckResult =
         check.applyCheckOnMetrics(Map(check.metric -> LongMetric(2)))
       result shouldBe CheckResult(
@@ -137,7 +137,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
 
     "fail a check where the size is outside the threshold" in {
       val check =
-        SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter(lit(false), "someFilter"))
+        SingleMetricCheck.sizeCheck(AbsoluteThreshold(Some(0L), Some(3L)), MetricFilter(lit(false), "someFilter"))
       val result: CheckResult =
         check.applyCheckOnMetrics(Map(check.metric -> LongMetric(4)))
       result shouldBe CheckResult(
@@ -151,7 +151,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
 
   "SingleMetricBasedCheck.complianceCheck" should {
     "pass a check where the compliance rate is within the threshold" in {
-      val check = SingleMetricBasedCheck.complianceCheck(
+      val check = SingleMetricCheck.complianceCheck(
         AbsoluteThreshold(Some(0.9), Some(1d)),
         someComplianceFn,
         MetricFilter.noFilter
@@ -167,7 +167,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     }
 
     "fail a check where the compliance rate is outside the threshold" in {
-      val check = SingleMetricBasedCheck.complianceCheck(
+      val check = SingleMetricCheck.complianceCheck(
         AbsoluteThreshold(Some(0.9), Some(1d)),
         someComplianceFn,
         MetricFilter.noFilter

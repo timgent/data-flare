@@ -1,6 +1,7 @@
 package com.github.timgent.sparkdataquality.checks.metrics
 
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.DualDsDescription
+import com.github.timgent.sparkdataquality.checks.QCCheck.DualDsQCCheck
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType}
 import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricValue}
 
@@ -9,21 +10,21 @@ import scala.reflect.ClassTag
 /**
   * A check based on a metric for one dataset compared to a metric on another dataset
   *
-  * @param dsAMetric - the metric to be used on dataset a
-  * @param dsBMetric - the metric to be used on dataset b
+  * @param dsMetric - the metric to be used on dataset a
+  * @param dsToCompareMetric - the metric to be used on dataset b
   * @param metricComparator    - comparison function for the metrics which determines if the check passes
   * @param userDescription     - description of the check
   * @tparam MV
   */
-final case class DualMetricBasedCheck[MV <: MetricValue](
-    dsAMetric: MetricDescriptor,
-    dsBMetric: MetricDescriptor,
-    userDescription: String,
-    metricComparator: MetricComparator[MV])
-    extends MetricsBasedCheck {
+final case class DualMetricCheck[MV <: MetricValue](
+                                                     dsMetric: MetricDescriptor,
+                                                     dsToCompareMetric: MetricDescriptor,
+                                                     userDescription: String,
+                                                     metricComparator: MetricComparator[MV])
+    extends MetricsBasedCheck with DualDsQCCheck {
 
   override def description: String =
-    s"$userDescription. Comparing metric ${dsAMetric.toSimpleMetricDescriptor} to ${dsBMetric.toSimpleMetricDescriptor} using comparator of ${metricComparator.description}"
+    s"$userDescription. Comparing metric ${dsMetric.toSimpleMetricDescriptor} to ${dsToCompareMetric.toSimpleMetricDescriptor} using comparator of ${metricComparator.description}"
 
   override def qcType: QcType = QcType.MetricsBasedQualityCheck
 
@@ -49,8 +50,8 @@ final case class DualMetricBasedCheck[MV <: MetricValue](
       dsBMetrics: Map[MetricDescriptor, MetricValue],
       dualDsDescription: DualDsDescription
   )(implicit classTag: ClassTag[MV]): CheckResult = {
-    val dsAMetricOpt: Option[MetricValue] = dsAMetrics.get(dsAMetric)
-    val dsBMetricOpt: Option[MetricValue] = dsBMetrics.get(dsBMetric)
+    val dsAMetricOpt: Option[MetricValue] = dsAMetrics.get(dsMetric)
+    val dsBMetricOpt: Option[MetricValue] = dsBMetrics.get(dsToCompareMetric)
     (dsAMetricOpt, dsBMetricOpt) match {
       case (Some(dsAMetric), Some(dsBMetric)) =>
         (dsAMetric, dsBMetric) match {

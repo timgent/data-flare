@@ -2,8 +2,9 @@ package com.github.timgent.sparkdataquality.examples
 
 import java.time.{LocalDateTime, ZoneOffset}
 
-import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricBasedCheck, SingleMetricBasedCheck}
-import com.github.timgent.sparkdataquality.checks.{CheckStatus, RawCheckResult, SingleDatasetCheck}
+import cats.implicits._
+import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricCheck, SingleMetricCheck}
+import com.github.timgent.sparkdataquality.checks.{ArbSingleDsCheck, CheckStatus, RawCheckResult}
 import com.github.timgent.sparkdataquality.checkssuite._
 import com.github.timgent.sparkdataquality.examples.Day1Checks.qcResults
 import com.github.timgent.sparkdataquality.examples.ExampleHelpers.{Customer, Order, _}
@@ -137,50 +138,7 @@ object Helpers {
       customersWithOrdersDs: DescribedDataset
   ): ChecksSuite = {
 
-    val singleDsMetricChecks = List(
-      SingleDatasetMetricChecks(
-        customerDs,
-        List(
-          SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(10L), Some(20L))),
-          SingleMetricBasedCheck.complianceCheck(
-            AbsoluteThreshold.exactly(1),
-            ComplianceFn(col("name").isNotNull, "mustHaveName")
-          )
-        )
-      ),
-      SingleDatasetMetricChecks(orderDs, List(SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(1L), None)))),
-      SingleDatasetMetricChecks(
-        customersWithOrdersDs,
-        List(SingleMetricBasedCheck.sizeCheck(AbsoluteThreshold(Some(1L), None)))
-      )
-    )
-
-    val dualDsMetricChecks = List(
-      DualDatasetMetricChecks(
-        customerDs,
-        customersWithOrdersDs,
-        List(
-          DualMetricBasedCheck(
-            SizeMetric(),
-            CountDistinctValuesMetric(List("customer_id")),
-            "Keep all customers",
-            MetricComparator.metricsAreEqual)
-        )
-      ),
-      DualDatasetMetricChecks(
-        orderDs,
-        customersWithOrdersDs,
-        List(
-          DualMetricBasedCheck(
-            SizeMetric(),
-            CountDistinctValuesMetric(List("order_id")),
-            "Keep all orders",
-            MetricComparator.metricsAreEqual)
-        )
-      )
-    )
-
-    val expectedCustomerColumnsCheck = SingleDatasetCheck("correctColumns") { ds =>
+    val expectedCustomerColumnsCheck = ArbSingleDsCheck("correctColumns") { ds =>
       val expectedColumns = Set("customer_id", "name")
       val columnsMatchExpected = expectedColumns == ds.columns.toSet
       if (columnsMatchExpected)
@@ -192,12 +150,41 @@ object Helpers {
         )
     }
 
+    val singleDsChecks = Map(
+      customerDs ->
+        List(
+          SingleMetricCheck.sizeCheck(AbsoluteThreshold(Some(10L), Some(20L))),
+          SingleMetricCheck.complianceCheck(
+            AbsoluteThreshold.exactly(1),
+            ComplianceFn(col("name").isNotNull, "mustHaveName")
+          ),
+          expectedCustomerColumnsCheck
+        ),
+      orderDs -> List(SingleMetricCheck.sizeCheck(AbsoluteThreshold(Some(1L), None))),
+      customersWithOrdersDs -> List(SingleMetricCheck.sizeCheck(AbsoluteThreshold(Some(1L), None)))
+    )
+
+    val dualDsMetricChecks = Map(
+      DescribedDatasetPair(customerDs, customersWithOrdersDs) ->
+        List(
+          DualMetricCheck(
+            SizeMetric(),
+            CountDistinctValuesMetric(List("customer_id")),
+            "Keep all customers",
+            MetricComparator.metricsAreEqual
+          )
+        ),
+      DescribedDatasetPair(orderDs, customersWithOrdersDs) ->
+        List(
+          DualMetricCheck(SizeMetric(), CountDistinctValuesMetric(List("order_id")), "Keep all orders", MetricComparator.metricsAreEqual)
+        )
+    )
+
     val checksSuite = ChecksSuite(
       "Customers and orders check suite",
-      singleDatasetMetricChecks = singleDsMetricChecks,
-      dualDatasetMetricChecks = dualDsMetricChecks,
+      singleDsChecks = singleDsChecks |+| Map(customerDs -> List(expectedCustomerColumnsCheck)),
+      dualDsChecks = dualDsMetricChecks,
       metricsPersister = esMetricsPersister,
-      singleDatasetChecks = List(SingleDatasetCheckWithDs(customerDs, List(expectedCustomerColumnsCheck))),
       qcResultsRepository = qcResultsRepository
     )
 
@@ -208,7 +195,6 @@ object Helpers {
 object Day1Checks extends App {
 
   import Day1Data._
-  import Helpers.qcResultsRepository
 
   val checksSuite = Helpers.getCheckSuite(orderDs, customerDs, customersWithOrdersDs)
 
@@ -224,7 +210,6 @@ object Day1Checks extends App {
 object Day2Checks extends App {
 
   import Day2Data._
-  import Helpers.qcResultsRepository
 
   val checksSuite = Helpers.getCheckSuite(orderDs, customerDs, customersWithOrdersDs)
 
@@ -240,7 +225,6 @@ object Day2Checks extends App {
 object Day3Checks extends App {
 
   import Day3Data._
-  import Helpers.qcResultsRepository
 
   val checksSuite = Helpers.getCheckSuite(orderDs, customerDs, customersWithOrdersDs)
 
