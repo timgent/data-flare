@@ -70,7 +70,7 @@ object MetricDescriptor {
       with Filterable {
     override def metricCalculator: SumValuesMetricCalculator[MV] = SumValuesMetricCalculator[MV](onColumn, filter)
     override def toSimpleMetricDescriptor: SimpleMetricDescriptor =
-      SimpleMetricDescriptor(metricName, Some(filter.filterDescription))
+      SimpleMetricDescriptor(metricName, Some(filter.filterDescription), onColumn = Some(onColumn))
     override def metricName: String = "SumValues"
     override type MC = SumValuesMetricCalculator[MV]
   }
@@ -127,5 +127,6 @@ private[sparkdataquality] case class SimpleMetricDescriptor(
     metricName: String,
     filterDescription: Option[String] = None,
     complianceDescription: Option[String] = None,
-    onColumns: Option[List[String]] = None
+    onColumns: Option[List[String]] = None,
+    onColumn: Option[String] = None
 )

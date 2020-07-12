@@ -12,7 +12,8 @@ private[repository] object CommonEncoders {
         Some("metricName" -> a.metricName.asJson),
         a.filterDescription.map(fd => "filterDescription" -> fd.asJson),
         a.complianceDescription.map(cd => "complianceDescription" -> cd.asJson),
-        a.onColumns.map(oc => "onColumns" -> oc.asJson)
+        a.onColumns.map(oc => "onColumns" -> oc.asJson),
+        a.onColumn.map(oc => "onColumn" -> oc.asJson)
       ).flatten
       Json.obj(fields: _*)
     }
