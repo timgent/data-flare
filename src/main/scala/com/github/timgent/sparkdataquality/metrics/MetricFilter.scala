@@ -1,7 +1,7 @@
 package com.github.timgent.sparkdataquality.metrics
 
 import org.apache.spark.sql.Column
-import org.apache.spark.sql.functions.lit
+import org.apache.spark.sql.functions.{lit, col}
 
 /**
   * Defines a filter to be applied before a metric is calculated
@@ -11,6 +11,9 @@ import org.apache.spark.sql.functions.lit
 case class MetricFilter(filter: Column, filterDescription: String)
 
 object MetricFilter {
+
+  def apply(filter: Column): MetricFilter = MetricFilter(filter, filter.toString)
+  def apply(filter: String): MetricFilter = MetricFilter(col(filter), filter)
 
   /**
     * Don't apply any filter
