@@ -1,7 +1,11 @@
 package com.github.timgent.sparkdataquality.metrics
 
+import com.github.timgent.sparkdataquality.SdqError.MetricCalculationError
+import com.github.timgent.sparkdataquality.checkssuite.DescribedDs
 import com.github.timgent.sparkdataquality.metrics.MetricCalculator.SimpleMetricCalculator
-import org.apache.spark.sql.{DataFrame, Dataset}
+import org.apache.spark.sql.DataFrame
+
+import scala.util.{Failure, Success, Try}
 
 private case class DescriptorWithColumnNumber[MC <: MetricCalculator](
     descriptor: MetricDescriptor,
@@ -12,9 +16,9 @@ private case class DescriptorWithColumnNumber[MC <: MetricCalculator](
 private[sparkdataquality] object MetricsCalculator {
 
   def calculateMetrics(
-      ds: Dataset[_],
+      dds: DescribedDs,
       metricDescriptors: Seq[MetricDescriptor]
-  ): Map[MetricDescriptor, MetricValue] = {
+  ): Either[MetricCalculationError, Map[MetricDescriptor, MetricValue]] = {
     val distinctDescriptors = metricDescriptors.distinct
 
     val simpleDescriptors: Seq[DescriptorWithColumnNumber[SimpleMetricCalculator]] =
@@ -31,12 +35,12 @@ private[sparkdataquality] object MetricsCalculator {
             DescriptorWithColumnNumber(descriptor, calculator, colNum)
         }
 
-    val simpleMetrics: Map[MetricDescriptor, SimpleMetricCalculator#MetricType] =
+    val simpleMetricsTry: Try[Map[MetricDescriptor, SimpleMetricCalculator#MetricType]] = Try {
       simpleDescriptors match {
         case Nil => Map.empty
         case firstAgg :: otherAggs =>
           val dsWithAggregations: DataFrame =
-            ds.agg(firstAgg.calculator.aggFunction, otherAggs.map(_.calculator.aggFunction): _*)
+            dds.ds.agg(firstAgg.calculator.aggFunction, otherAggs.map(_.calculator.aggFunction): _*)
           val metricsRow = dsWithAggregations.collect().toSeq.head
           simpleDescriptors.map { descriptor =>
             descriptor.descriptor -> descriptor.calculator.valueFromRow(
@@ -45,6 +49,10 @@ private[sparkdataquality] object MetricsCalculator {
             )
           }.toMap
       }
-    simpleMetrics
+    }
+    simpleMetricsTry match {
+      case Failure(exception)     => Left(MetricCalculationError(dds, metricDescriptors, exception))
+      case Success(simpleMetrics) => Right(simpleMetrics)
+    }
   }
 }

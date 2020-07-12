@@ -194,7 +194,7 @@ case class ChecksSuite(
       allMetricDescriptors.map {
         case (describedDataset, metricDescriptors) =>
           val metricValues: Map[MetricDescriptor, MetricValue] =
-            MetricsCalculator.calculateMetrics(describedDataset.ds, metricDescriptors)
+            MetricsCalculator.calculateMetrics(describedDataset, metricDescriptors).right.get // TODO: Handle these errors properly
           (describedDataset, metricValues)
       }
 
