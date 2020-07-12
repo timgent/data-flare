@@ -13,7 +13,16 @@ import com.github.timgent.sparkdataquality.checks.CheckDescription.{DualMetricCh
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, SingleDsDescription}
 import com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck
 import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricCheck, SingleMetricCheck}
-import com.github.timgent.sparkdataquality.checks.{ArbDualDsCheck, ArbSingleDsCheck, ArbitraryCheck, CheckResult, CheckStatus, DeequQCCheck, QcType, RawCheckResult}
+import com.github.timgent.sparkdataquality.checks.{
+  ArbDualDsCheck,
+  ArbSingleDsCheck,
+  ArbitraryCheck,
+  CheckResult,
+  CheckStatus,
+  DeequQCCheck,
+  QcType,
+  RawCheckResult
+}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
 import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter, SimpleMetricDescriptor}
 import com.github.timgent.sparkdataquality.repository.{InMemoryMetricsPersister, InMemoryQcResultsRepository}
@@ -183,9 +192,10 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
                 QcType.DualMetricCheck,
                 CheckStatus.Success,
                 "metric comparison passed. dsA with LongMetric(3) was compared to dsB with LongMetric(3)",
-                DualMetricCheckDescription("check size metrics are equal",
-                  SimpleMetricDescriptor("Size",Some("no filter"),None,None),
-                  SimpleMetricDescriptor("Size",Some("no filter"),None,None),
+                DualMetricCheckDescription(
+                  "check size metrics are equal",
+                  SimpleMetricDescriptor("Size", Some("no filter"), None, None),
+                  SimpleMetricDescriptor("Size", Some("no filter"), None, None),
                   "metrics are equal"
                 ),
                 Some(DualDsDescription("dsA", "dsB"))
@@ -246,6 +256,43 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
               simpleSizeMetric.toSimpleMetricDescriptor -> LongMetric(2L)
             ),
             SingleDsDescription("dsC") -> Map(
+              simpleSizeMetric.toSimpleMetricDescriptor -> LongMetric(1L)
+            )
+          )
+        )
+      }
+    }
+
+    "specifies specific metrics to track" should {
+      "store specified metrics in a metrics repository" in {
+        val simpleSizeMetric = MetricDescriptor.SizeMetric()
+        val simpleSumMetric = MetricDescriptor.SumValuesMetric[LongMetric]("number")
+        val dsA = Seq(
+          NumberString(1, "a"),
+          NumberString(2, "b"),
+          NumberString(3, "c")
+        ).toDS
+        val ddsA = DescribedDs(dsA, "dsA")
+        val dsB = Seq(NumberString(1, "a")).toDS
+        val ddsB = DescribedDs(dsB, "dsB")
+        val checkSuiteDescription = "my first metricsCheckSuite"
+        val inMemoryMetricsPersister = new InMemoryMetricsPersister
+        val metricsBasedChecksSuite = ChecksSuite(
+          checkSuiteDescription,
+          metricsToTrack = Map(ddsA -> Seq(simpleSizeMetric, simpleSumMetric), ddsB -> Seq(simpleSizeMetric)),
+          metricsPersister = inMemoryMetricsPersister
+        )
+
+        for {
+          _ <- metricsBasedChecksSuite.run(now)
+          storedMetrics <- inMemoryMetricsPersister.loadAll
+        } yield storedMetrics shouldBe Map(
+          now -> Map(
+            SingleDsDescription("dsA") -> Map(
+              simpleSizeMetric.toSimpleMetricDescriptor -> LongMetric(3L),
+              simpleSumMetric.toSimpleMetricDescriptor -> LongMetric(6L)
+            ),
+            SingleDsDescription("dsB") -> Map(
               simpleSizeMetric.toSimpleMetricDescriptor -> LongMetric(1L)
             )
           )
