@@ -12,6 +12,7 @@
           "metricsintro",
           "metricssingledschecks",
           "metricsdualdschecks",
+          "metricstracking",
           "availablemetrics"
         ]
       },
