@@ -1,5 +1,7 @@
 package com.github.timgent.sparkdataquality.checks
 
+import cats.Show
+
 /**
   * Check result without additional information about datasource and check description
   *
@@ -30,4 +32,17 @@ case class CheckResult(
 ) {
   def withDatasourceDescription(datasourceDescription: DatasourceDescription): CheckResult =
     this.copy(datasourceDescription = Some(datasourceDescription))
+}
+
+object CheckResult {
+  implicit val showCheckResult: Show[CheckResult] = Show.show { checkResult =>
+    import checkResult._
+    import cats.implicits._
+    s"""checkDescription -> ${checkDescription.show}
+       |resultDescription -> $resultDescription
+       |status -> $status
+       |datasourceDescription -> $datasourceDescription
+       |qcType -> $qcType
+       |""".stripMargin
+  }
 }
