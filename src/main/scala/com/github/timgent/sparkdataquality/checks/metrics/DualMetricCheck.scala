@@ -18,8 +18,8 @@ import scala.reflect.ClassTag
   * @tparam MV
   */
 final case class DualMetricCheck[MV <: MetricValue](
-    dsMetric: MetricDescriptor,
-    dsToCompareMetric: MetricDescriptor,
+    dsMetric: MetricDescriptor { type MetricType = MV },
+    dsToCompareMetric: MetricDescriptor { type MetricType = MV },
     checkDescription: String,
     metricComparator: MetricComparator[MV]
 ) extends MetricsBasedCheck

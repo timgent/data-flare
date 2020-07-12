@@ -14,6 +14,8 @@ import com.github.timgent.sparkdataquality.metrics.MetricValue.NumericMetricValu
 private[sparkdataquality] trait MetricDescriptor {
   type MC <: MetricCalculator
 
+  type MetricType = MC#MetricType
+
   /**
     * The metricCalculator which contains key logic for calculating a MetricValue for this MetricDescriptor
     * @return the MetricCalculator
