@@ -3,6 +3,7 @@ package com.github.timgent.sparkdataquality.checks.metrics
 import com.github.timgent.sparkdataquality.checks.CheckDescription.{DualMetricCheckDescription, SingleMetricCheckDescription}
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.DualDsDescription
 import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus, QcType, RawCheckResult}
+import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{SizeMetric, SumValuesMetric}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter, SimpleMetricDescriptor}
 import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
@@ -76,8 +77,7 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
   }
 
   "SingleMetricCheck" should {
-    val metric = stub[MetricDescriptor]
-    (metric.toSimpleMetricDescriptor _).when().returns(mock[SimpleMetricDescriptor])
+    val metric = SizeMetric()
     val exampleCheck = SingleMetricCheck[LongMetric](metric, "exampleCheck") { metricValue =>
       val isWithinThreshold = AbsoluteThreshold(2L, 2L).isWithinThreshold(metricValue)
       if (isWithinThreshold)

@@ -17,7 +17,7 @@ import scala.reflect.ClassTag
   * @param check - the check to be done
   * @tparam MV - the type of the MetricValue that will be calculated in order to complete this check
   */
-case class SingleMetricCheck[MV <: MetricValue](metric: MetricDescriptor, checkDescription: String)(
+case class SingleMetricCheck[MV <: MetricValue](metric: MetricDescriptor { type MetricType = MV }, checkDescription: String)(
     check: MV#T => RawCheckResult
 ) extends MetricsBasedCheck
     with SingleDsCheck {
@@ -56,7 +56,7 @@ object SingleMetricCheck {
     * @return
     */
   def thresholdBasedCheck[MV <: MetricValue](
-      metricDescriptor: MetricDescriptor,
+      metricDescriptor: MetricDescriptor { type MetricType = MV },
       description: String,
       threshold: AbsoluteThreshold[MV#T]
   ): SingleMetricCheck[MV] = {
