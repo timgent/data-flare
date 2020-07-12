@@ -1,5 +1,6 @@
 package com.github.timgent.sparkdataquality.metrics
 
+import cats.Show
 import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{
   ComplianceMetricCalculator,
   DistinctValuesMetricCalculator,
@@ -132,3 +133,15 @@ private[sparkdataquality] case class SimpleMetricDescriptor(
     onColumns: Option[List[String]] = None,
     onColumn: Option[String] = None
 )
+
+object SimpleMetricDescriptor {
+  implicit val showSimpleMetricDescriptor: Show[SimpleMetricDescriptor] = Show.show { descriptor =>
+    import descriptor._
+    val filterDescriptionStr = filterDescription.map(filterDescription => s", filterDescription=$filterDescription").getOrElse("")
+    val complianceDescriptionStr =
+      complianceDescription.map(complianceDescription => s", complianceDescription=$complianceDescription").getOrElse("")
+    val onColumnsStr = onColumns.map(onColumns => s", onColumns=$onColumns").getOrElse("")
+    val onColumnStr = onColumn.map(onColumn => s", onColumn=$onColumn").getOrElse("")
+    "metricName=" + metricName + filterDescriptionStr + complianceDescriptionStr + onColumnsStr + onColumnStr
+  }
+}

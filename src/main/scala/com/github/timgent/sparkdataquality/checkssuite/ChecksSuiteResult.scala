@@ -2,7 +2,8 @@ package com.github.timgent.sparkdataquality.checkssuite
 
 import java.time.Instant
 
-import com.github.timgent.sparkdataquality.checks.CheckResult
+import cats.Show
+import com.github.timgent.sparkdataquality.checks.{CheckResult, CheckStatus}
 import enumeratum._
 
 /**
@@ -19,7 +20,27 @@ case class ChecksSuiteResult(
     checkResults: Seq[CheckResult],
     timestamp: Instant,
     checkTags: Map[String, String]
-)
+) {
+  import cats.implicits._
+  def prettyPrint = this.show
+}
+
+object ChecksSuiteResult {
+  import cats.implicits._
+  implicit val showChecksSuiteResult: Show[ChecksSuiteResult] = Show.show { checksSuiteResult =>
+    val (successfulQcResults, unsuccessfulQcResults) = checksSuiteResult.checkResults.partition(_.status == CheckStatus.Success)
+    s"""
+       |SUCCESSFUL QC Checks:
+       |
+       |${successfulQcResults.map(_.show).mkString("\n\n - ")}
+       | 
+       |UNSUCCESSFUL QC Checks:
+       | 
+       |${unsuccessfulQcResults.map(_.show).mkString("\n\n - ")}
+       |
+       |""".stripMargin
+  }
+}
 
 /**
   * Represents the overall status of a CheckSuite

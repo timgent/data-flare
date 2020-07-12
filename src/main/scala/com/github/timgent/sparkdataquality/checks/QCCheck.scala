@@ -1,5 +1,6 @@
 package com.github.timgent.sparkdataquality.checks
 
+import cats.Show
 import com.github.timgent.sparkdataquality.metrics.SimpleMetricDescriptor
 import enumeratum._
 
@@ -17,6 +18,20 @@ object CheckDescription {
       desc: String,
       dsMetric: SimpleMetricDescriptor
   ) extends CheckDescription
+  import cats.implicits._
+  implicit val showCheckDescription: Show[CheckDescription] = Show.show {
+    case SimpleCheckDescription(desc) => desc
+    case DualMetricCheckDescription(desc, dsMetric, dsToCompareMetric, metricComparator) =>
+      s"""   
+         |   - description -> $desc
+         |   - dsMetric -> ${dsMetric.show}
+         |   - dsToCompareMetric -> ${dsToCompareMetric.show}
+         |   - metricComparator -> $metricComparator""".stripMargin
+    case SingleMetricCheckDescription(desc, dsMetric) =>
+      s"""   
+         |   - description -> $desc
+         |   - dsMetric -> ${dsMetric.show}""".stripMargin
+  }
 }
 
 /**

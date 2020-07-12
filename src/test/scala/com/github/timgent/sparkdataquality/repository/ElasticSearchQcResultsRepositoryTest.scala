@@ -1,5 +1,7 @@
 package com.github.timgent.sparkdataquality.repository
 
+import java.time.Instant
+
 import com.fortysevendeg.scalacheck.datetime.jdk8.ArbitraryJdk8.arbInstantJdk8
 import com.github.timgent.sparkdataquality.checks.CheckDescription.{
   DualMetricCheckDescription,
@@ -48,8 +50,20 @@ class ElasticSearchQcResultsRepositoryTest
   implicit val otherDsDescriptionArb = Arbitrary(Gen.resultOf(OtherDsDescription))
   implicit val datasourceDescriptionArb: Arbitrary[Option[DatasourceDescription]] =
     Arbitrary(Gen.option(Gen.oneOf(arbitrary[SingleDsDescription], arbitrary[DualDsDescription], arbitrary[OtherDsDescription])))
-  implicit val checkResultArb = Arbitrary(Gen.resultOf(CheckResult))
-  val checksSuiteResultGen: Gen[ChecksSuiteResult] = Gen.resultOf(ChecksSuiteResult)
+  implicit val checkResultArb = Arbitrary(for {
+    qcType <- arbitrary[QcType]
+    status <- arbitrary[CheckStatus]
+    resultDescription <- arbitrary[String]
+    checkDescription <- arbitrary[CheckDescription]
+    datasourceDescription <- arbitrary[Option[DatasourceDescription]]
+  } yield CheckResult(qcType, status, resultDescription, checkDescription, datasourceDescription))
+  val checksSuiteResultGen: Gen[ChecksSuiteResult] = for {
+    overallStatus <- arbitrary[CheckSuiteStatus]
+    checkSuiteDescription <- arbitrary[String]
+    checkResults <- arbitrary[Seq[CheckResult]]
+    timestamp <- arbitrary[Instant]
+    checkTags <- arbitrary[Map[String, String]]
+  } yield ChecksSuiteResult(overallStatus, checkSuiteDescription, checkResults, timestamp, checkTags)
   implicit val checksSuiteResultArb: Arbitrary[ChecksSuiteResult] = Arbitrary(checksSuiteResultGen)
 
   "ElasticSearchQcResultsRepository.save" should {

@@ -70,3 +70,13 @@ metrics will take place.
 
 You'll find some more details about the different types of checks you can do, and how to persist your results and your
 metrics in the other sections of the documentation.
+
+## Showing your results
+We've built in pretty printing of your `ChecksSuiteResult` as a quick way to get started seeing the results of your
+checks, and to help you in understanding reasons for any failures.
+```scala mdoc:compile-only
+import com.github.timgent.sparkdataquality.checkssuite.ChecksSuiteResult
+val someCheckSuiteResult: ChecksSuiteResult = ???
+println(someCheckSuiteResult.prettyPrint)
+```
+Instances of the cats `Show` typeclass are also provided in the companion object for `ChecksSuiteResult`.
