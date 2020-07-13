@@ -51,7 +51,7 @@ private[sparkdataquality] object MetricsCalculator {
       }
     }
     simpleMetricsTry match {
-      case Failure(exception)     => Left(MetricCalculationError(dds, metricDescriptors, exception))
+      case Failure(exception)     => Left(MetricCalculationError(dds, metricDescriptors, Some(exception)))
       case Success(simpleMetrics) => Right(simpleMetrics)
     }
   }

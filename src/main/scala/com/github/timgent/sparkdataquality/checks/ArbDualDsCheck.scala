@@ -28,7 +28,7 @@ object ArbDualDsCheck {
 
       override def applyCheck(dsPair: DescribedDsPair): CheckResult = {
         check(dsPair.rawDatasetPair)
-          .withDescription(qcType, description, dsPair.datasourceDescription)
+          .withDescription(qcType, description, Some(dsPair.datasourceDescription))
       }
     }
   }
