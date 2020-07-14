@@ -4,6 +4,7 @@ import xerial.sbt.Sonatype.GitHubHosting
 lazy val scala212 = "2.12.12"
 lazy val scala211 = "2.11.12"
 lazy val supportedScalaVersions = List(scala212, scala211)
+val versionForDocs = "0.1.10" // TODO: Make this update automatically on release, currently it's manual
 
 ThisBuild / scalaVersion := scala211
 ThisBuild / organization := "com.github.timgent"
@@ -54,7 +55,7 @@ lazy val docs = project // new documentation project
     docusaurusCreateSite := docusaurusCreateSite.dependsOn(unidoc in Compile).value,
     docusaurusPublishGhpages := docusaurusPublishGhpages.dependsOn(unidoc in Compile).value,
     mdocIn := new File("docs-source"),
-    mdocVariables := Map("VERSION" -> publishedVersion)
+    mdocVariables := Map("VERSION" -> versionForDocs)
   )
 
 scalacOptions += "-Ypartial-unification"
