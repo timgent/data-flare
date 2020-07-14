@@ -4,7 +4,7 @@ import cats.Show
 import com.github.timgent.sparkdataquality.checks.CheckDescription.SimpleCheckDescription
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.SingleDsDescription
-import com.github.timgent.sparkdataquality.checkssuite.DescribedDs
+import com.github.timgent.sparkdataquality.checkssuite.{DescribedDs, DescribedDsPair}
 import com.github.timgent.sparkdataquality.metrics.MetricDescriptor
 
 sealed trait SdqError {
@@ -24,9 +24,11 @@ object SdqError {
          |- ${metricDescriptors.map(_.toSimpleMetricDescriptor.show).mkString("\n- ")}""".stripMargin
   }
 
-  case class ArbSingleDsCheckError(dds: DescribedDs, checkDescription: SimpleCheckDescription, err: Option[Throwable]) extends SdqError {
-    override def datasourceDescription: Option[DatasourceDescription] = Some(dds.datasourceDescription)
-
+  case class ArbCheckError(
+      datasourceDescription: Option[DatasourceDescription],
+      checkDescription: SimpleCheckDescription,
+      err: Option[Throwable]
+  ) extends SdqError {
     override def msg: String = s"This check failed due to an exception being thrown during evaluation. Cause: ${err.map(_.getMessage)}"
   }
 

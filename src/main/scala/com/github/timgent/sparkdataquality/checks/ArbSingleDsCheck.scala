@@ -1,6 +1,6 @@
 package com.github.timgent.sparkdataquality.checks
 
-import com.github.timgent.sparkdataquality.SdqError.ArbSingleDsCheckError
+import com.github.timgent.sparkdataquality.SdqError.ArbCheckError
 import com.github.timgent.sparkdataquality.checks.CheckDescription.SimpleCheckDescription
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.SingleDsDescription
 import com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck
@@ -35,7 +35,7 @@ object ArbSingleDsCheck {
               "Check failed due to unexpected exception during evaluation",
               description,
               Some(dataset.datasourceDescription),
-              errors = Seq(ArbSingleDsCheckError(dataset, description, Some(exception)))
+              errors = Seq(ArbCheckError(Some(dataset.datasourceDescription), description, Some(exception)))
             )
           case Success(rawCheckResult) =>
             rawCheckResult.withDescription(qcType, description, Some(SingleDsDescription(dataset.description)))

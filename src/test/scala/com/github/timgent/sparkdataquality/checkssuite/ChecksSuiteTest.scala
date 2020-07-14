@@ -70,7 +70,8 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
     qcType match {
       case QcType.SingleMetricCheck | QcType.DualMetricCheck =>
         checkResult.resultDescription shouldBe "Check failed due to issue calculating metrics for this dataset"
-      case QcType.ArbSingleDsCheck => checkResult.resultDescription shouldBe "Check failed due to unexpected exception during evaluation"
+      case QcType.ArbSingleDsCheck | QcType.ArbDualDsCheck =>
+        checkResult.resultDescription shouldBe "Check failed due to unexpected exception during evaluation"
     }
   }
 
@@ -81,10 +82,10 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
     error.datasourceDescription shouldBe Some(badCheckDs.datasourceDescription)
   }
 
-  def assertSingleArbCheckErrorsRelateToCorrectDs(error: SdqError, badCheckDs: DescribedDs) = {
+  def assertArbCheckErrorsRelateToCorrectDs(error: SdqError, expectedDsDescription: DatasourceDescription) = {
     assert(error.msg.contains("This check failed due to an exception being thrown during evaluation"))
     error.err shouldBe a[Some[_]]
-    error.datasourceDescription shouldBe Some(badCheckDs.datasourceDescription)
+    error.datasourceDescription shouldBe Some(expectedDsDescription)
   }
 
   lazy val dsA = Seq(
@@ -510,7 +511,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
             ddsA.datasourceDescription
           )
           checksSuiteResult.checkResults.head.errors.size shouldBe 1
-          assertSingleArbCheckErrorsRelateToCorrectDs(checksSuiteResult.checkResults.head.errors.head, ddsA)
+          assertArbCheckErrorsRelateToCorrectDs(checksSuiteResult.checkResults.head.errors.head, ddsA.datasourceDescription)
         }
       }
     }
@@ -559,6 +560,24 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
             ),
             checkTags = someTags
           )
+        }
+      }
+
+      "return an error if the check is invalid" in {
+        val badCheck =
+          ArbDualDsCheck("badCheck")(dsPair => RawCheckResult(CheckStatus.Success, dsPair.ds.select("nonexistent").collect.toString))
+        val checksSuite = ChecksSuite("badSuite", dualDsChecks = Map(ddsPair -> Seq(badCheck)))
+        for {
+          checksSuiteResult <- checksSuite.run(now)
+        } yield {
+          assertCheckResultHasMetricErrorFields(
+            checksSuiteResult,
+            badCheck.description,
+            QcType.ArbDualDsCheck,
+            ddsPair.datasourceDescription
+          )
+          checksSuiteResult.checkResults.head.errors.size shouldBe 1
+          assertArbCheckErrorsRelateToCorrectDs(checksSuiteResult.checkResults.head.errors.head, ddsPair.datasourceDescription)
         }
       }
     }
