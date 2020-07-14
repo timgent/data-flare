@@ -46,6 +46,8 @@ object CheckResult {
        |status -> $status
        |datasourceDescription -> $datasourceDescription
        |qcType -> $qcType
+       |errors -> 
+       |  ${errors.map(_.show.replaceAll("\n", "\n  ")).mkString("\n")}
        |""".stripMargin
   }
 }

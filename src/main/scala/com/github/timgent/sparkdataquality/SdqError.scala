@@ -1,5 +1,6 @@
 package com.github.timgent.sparkdataquality
 
+import cats.Show
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.SingleDsDescription
 import com.github.timgent.sparkdataquality.checkssuite.DescribedDs
@@ -20,5 +21,12 @@ object SdqError {
       s"""One of the metrics defined on dataset ${dds.description} could not be calculated
          |Metrics used were:
          |- ${metricDescriptors.map(_.toSimpleMetricDescriptor.show).mkString("\n- ")}""".stripMargin
+  }
+
+  implicit val sdqErrorShow: Show[SdqError] = Show.show { error =>
+    import error._
+    s"""datasourceDescription: $datasourceDescription
+       |err: ${err.map(_.getMessage)}
+       |msg: $msg""".stripMargin
   }
 }
