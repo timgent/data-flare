@@ -1,6 +1,12 @@
 package com.github.timgent.sparkdataquality.metrics
 
-import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{ComplianceMetricCalculator, DistinctValuesMetricCalculator, SimpleMetricCalculator, SizeMetricCalculator, SumValuesMetricCalculator}
+import com.github.timgent.sparkdataquality.metrics.MetricCalculator.{
+  ComplianceMetricCalculator,
+  DistinctValuesMetricCalculator,
+  SimpleMetricCalculator,
+  SizeMetricCalculator,
+  SumValuesMetricCalculator
+}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.sparkdataquality.utils.CommonFixtures._
 import com.holdenkarau.spark.testing.DatasetSuiteBase
@@ -35,10 +41,6 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
     "apply the provided filter to count the size of matching rows in a DataFrame" in {
       val letterNotAFilter = MetricFilter('str =!= "a", "letter not equal to a")
       testMetricAggFunction(ds, SizeMetricCalculator(letterNotAFilter), LongMetric(2))
-    }
-
-    "return a failure when an invalid filter is given" in { // TODO: Implement error handling for bad metrics
-      pending
     }
   }
 
@@ -77,14 +79,6 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
         DoubleMetric(0.5)
       )
     }
-
-    "return a failure when an invalid filter is given" in { // TODO: Implement error handling for bad metrics
-      pending
-    }
-
-    "return a failure when an invalid compliance fn is given" in { // TODO: Implement error handling for bad metrics
-      pending
-    }
   }
 
   "DistinctValuesMetricCalculator" should {
@@ -114,20 +108,7 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
         LongMetric(3)
       )
     }
-
-    "return a failure when an invalid filter is given" in { // TODO: Implement error handling for bad metrics
-      pending
-    }
-
-    "return a failure when an invalid column is given" in { // TODO: Implement error handling for bad metrics
-      pending
-    }
-
-    "return a failure when an empty list of columns is given" in {
-      pending
-    }
   }
-
 
   "SumValuesMetricCalculator" should {
     lazy val ds = Seq(
@@ -152,18 +133,6 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
         SumValuesMetricCalculator[LongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
         LongMetric(6)
       )
-    }
-
-    "return a failure when an invalid filter is given" in { // TODO: Implement error handling for bad metrics
-      pending
-    }
-
-    "return a failure when an invalid column is given" in { // TODO: Implement error handling for bad metrics
-      pending
-    }
-
-    "return a failure when the column value can't be summed" in { // TODO: Implement error handling for bad metrics
-      pending
     }
   }
 }

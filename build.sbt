@@ -1,15 +1,12 @@
 import Dependencies._
 import xerial.sbt.Sonatype.GitHubHosting
 
-val libraryVersion = "0.1.8-SNAPSHOT"
-val publishedVersion = libraryVersion.replaceAll("-SNAPSHOT", "")
-
 lazy val scala212 = "2.12.12"
 lazy val scala211 = "2.11.12"
 lazy val supportedScalaVersions = List(scala212, scala211)
+val versionForDocs = "0.1.10" // TODO: Make this update automatically on release, currently it's manual
 
 ThisBuild / scalaVersion := scala211
-ThisBuild / version := libraryVersion
 ThisBuild / organization := "com.github.timgent"
 ThisBuild / organizationName := "timgent"
 
@@ -58,7 +55,7 @@ lazy val docs = project // new documentation project
     docusaurusCreateSite := docusaurusCreateSite.dependsOn(unidoc in Compile).value,
     docusaurusPublishGhpages := docusaurusPublishGhpages.dependsOn(unidoc in Compile).value,
     mdocIn := new File("docs-source"),
-    mdocVariables := Map("VERSION" -> publishedVersion)
+    mdocVariables := Map("VERSION" -> versionForDocs)
   )
 
 scalacOptions += "-Ypartial-unification"
@@ -78,7 +75,7 @@ sonatypeProjectHosting := Some(GitHubHosting("timgent", "spark-data-quality", "t
 
 import ReleaseTransformations._
 
-releaseCrossBuild := false // true if you cross-build the project for multiple Scala versions
+releaseCrossBuild := true // true if you cross-build the project for multiple Scala versions
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
@@ -89,7 +86,7 @@ releaseProcess := Seq[ReleaseStep](
   tagRelease,
   // For non cross-build projects, use releaseStepCommand("publishSigned")
   // For cross-build projects, use releaseStepCommand("+publishSigned")
-  releaseStepCommandAndRemaining("publishSigned"),
+  releaseStepCommandAndRemaining("+publishSigned"),
   releaseStepCommand("sonatypeBundleRelease"),
   setNextVersion,
   commitNextVersion,
