@@ -3,12 +3,6 @@ package com.github.timgent.sparkdataquality.checkssuite
 import java.time.Instant
 
 import cats.implicits._
-import com.amazon.deequ.analyzers.Size
-import com.amazon.deequ.analyzers.runners.AnalyzerContext
-import com.amazon.deequ.checks.{Check, CheckLevel}
-import com.amazon.deequ.metrics.{DoubleMetric, Entity}
-import com.amazon.deequ.repository.ResultKey
-import com.amazon.deequ.repository.memory.InMemoryMetricsRepository
 import com.github.timgent.sparkdataquality.SdqError
 import com.github.timgent.sparkdataquality.SdqError.MetricCalculationError
 import com.github.timgent.sparkdataquality.checks.ArbDualDsCheck.DatasetPair
@@ -403,57 +397,6 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
             )
           )
         )
-      }
-    }
-
-    "contains deequ checks" should {
-      "be able to do the deequ quality checks and store check results and underlying metrics in a repository" in {
-        val testDataset = DescribedDs(
-          List((1, "a"), (2, "b"), (3, "c")).map(TestDataClass.tupled).toDF,
-          "testDataset"
-        )
-        val qcResultsRepository = new InMemoryQcResultsRepository
-        val deequMetricsRepository: InMemoryMetricsRepository = new InMemoryMetricsRepository
-
-        val deequQcConstraint = DeequQCCheck(Check(CheckLevel.Error, "size check").hasSize(_ == 3))
-        val qualityChecks = ChecksSuite(
-          checkSuiteDescription = "sample deequ checks",
-          singleDsChecks = Map(testDataset -> Seq(deequQcConstraint)),
-          tags = someTags,
-          deequMetricsRepository = deequMetricsRepository,
-          qcResultsRepository = qcResultsRepository
-        )
-
-        for {
-          qcResults <- qualityChecks.run(now)
-          persistedQcResults <- qcResultsRepository.loadAll
-          persistedDeequMetrics = deequMetricsRepository.load().get()
-        } yield {
-          persistedQcResults.size shouldBe 1
-          checkResultAndPersistedResult(qcResults, persistedQcResults.head)(
-            timestamp = now,
-            checkSuiteDescription = "sample deequ checks",
-            checkStatus = CheckSuiteStatus.Success,
-            resultDescription = "1 checks were successful. 0 checks gave errors. 0 checks gave warnings",
-            checkResults = Seq(
-              CheckResult(
-                QcType.DeequQualityCheck,
-                CheckStatus.Success,
-                "Deequ check was successful",
-                deequQcConstraint.description
-              )
-            ),
-            checkTags = someTags
-          )
-
-          persistedDeequMetrics.size shouldBe 1
-          persistedDeequMetrics.head.resultKey shouldBe ResultKey(now.toEpochMilli, Map.empty)
-          persistedDeequMetrics.head.analyzerContext shouldBe AnalyzerContext(
-            Map(
-              Size(None) -> DoubleMetric(Entity.Dataset, "Size", "*", Success(3.0))
-            )
-          )
-        }
       }
     }
 

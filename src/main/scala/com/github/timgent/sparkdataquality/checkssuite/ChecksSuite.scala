@@ -3,19 +3,14 @@ package com.github.timgent.sparkdataquality.checkssuite
 import java.time.Instant
 
 import cats.implicits._
-import com.amazon.deequ.repository.ResultKey
-import com.amazon.deequ.{VerificationRunBuilder, VerificationSuite}
 import com.github.timgent.sparkdataquality.SdqError.MetricCalculationError
 import com.github.timgent.sparkdataquality.checks.ArbDualDsCheck.DatasetPair
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, SingleDsDescription}
 import com.github.timgent.sparkdataquality.checks.QCCheck.{DualDsQCCheck, SingleDsCheck}
 import com.github.timgent.sparkdataquality.checks._
 import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricCheck, SingleMetricCheck}
-import com.github.timgent.sparkdataquality.deequ.DeequHelpers.VerificationResultExtension
-import com.github.timgent.sparkdataquality.deequ.DeequNullMetricsRepository
 import com.github.timgent.sparkdataquality.metrics.{MetricDescriptor, MetricValue, MetricsCalculator}
 import com.github.timgent.sparkdataquality.repository.{MetricsPersister, NullMetricsPersister, NullQcResultsRepository, QcResultsRepository}
-import com.github.timgent.sparkdataquality.sparkdataquality.DeequMetricsRepository
 import org.apache.spark.sql.Dataset
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,7 +45,6 @@ case class DescribedDsPair(ds: DescribedDs, dsToCompare: DescribedDs) {
   * @param arbitraryChecks - any other arbitrary checks
   * @param metricsToTrack - metrics to track (even if no checks on them)
   * @param metricsPersister - how to persist metrics
-  * @param deequMetricsRepository - how to persist deequ's metrics
   * @param checkResultCombiner - how the overall result status should be calculated
   */
 case class ChecksSuite(
@@ -61,7 +55,6 @@ case class ChecksSuite(
     arbitraryChecks: Seq[ArbitraryCheck] = Seq.empty,
     metricsToTrack: Map[DescribedDs, Seq[MetricDescriptor]] = Map.empty,
     metricsPersister: MetricsPersister = NullMetricsPersister,
-    deequMetricsRepository: DeequMetricsRepository = new DeequNullMetricsRepository,
     qcResultsRepository: QcResultsRepository = new NullQcResultsRepository,
     checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
 ) extends ChecksSuiteBase {
@@ -75,12 +68,6 @@ case class ChecksSuite(
   private val singleMetricChecks: Map[DescribedDs, Seq[SingleMetricCheck[_]]] = singleDsChecks.map {
     case (dds, checks) =>
       val relevantChecks = checks.collect { case check: SingleMetricCheck[_] => check }
-      (dds, relevantChecks)
-  }
-
-  private val deequChecks: Map[DescribedDs, Seq[DeequQCCheck]] = singleDsChecks.map {
-    case (dds, checks) =>
-      val relevantChecks = checks.collect { case check: DeequQCCheck => check }
       (dds, relevantChecks)
   }
 
@@ -116,13 +103,12 @@ case class ChecksSuite(
       checkResults = check.applyCheck(ddsPair)
     } yield checkResults
     val arbitraryCheckResults = arbitraryChecks.map(_.applyCheck)
-    val deequCheckResults = getDeequCheckResults(deequChecks, timestamp, tags)
 
     for {
       metricBasedCheckResults <- metricBasedCheckResultsFut
       allCheckResults =
         metricBasedCheckResults ++ singleDatasetCheckResults ++ datasetComparisonCheckResults ++
-          arbitraryCheckResults ++ deequCheckResults
+          arbitraryCheckResults
       checkSuiteResult = ChecksSuiteResult(
         overallStatus = checkResultCombiner(allCheckResults),
         checkSuiteDescription = checkSuiteDescription,
@@ -134,25 +120,6 @@ case class ChecksSuite(
     } yield {
       checkSuiteResult
     }
-  }
-
-  private def getDeequCheckResults(
-      deequChecks: Map[DescribedDs, Seq[DeequQCCheck]],
-      timestamp: Instant,
-      tags: Map[String, String]
-  ): Seq[CheckResult] = {
-    for {
-      (dds, checks) <- deequChecks.toSeq
-      verificationSuite: VerificationRunBuilder = VerificationSuite()
-        .onData(dds.ds.toDF)
-        .useRepository(deequMetricsRepository)
-        .saveOrAppendResult(ResultKey(timestamp.toEpochMilli))
-      checkResult <-
-        verificationSuite
-          .addChecks(checks.map(_.check))
-          .run()
-          .toCheckResults(tags)
-    } yield checkResult
   }
 
   /**

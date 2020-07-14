@@ -16,8 +16,7 @@
           "availablemetrics"
         ]
       },
-      "arbchecks",
-      "deequchecks"
+      "arbchecks"
     ],
     "Persisting your results": [
       "qcresultspersistence",
