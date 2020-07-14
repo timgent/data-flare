@@ -1,5 +1,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.timgent/spark-data-quality_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.timgent/spark-data-quality_2.11)
 [![javadoc](https://javadoc.io/badge2/com.github.timgent/spark-data-quality_2.11/javadoc.svg)](https://javadoc.io/doc/com.github.timgent/spark-data-quality_2.11)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.timgent/spark-data-quality_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.timgent/spark-data-quality_2.12)
+[![javadoc](https://javadoc.io/badge2/com.github.timgent/spark-data-quality_2.12/javadoc.svg)](https://javadoc.io/doc/com.github.timgent/spark-data-quality_2.12)
 ![Build Status](https://github.com/timgent/spark-data-quality/workflows/Scala%20CI/badge.svg)
 
 # Spark Data Quality
