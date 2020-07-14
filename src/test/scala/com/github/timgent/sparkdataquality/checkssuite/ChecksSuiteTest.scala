@@ -55,7 +55,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
     persistedQcResult.checkTags shouldBe checkTags
   }
 
-  def assertCheckResultHasErrorFields(
+  def assertCheckResultHasMetricErrorFields(
       checksSuiteResult: ChecksSuiteResult,
       checkDescription: CheckDescription,
       qcType: QcType,
@@ -67,13 +67,23 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
     checkResult.status shouldBe CheckStatus.Error
     checkResult.checkDescription shouldBe checkDescription
     checkResult.datasourceDescription shouldBe Some(datasourceDescription)
-    checkResult.resultDescription shouldBe "Check failed due to issue calculating metrics for this dataset"
+    qcType match {
+      case QcType.SingleMetricCheck | QcType.DualMetricCheck =>
+        checkResult.resultDescription shouldBe "Check failed due to issue calculating metrics for this dataset"
+      case QcType.ArbSingleDsCheck => checkResult.resultDescription shouldBe "Check failed due to unexpected exception during evaluation"
+    }
   }
 
-  def assertErrorsRelateToCorrectDs(error: SdqError, badCheckDs: DescribedDs) = {
+  def assertMetricErrorsRelateToCorrectDs(error: SdqError, badCheckDs: DescribedDs) = {
     error.msg shouldBe s"""One of the metrics defined on dataset ${badCheckDs.description} could not be calculated
                           |Metrics used were:
                           |- metricName=SumValues, filterDescription=no filter, onColumn=nonexistent""".stripMargin
+    error.datasourceDescription shouldBe Some(badCheckDs.datasourceDescription)
+  }
+
+  def assertSingleArbCheckErrorsRelateToCorrectDs(error: SdqError, badCheckDs: DescribedDs) = {
+    assert(error.msg.contains("This check failed due to an exception being thrown during evaluation"))
+    error.err shouldBe a[Some[_]]
     error.datasourceDescription shouldBe Some(badCheckDs.datasourceDescription)
   }
 
@@ -192,9 +202,14 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
         for {
           checksSuiteResult <- checksSuite.run(now)
         } yield {
-          assertCheckResultHasErrorFields(checksSuiteResult, badCheck.description, QcType.SingleMetricCheck, ddsA.datasourceDescription)
+          assertCheckResultHasMetricErrorFields(
+            checksSuiteResult,
+            badCheck.description,
+            QcType.SingleMetricCheck,
+            ddsA.datasourceDescription
+          )
           checksSuiteResult.checkResults.head.errors.size shouldBe 1
-          assertErrorsRelateToCorrectDs(checksSuiteResult.checkResults.head.errors.head, ddsA)
+          assertMetricErrorsRelateToCorrectDs(checksSuiteResult.checkResults.head.errors.head, ddsA)
         }
       }
     }
@@ -248,9 +263,14 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
         for {
           checksSuiteResult <- checksSuite.run(now)
         } yield {
-          assertCheckResultHasErrorFields(checksSuiteResult, badCheck.description, QcType.DualMetricCheck, ddsPair.datasourceDescription)
+          assertCheckResultHasMetricErrorFields(
+            checksSuiteResult,
+            badCheck.description,
+            QcType.DualMetricCheck,
+            ddsPair.datasourceDescription
+          )
           checksSuiteResult.checkResults.head.errors.size shouldBe 1
-          assertErrorsRelateToCorrectDs(checksSuiteResult.checkResults.head.errors.head, ddsA)
+          assertMetricErrorsRelateToCorrectDs(checksSuiteResult.checkResults.head.errors.head, ddsA)
         }
       }
       "return an error if the second check is invalid" in {
@@ -259,9 +279,14 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
         for {
           checksSuiteResult <- checksSuite.run(now)
         } yield {
-          assertCheckResultHasErrorFields(checksSuiteResult, badCheck.description, QcType.DualMetricCheck, ddsPair.datasourceDescription)
+          assertCheckResultHasMetricErrorFields(
+            checksSuiteResult,
+            badCheck.description,
+            QcType.DualMetricCheck,
+            ddsPair.datasourceDescription
+          )
           checksSuiteResult.checkResults.head.errors.size shouldBe 1
-          assertErrorsRelateToCorrectDs(checksSuiteResult.checkResults.head.errors.head, ddsB)
+          assertMetricErrorsRelateToCorrectDs(checksSuiteResult.checkResults.head.errors.head, ddsB)
         }
       }
 
@@ -271,13 +296,18 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
         for {
           checksSuiteResult <- checksSuite.run(now)
         } yield {
-          assertCheckResultHasErrorFields(checksSuiteResult, badCheck.description, QcType.DualMetricCheck, ddsPair.datasourceDescription)
+          assertCheckResultHasMetricErrorFields(
+            checksSuiteResult,
+            badCheck.description,
+            QcType.DualMetricCheck,
+            ddsPair.datasourceDescription
+          )
           val errors = checksSuiteResult.checkResults.head.errors
           errors.size shouldBe 2
           val ddsAErr = errors.find(_.datasourceDescription.contains(ddsA.datasourceDescription)).get
           val ddsBErr = errors.find(_.datasourceDescription.contains(ddsB.datasourceDescription)).get
-          assertErrorsRelateToCorrectDs(ddsAErr, ddsA)
-          assertErrorsRelateToCorrectDs(ddsBErr, ddsB)
+          assertMetricErrorsRelateToCorrectDs(ddsAErr, ddsA)
+          assertMetricErrorsRelateToCorrectDs(ddsBErr, ddsB)
         }
       }
 
@@ -464,6 +494,23 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
             ),
             checkTags = someTags
           )
+        }
+      }
+
+      "return an error if the check is invalid" in {
+        val badCheck = ArbSingleDsCheck("badCheck")(ds => RawCheckResult(CheckStatus.Success, ds.select("nonexistent").collect.toString))
+        val checksSuite = ChecksSuite("badSuite", singleDsChecks = Map(ddsA -> Seq(badCheck)))
+        for {
+          checksSuiteResult <- checksSuite.run(now)
+        } yield {
+          assertCheckResultHasMetricErrorFields(
+            checksSuiteResult,
+            badCheck.description,
+            QcType.ArbSingleDsCheck,
+            ddsA.datasourceDescription
+          )
+          checksSuiteResult.checkResults.head.errors.size shouldBe 1
+          assertSingleArbCheckErrorsRelateToCorrectDs(checksSuiteResult.checkResults.head.errors.head, ddsA)
         }
       }
     }
