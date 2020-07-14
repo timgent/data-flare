@@ -17,7 +17,6 @@ val myFirstChecksSuite = ChecksSuite(
     arbitraryChecks = ???,
     metricsToTrack = ???,
     metricsPersister = ???,
-    deequMetricsRepository = ???,
     qcResultsRepository = ???,
     checkResultCombiner = ???
 )

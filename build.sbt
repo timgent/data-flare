@@ -4,7 +4,11 @@ import xerial.sbt.Sonatype.GitHubHosting
 val libraryVersion = "0.1.8-SNAPSHOT"
 val publishedVersion = libraryVersion.replaceAll("-SNAPSHOT", "")
 
-ThisBuild / scalaVersion := "2.11.12"
+lazy val scala212 = "2.12.12"
+lazy val scala211 = "2.11.12"
+lazy val supportedScalaVersions = List(scala212, scala211)
+
+ThisBuild / scalaVersion := scala211
 ThisBuild / version := libraryVersion
 ThisBuild / organization := "com.github.timgent"
 ThisBuild / organizationName := "timgent"
@@ -12,13 +16,13 @@ ThisBuild / organizationName := "timgent"
 lazy val root = (project in file("."))
   .settings(
     name := "spark-data-quality",
+    crossScalaVersions := supportedScalaVersions,
     libraryDependencies ++= List(
       scalaTest,
       sparkTestingBase,
       scalaMock,
       sparkCore,
       sparkSql,
-      deequ,
       elastic4s,
       elastic4sTestKit,
       elastic4sCirceJson,

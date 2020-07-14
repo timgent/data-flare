@@ -22,10 +22,6 @@ built in options or define your own repository for storing to a location of your
 * SDQ provides the option to persist metrics to a repository. We recommend using the built in Persister for 
 ElasticSearch, so that you can easily graph metrics over time with Kibana. Or you can easily use a custom Persister to
 track metrics using a datastore of your choosing.
-* SDQ also supports performing [Deequ](https://github.com/awslabs/deequ) checks, which gives a greater range of 
-built-in checks at present. However, please be aware metrics related to Deequ are persisted separately to other SDQ 
-metrics, and currently Deequ only supports persisting of Deequ metrics as a JSON blob in a file. For this reason we 
-recommend using SDQ checks where possible.
 
 ## Comparison to other data quality tools
 SDQ was inspired by other data quality tools such as [Deequ](https://github.com/awslabs/deequ). We've found other

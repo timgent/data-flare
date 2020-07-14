@@ -69,7 +69,6 @@ private[sparkdataquality] sealed trait QcType extends EnumEntry
 
 private[sparkdataquality] object QcType extends Enum[QcType] {
   val values = findValues
-  case object DeequQualityCheck extends QcType
   case object ArbSingleDsCheck extends QcType
   case object ArbDualDsCheck extends QcType
   case object ArbitraryCheck extends QcType
