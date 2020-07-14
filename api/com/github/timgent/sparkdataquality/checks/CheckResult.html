@@ -47,11 +47,11 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">CheckResult</span><span class="params">(<span name="qcType">qcType: <span class="extype" name="com.github.timgent.sparkdataquality.checks.QcType">QcType</span></span>, <span name="status">status: <a href="CheckStatus.html" class="extype" name="com.github.timgent.sparkdataquality.checks.CheckStatus">CheckStatus</a></span>, <span name="resultDescription">resultDescription: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="checkDescription">checkDescription: <a href="CheckDescription.html" class="extype" name="com.github.timgent.sparkdataquality.checks.CheckDescription">CheckDescription</a></span>, <span name="datasourceDescription">datasourceDescription: <span class="extype" name="scala.Option">Option</span>[<a href="DatasourceDescription.html" class="extype" name="com.github.timgent.sparkdataquality.checks.DatasourceDescription">DatasourceDescription</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">CheckResult</span><span class="params">(<span name="qcType">qcType: <span class="extype" name="com.github.timgent.sparkdataquality.checks.QcType">QcType</span></span>, <span name="status">status: <a href="CheckStatus.html" class="extype" name="com.github.timgent.sparkdataquality.checks.CheckStatus">CheckStatus</a></span>, <span name="resultDescription">resultDescription: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="checkDescription">checkDescription: <a href="CheckDescription.html" class="extype" name="com.github.timgent.sparkdataquality.checks.CheckDescription">CheckDescription</a></span>, <span name="datasourceDescription">datasourceDescription: <span class="extype" name="scala.Option">Option</span>[<a href="DatasourceDescription.html" class="extype" name="com.github.timgent.sparkdataquality.checks.DatasourceDescription">DatasourceDescription</a>] = <span class="symbol">None</span></span>, <span name="errors">errors: <span class="extype" name="scala.Seq">Seq</span>[<a href="../SdqError.html" class="extype" name="com.github.timgent.sparkdataquality.SdqError">SdqError</a>] = <span class="symbol">Seq.empty</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>The result of a check</p></div><dl class="paramcmts block"><dt class="param">status</dt><dd class="cmt"><p>- status of the check</p></dd><dt class="param">resultDescription</dt><dd class="cmt"><p>- description of the check result</p></dd><dt class="param">checkDescription</dt><dd class="cmt"><p>- description of the check</p></dd><dt class="param">datasourceDescription</dt><dd class="cmt"><p>- optional description of the datasource used in the check</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>The result of a check</p></div><dl class="paramcmts block"><dt class="param">status</dt><dd class="cmt"><p>- status of the check</p></dd><dt class="param">resultDescription</dt><dd class="cmt"><p>- description of the check result</p></dd><dt class="param">checkDescription</dt><dd class="cmt"><p>- description of the check</p></dd><dt class="param">datasourceDescription</dt><dd class="cmt"><p>- optional description of the datasource used in the check</p></dd><dt class="param">errors</dt><dd class="cmt"><p>- any errors that occured when trying to execute the check</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -91,7 +91,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="com.github.timgent.sparkdataquality.checks.CheckResult#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(qcType:com.github.timgent.sparkdataquality.checks.QcType,status:com.github.timgent.sparkdataquality.checks.CheckStatus,resultDescription:String,checkDescription:com.github.timgent.sparkdataquality.checks.CheckDescription,datasourceDescription:Option[com.github.timgent.sparkdataquality.checks.DatasourceDescription]):com.github.timgent.sparkdataquality.checks.CheckResult"></a>
+      <a id="&lt;init&gt;(qcType:com.github.timgent.sparkdataquality.checks.QcType,status:com.github.timgent.sparkdataquality.checks.CheckStatus,resultDescription:String,checkDescription:com.github.timgent.sparkdataquality.checks.CheckDescription,datasourceDescription:Option[com.github.timgent.sparkdataquality.checks.DatasourceDescription],errors:Seq[com.github.timgent.sparkdataquality.SdqError]):com.github.timgent.sparkdataquality.checks.CheckResult"></a>
       <a id="&lt;init&gt;:CheckResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -99,14 +99,14 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">CheckResult</span><span class="params">(<span name="qcType">qcType: <span class="extype" name="com.github.timgent.sparkdataquality.checks.QcType">QcType</span></span>, <span name="status">status: <a href="CheckStatus.html" class="extype" name="com.github.timgent.sparkdataquality.checks.CheckStatus">CheckStatus</a></span>, <span name="resultDescription">resultDescription: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="checkDescription">checkDescription: <a href="CheckDescription.html" class="extype" name="com.github.timgent.sparkdataquality.checks.CheckDescription">CheckDescription</a></span>, <span name="datasourceDescription">datasourceDescription: <span class="extype" name="scala.Option">Option</span>[<a href="DatasourceDescription.html" class="extype" name="com.github.timgent.sparkdataquality.checks.DatasourceDescription">DatasourceDescription</a>] = <span class="symbol">None</span></span>)</span>
+        <span class="name">CheckResult</span><span class="params">(<span name="qcType">qcType: <span class="extype" name="com.github.timgent.sparkdataquality.checks.QcType">QcType</span></span>, <span name="status">status: <a href="CheckStatus.html" class="extype" name="com.github.timgent.sparkdataquality.checks.CheckStatus">CheckStatus</a></span>, <span name="resultDescription">resultDescription: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="checkDescription">checkDescription: <a href="CheckDescription.html" class="extype" name="com.github.timgent.sparkdataquality.checks.CheckDescription">CheckDescription</a></span>, <span name="datasourceDescription">datasourceDescription: <span class="extype" name="scala.Option">Option</span>[<a href="DatasourceDescription.html" class="extype" name="com.github.timgent.sparkdataquality.checks.DatasourceDescription">DatasourceDescription</a>] = <span class="symbol">None</span></span>, <span name="errors">errors: <span class="extype" name="scala.Seq">Seq</span>[<a href="../SdqError.html" class="extype" name="com.github.timgent.sparkdataquality.SdqError">SdqError</a>] = <span class="symbol">Seq.empty</span></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checks.CheckResult@&lt;init&gt;(qcType:com.github.timgent.sparkdataquality.checks.QcType,status:com.github.timgent.sparkdataquality.checks.CheckStatus,resultDescription:String,checkDescription:com.github.timgent.sparkdataquality.checks.CheckDescription,datasourceDescription:Option[com.github.timgent.sparkdataquality.checks.DatasourceDescription]):com.github.timgent.sparkdataquality.checks.CheckResult" title="Permalink" target="_top">
+      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checks.CheckResult@&lt;init&gt;(qcType:com.github.timgent.sparkdataquality.checks.QcType,status:com.github.timgent.sparkdataquality.checks.CheckStatus,resultDescription:String,checkDescription:com.github.timgent.sparkdataquality.checks.CheckDescription,datasourceDescription:Option[com.github.timgent.sparkdataquality.checks.DatasourceDescription],errors:Seq[com.github.timgent.sparkdataquality.SdqError]):com.github.timgent.sparkdataquality.checks.CheckResult" title="Permalink" target="_top">
         <img src="../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">status</dt><dd class="cmt"><p>- status of the check</p></dd><dt class="param">resultDescription</dt><dd class="cmt"><p>- description of the check result</p></dd><dt class="param">checkDescription</dt><dd class="cmt"><p>- description of the check</p></dd><dt class="param">datasourceDescription</dt><dd class="cmt"><p>- optional description of the datasource used in the check</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">status</dt><dd class="cmt"><p>- status of the check</p></dd><dt class="param">resultDescription</dt><dd class="cmt"><p>- description of the check result</p></dd><dt class="param">checkDescription</dt><dd class="cmt"><p>- description of the check</p></dd><dt class="param">datasourceDescription</dt><dd class="cmt"><p>- optional description of the datasource used in the check</p></dd><dt class="param">errors</dt><dd class="cmt"><p>- any errors that occured when trying to execute the check</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -258,6 +258,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.github.timgent.sparkdataquality.checks.CheckResult#errors" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="errors:Seq[com.github.timgent.sparkdataquality.SdqError]"></a>
+      <a id="errors:Seq[SdqError]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">errors</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="../SdqError.html" class="extype" name="com.github.timgent.sparkdataquality.SdqError">SdqError</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.github.timgent.sparkdataquality.checks.CheckResult@errors:Seq[com.github.timgent.sparkdataquality.SdqError]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">- any errors that occured when trying to execute the check</p>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
