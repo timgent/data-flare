@@ -11,7 +11,12 @@ import com.sksamuel.elastic4s.{ElasticClient, ElasticProperties, Index}
 import io.circe.Decoder.Result
 import io.circe.{Decoder, Encoder, HCursor, Json}
 import cats.syntax.either._
-import com.github.timgent.sparkdataquality.checks.CheckDescription.{DualMetricCheckDescription, SimpleCheckDescription, SingleMetricCheckDescription}
+import com.github.timgent.sparkdataquality.SdqError
+import com.github.timgent.sparkdataquality.checks.CheckDescription.{
+  DualMetricCheckDescription,
+  SimpleCheckDescription,
+  SingleMetricCheckDescription
+}
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, OtherDsDescription, SingleDsDescription}
 import com.github.timgent.sparkdataquality.metrics.SimpleMetricDescriptor
 import io.circe.syntax._
@@ -107,48 +112,66 @@ object ElasticSearchQcResultsRepository {
   private implicit val checkDescriptionEncoder: Encoder[CheckDescription] = new Encoder[CheckDescription] {
     override def apply(a: CheckDescription): Json = {
       val fields = a match {
-        case CheckDescription.SimpleCheckDescription(desc) => Seq(
-          "type" -> Json.fromString("SimpleCheckDescription"),
-          "desc" -> Json.fromString(desc)
-        )
-        case CheckDescription.DualMetricCheckDescription(desc, dsMetric, dsToCompareMetric, metricComparator) => Seq(
-          "type" -> Json.fromString("DualMetricCheckDescription"),
-          "desc" -> Json.fromString(desc),
-          "dsMetric" -> dsMetric.asJson,
-          "dsToCompareMetric" -> dsToCompareMetric.asJson,
-          "metricComparator" -> Json.fromString(metricComparator)
-        )
-        case CheckDescription.SingleMetricCheckDescription(desc, dsMetric) => Seq(
-          "type" -> Json.fromString("SingleMetricCheckDescription"),
-          "desc" -> Json.fromString(desc),
-          "dsMetric" -> dsMetric.asJson
-        )
+        case CheckDescription.SimpleCheckDescription(desc) =>
+          Seq(
+            "type" -> Json.fromString("SimpleCheckDescription"),
+            "desc" -> Json.fromString(desc)
+          )
+        case CheckDescription.DualMetricCheckDescription(desc, dsMetric, dsToCompareMetric, metricComparator) =>
+          Seq(
+            "type" -> Json.fromString("DualMetricCheckDescription"),
+            "desc" -> Json.fromString(desc),
+            "dsMetric" -> dsMetric.asJson,
+            "dsToCompareMetric" -> dsToCompareMetric.asJson,
+            "metricComparator" -> Json.fromString(metricComparator)
+          )
+        case CheckDescription.SingleMetricCheckDescription(desc, dsMetric) =>
+          Seq(
+            "type" -> Json.fromString("SingleMetricCheckDescription"),
+            "desc" -> Json.fromString(desc),
+            "dsMetric" -> dsMetric.asJson
+          )
       }
       Json.obj(fields: _*)
     }
   }
 
   private implicit val checkDescriptionDecoder: Decoder[CheckDescription] = new Decoder[CheckDescription] {
-    override def apply(c: HCursor): Result[CheckDescription] = for {
-      descriptionType <- c.downField("type").as[String]
-      checkDescription <- descriptionType match {
-        case "SimpleCheckDescription" => for {
-          desc <- c.downField("desc").as[String]
-        } yield SimpleCheckDescription(desc)
-        case "DualMetricCheckDescription" => for {
-          desc <- c.downField("desc").as[String]
-          dsMetric <- c.downField("dsMetric").as[SimpleMetricDescriptor]
-          dsToCompareMetric <- c.downField("dsToCompareMetric").as[SimpleMetricDescriptor]
-          metricComparator <- c.downField("metricComparator").as[String]
-        } yield DualMetricCheckDescription(desc, dsMetric, dsToCompareMetric, metricComparator)
-        case "SingleMetricCheckDescription" => for {
-          desc <- c.downField("desc").as[String]
-          dsMetric <- c.downField("dsMetric").as[SimpleMetricDescriptor]
-        } yield SingleMetricCheckDescription(desc, dsMetric)
-      }
-    } yield checkDescription
+    override def apply(c: HCursor): Result[CheckDescription] =
+      for {
+        descriptionType <- c.downField("type").as[String]
+        checkDescription <- descriptionType match {
+          case "SimpleCheckDescription" =>
+            for {
+              desc <- c.downField("desc").as[String]
+            } yield SimpleCheckDescription(desc)
+          case "DualMetricCheckDescription" =>
+            for {
+              desc <- c.downField("desc").as[String]
+              dsMetric <- c.downField("dsMetric").as[SimpleMetricDescriptor]
+              dsToCompareMetric <- c.downField("dsToCompareMetric").as[SimpleMetricDescriptor]
+              metricComparator <- c.downField("metricComparator").as[String]
+            } yield DualMetricCheckDescription(desc, dsMetric, dsToCompareMetric, metricComparator)
+          case "SingleMetricCheckDescription" =>
+            for {
+              desc <- c.downField("desc").as[String]
+              dsMetric <- c.downField("dsMetric").as[SimpleMetricDescriptor]
+            } yield SingleMetricCheckDescription(desc, dsMetric)
+        }
+      } yield checkDescription
   }
-  private implicit val checkResultEncoder: Encoder[CheckResult] = deriveEncoder[CheckResult]
+  private implicit val checkResultEncoder: Encoder[CheckResult] = new Encoder[CheckResult] {
+    override def apply(a: CheckResult): Json = {
+      Json.obj(
+        "qcType" -> a.qcType.asJson,
+        "status" -> a.status.asJson,
+        "resultDescription" -> a.resultDescription.asJson,
+        "checkDescription" -> a.checkDescription.asJson,
+        "datasourceDescription" -> a.datasourceDescription.asJson
+      )
+    }
+  }
+
   private implicit val checkResultDecoder: Decoder[CheckResult] = new Decoder[CheckResult] {
     override def apply(c: HCursor): Result[CheckResult] = {
       for {
@@ -157,7 +180,7 @@ object ElasticSearchQcResultsRepository {
         resultDescription <- c.downField("resultDescription").as[String]
         checkDescription <- c.downField("checkDescription").as[CheckDescription]
         datasourceDescription = c.downField("datasourceDescription").as[DatasourceDescription].fold(_ => None, Some(_))
-      } yield CheckResult(qcType, status, resultDescription, checkDescription, datasourceDescription)
+      } yield CheckResult(qcType, status, resultDescription, checkDescription, datasourceDescription, Seq.empty)
     }
   }
   private[repository] implicit val checksSuiteResultEncoder: Encoder[ChecksSuiteResult] = deriveEncoder[ChecksSuiteResult]

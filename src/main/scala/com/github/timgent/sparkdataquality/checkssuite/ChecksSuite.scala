@@ -5,6 +5,7 @@ import java.time.Instant
 import cats.implicits._
 import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.{VerificationRunBuilder, VerificationSuite}
+import com.github.timgent.sparkdataquality.SdqError.MetricCalculationError
 import com.github.timgent.sparkdataquality.checks.ArbDualDsCheck.DatasetPair
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, SingleDsDescription}
 import com.github.timgent.sparkdataquality.checks.QCCheck.{DualDsQCCheck, SingleDsCheck}
@@ -24,7 +25,9 @@ import scala.concurrent.{ExecutionContext, Future}
   * @param ds - the dataset
   * @param description - description of the dataset
   */
-case class DescribedDs(ds: Dataset[_], description: String)
+case class DescribedDs(ds: Dataset[_], description: String) {
+  def datasourceDescription: SingleDsDescription = SingleDsDescription(description)
+}
 
 /**
   * A pair of [[DescribedDs]]s
@@ -33,7 +36,7 @@ case class DescribedDs(ds: Dataset[_], description: String)
   * @param dsToCompare - the second described dataset
   */
 case class DescribedDsPair(ds: DescribedDs, dsToCompare: DescribedDs) {
-  def datasourceDescription: Option[DualDsDescription] = Some(DualDsDescription(ds.description, dsToCompare.description))
+  def datasourceDescription: DualDsDescription = DualDsDescription(ds.description, dsToCompare.description)
 
   private[sparkdataquality] def rawDatasetPair = DatasetPair(ds.ds, dsToCompare.ds)
 }
@@ -190,16 +193,16 @@ case class ChecksSuite(
   )(implicit ec: ExecutionContext): Future[Seq[CheckResult]] = {
     val allMetricDescriptors: Map[DescribedDs, List[MetricDescriptor]] =
       getMinimumRequiredMetrics(singleMetricChecks, dualMetricChecks, metricsToTrack)
-    val calculatedMetrics: Map[DescribedDs, Map[MetricDescriptor, MetricValue]] =
+    val calculatedMetrics: Map[DescribedDs, Either[MetricCalculationError, Map[MetricDescriptor, MetricValue]]] =
       allMetricDescriptors.map {
         case (describedDataset, metricDescriptors) =>
-          val metricValues: Map[MetricDescriptor, MetricValue] =
-            MetricsCalculator.calculateMetrics(describedDataset.ds, metricDescriptors)
+          val metricValues: Either[MetricCalculationError, Map[MetricDescriptor, MetricValue]] =
+            MetricsCalculator.calculateMetrics(describedDataset, metricDescriptors)
           (describedDataset, metricValues)
       }
 
-    val metricsToSave = calculatedMetrics.map {
-      case (describedDataset, metrics) =>
+    val metricsToSave = calculatedMetrics.collect {
+      case (describedDataset, Right(metrics)) =>
         (
           SingleDsDescription(describedDataset.description),
           metrics.map {
@@ -215,11 +218,14 @@ case class ChecksSuite(
       val singleDatasetCheckResults: Seq[CheckResult] = singleMetricChecks.toSeq.flatMap {
         case (dds, checks) =>
           val datasetDescription = SingleDsDescription(dds.description)
-          val metricsForDs: Map[MetricDescriptor, MetricValue] =
-            calculatedMetrics(dds)
-          val checkResults: Seq[CheckResult] = checks.map(
-            _.applyCheckOnMetrics(metricsForDs).withDatasourceDescription(datasetDescription)
-          )
+          val maybeMetricsForDs: Either[MetricCalculationError, Map[MetricDescriptor, MetricValue]] = calculatedMetrics(dds)
+          val checkResults: Seq[CheckResult] = checks.map { check =>
+            maybeMetricsForDs match {
+              case Left(err) => check.getMetricErrorCheckResult(dds.datasourceDescription, err)
+              case Right(metricsForDs: Map[MetricDescriptor, MetricValue]) =>
+                check.applyCheckOnMetrics(metricsForDs).withDatasourceDescription(datasetDescription)
+            }
+          }
           checkResults
       }
 
@@ -227,13 +233,21 @@ case class ChecksSuite(
         case (ddsPair, checks) =>
           val dds = ddsPair.ds
           val ddsToCompare = ddsPair.dsToCompare
-          val metricsForDsA: Map[MetricDescriptor, MetricValue] = calculatedMetrics(dds)
-          val metricsForDsB: Map[MetricDescriptor, MetricValue] = calculatedMetrics(ddsToCompare)
+          val maybeMetricsForDsA: Either[MetricCalculationError, Map[MetricDescriptor, MetricValue]] = calculatedMetrics(dds)
+          val maybeMetricsForDsB: Either[MetricCalculationError, Map[MetricDescriptor, MetricValue]] = calculatedMetrics(ddsToCompare)
           val datasourceDescription = DualDsDescription(dds.description, ddsToCompare.description)
-          val checkResults: Seq[CheckResult] = checks.map(
-            _.applyCheckOnMetrics(metricsForDsA, metricsForDsB, datasourceDescription)
-              .withDatasourceDescription(datasourceDescription)
-          )
+          val checkResults: Seq[CheckResult] = checks.map { check =>
+            (maybeMetricsForDsA, maybeMetricsForDsB) match {
+              case (Right(metricsForDsA), Right(metricsForDsB)) =>
+                check
+                  .applyCheckOnMetrics(metricsForDsA, metricsForDsB, datasourceDescription)
+                  .withDatasourceDescription(datasourceDescription)
+              case (Left(dsErr), Left(dsToCompareErr)) =>
+                check.getMetricErrorCheckResult(ddsPair.datasourceDescription, dsErr, dsToCompareErr)
+              case (_, Left(dsToCompareErr)) => check.getMetricErrorCheckResult(ddsPair.datasourceDescription, dsToCompareErr)
+              case (Left(dsErr), _)          => check.getMetricErrorCheckResult(ddsPair.datasourceDescription, dsErr)
+            }
+          }
           checkResults
       }
 

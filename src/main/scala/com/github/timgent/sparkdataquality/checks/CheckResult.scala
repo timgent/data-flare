@@ -1,6 +1,7 @@
 package com.github.timgent.sparkdataquality.checks
 
 import cats.Show
+import com.github.timgent.sparkdataquality.SdqError
 
 /**
   * Check result without additional information about datasource and check description
@@ -22,13 +23,15 @@ case class RawCheckResult(
   * @param resultDescription - description of the check result
   * @param checkDescription - description of the check
   * @param datasourceDescription - optional description of the datasource used in the check
+  * @param errors - any errors that occured when trying to execute the check
   */
 case class CheckResult(
     qcType: QcType,
     status: CheckStatus,
     resultDescription: String,
     checkDescription: CheckDescription,
-    datasourceDescription: Option[DatasourceDescription] = None
+    datasourceDescription: Option[DatasourceDescription] = None,
+    errors: Seq[SdqError] = Seq.empty
 ) {
   def withDatasourceDescription(datasourceDescription: DatasourceDescription): CheckResult =
     this.copy(datasourceDescription = Some(datasourceDescription))
@@ -43,6 +46,8 @@ object CheckResult {
        |status -> $status
        |datasourceDescription -> $datasourceDescription
        |qcType -> $qcType
+       |errors -> 
+       |  ${errors.map(_.show.replaceAll("\n", "\n  ")).mkString("\n")}
        |""".stripMargin
   }
 }

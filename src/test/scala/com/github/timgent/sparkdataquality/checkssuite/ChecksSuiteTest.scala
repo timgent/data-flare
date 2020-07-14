@@ -2,27 +2,21 @@ package com.github.timgent.sparkdataquality.checkssuite
 
 import java.time.Instant
 
+import cats.implicits._
 import com.amazon.deequ.analyzers.Size
 import com.amazon.deequ.analyzers.runners.AnalyzerContext
 import com.amazon.deequ.checks.{Check, CheckLevel}
 import com.amazon.deequ.metrics.{DoubleMetric, Entity}
 import com.amazon.deequ.repository.ResultKey
 import com.amazon.deequ.repository.memory.InMemoryMetricsRepository
+import com.github.timgent.sparkdataquality.SdqError
+import com.github.timgent.sparkdataquality.SdqError.MetricCalculationError
 import com.github.timgent.sparkdataquality.checks.ArbDualDsCheck.DatasetPair
 import com.github.timgent.sparkdataquality.checks.CheckDescription.{DualMetricCheckDescription, SingleMetricCheckDescription}
 import com.github.timgent.sparkdataquality.checks.DatasourceDescription.{DualDsDescription, SingleDsDescription}
-import com.github.timgent.sparkdataquality.checks.QCCheck.SingleDsCheck
 import com.github.timgent.sparkdataquality.checks.metrics.{DualMetricCheck, SingleMetricCheck}
-import com.github.timgent.sparkdataquality.checks.{
-  ArbDualDsCheck,
-  ArbSingleDsCheck,
-  ArbitraryCheck,
-  CheckResult,
-  CheckStatus,
-  DeequQCCheck,
-  QcType,
-  RawCheckResult
-}
+import com.github.timgent.sparkdataquality.checks._
+import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{SizeMetric, SumValuesMetric}
 import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
 import com.github.timgent.sparkdataquality.metrics.{MetricComparator, MetricDescriptor, MetricFilter, SimpleMetricDescriptor}
 import com.github.timgent.sparkdataquality.repository.{InMemoryMetricsPersister, InMemoryQcResultsRepository}
@@ -37,7 +31,7 @@ import org.scalatest.wordspec.AsyncWordSpec
 import scala.util.Success
 
 class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers {
-
+  import spark.implicits._
   def checkResultAndPersistedResult(
       qcResult: ChecksSuiteResult,
       persistedQcResult: ChecksSuiteResult
@@ -60,6 +54,44 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
     persistedQcResult.checkResults shouldBe checkResults
     persistedQcResult.checkTags shouldBe checkTags
   }
+
+  def assertCheckResultHasErrorFields(
+      checksSuiteResult: ChecksSuiteResult,
+      checkDescription: CheckDescription,
+      qcType: QcType,
+      datasourceDescription: DatasourceDescription
+  ) = {
+    checksSuiteResult.checkResults.size shouldBe 1
+    val checkResult = checksSuiteResult.checkResults.head
+    checkResult.qcType shouldBe qcType
+    checkResult.status shouldBe CheckStatus.Error
+    checkResult.checkDescription shouldBe checkDescription
+    checkResult.datasourceDescription shouldBe Some(datasourceDescription)
+    checkResult.resultDescription shouldBe "Check failed due to issue calculating metrics for this dataset"
+  }
+
+  def assertErrorsRelateToCorrectDs(error: SdqError, badCheckDs: DescribedDs) = {
+    error.msg shouldBe s"""One of the metrics defined on dataset ${badCheckDs.description} could not be calculated
+                          |Metrics used were:
+                          |- metricName=SumValues, filterDescription=no filter, onColumn=nonexistent""".stripMargin
+    error.datasourceDescription shouldBe Some(badCheckDs.datasourceDescription)
+  }
+
+  lazy val dsA = Seq(
+    NumberString(1, "a"),
+    NumberString(2, "b"),
+    NumberString(3, "c")
+  ).toDS
+  lazy val dsB = Seq(
+    NumberString(1, "a"),
+    NumberString(2, "b"),
+    NumberString(3, "c")
+  ).toDS
+  lazy val ddsA = DescribedDs(dsA, "dsA")
+  lazy val ddsB = DescribedDs(dsB, "dsB")
+  lazy val ddsPair = DescribedDsPair(ddsA, ddsB)
+  val badMetric = SumValuesMetric[LongMetric]("nonexistent")
+  val goodMetric = SizeMetric()
 
   import spark.implicits._
 
@@ -153,20 +185,23 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
           )
         }
       }
+
+      "return an error if the check is invalid" in {
+        val badCheck = SingleMetricCheck(badMetric, "badCheck")(_ => RawCheckResult(CheckStatus.Success, "I'll fail"))
+        val checksSuite = ChecksSuite("badSuite", singleDsChecks = Map(ddsA -> Seq(badCheck)))
+        for {
+          checksSuiteResult <- checksSuite.run(now)
+        } yield {
+          assertCheckResultHasErrorFields(checksSuiteResult, badCheck.description, QcType.SingleMetricCheck, ddsA.datasourceDescription)
+          checksSuiteResult.checkResults.head.errors.size shouldBe 1
+          assertErrorsRelateToCorrectDs(checksSuiteResult.checkResults.head.errors.head, ddsA)
+        }
+      }
     }
     "has dual metric based checks" should {
+
       "calculate metrics based checks between datasets" in {
         val simpleSizeMetric = MetricDescriptor.SizeMetric()
-        val dsA = Seq(
-          NumberString(1, "a"),
-          NumberString(2, "b"),
-          NumberString(3, "c")
-        ).toDS
-        val dsB = Seq(
-          NumberString(1, "a"),
-          NumberString(2, "b"),
-          NumberString(3, "c")
-        ).toDS
         val metricChecks = Seq(
           DualMetricCheck(simpleSizeMetric, simpleSizeMetric, "check size metrics are equal", MetricComparator.metricsAreEqual)
         )
@@ -206,6 +241,46 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
           )
         }
       }
+
+      "return an error if the first check is invalid" in {
+        val badCheck = DualMetricCheck(badMetric, goodMetric, "someCheck", MetricComparator.metricsAreEqual)
+        val checksSuite = ChecksSuite("desc", dualDsChecks = Map(ddsPair -> Seq(badCheck)))
+        for {
+          checksSuiteResult <- checksSuite.run(now)
+        } yield {
+          assertCheckResultHasErrorFields(checksSuiteResult, badCheck.description, QcType.DualMetricCheck, ddsPair.datasourceDescription)
+          checksSuiteResult.checkResults.head.errors.size shouldBe 1
+          assertErrorsRelateToCorrectDs(checksSuiteResult.checkResults.head.errors.head, ddsA)
+        }
+      }
+      "return an error if the second check is invalid" in {
+        val badCheck = DualMetricCheck(goodMetric, badMetric, "someCheck", MetricComparator.metricsAreEqual)
+        val checksSuite = ChecksSuite("desc", dualDsChecks = Map(ddsPair -> Seq(badCheck)))
+        for {
+          checksSuiteResult <- checksSuite.run(now)
+        } yield {
+          assertCheckResultHasErrorFields(checksSuiteResult, badCheck.description, QcType.DualMetricCheck, ddsPair.datasourceDescription)
+          checksSuiteResult.checkResults.head.errors.size shouldBe 1
+          assertErrorsRelateToCorrectDs(checksSuiteResult.checkResults.head.errors.head, ddsB)
+        }
+      }
+
+      "return an error if both checks are invalid" in {
+        val badCheck = DualMetricCheck(badMetric, badMetric, "someCheck", MetricComparator.metricsAreEqual)
+        val checksSuite = ChecksSuite("desc", dualDsChecks = Map(ddsPair -> Seq(badCheck)))
+        for {
+          checksSuiteResult <- checksSuite.run(now)
+        } yield {
+          assertCheckResultHasErrorFields(checksSuiteResult, badCheck.description, QcType.DualMetricCheck, ddsPair.datasourceDescription)
+          val errors = checksSuiteResult.checkResults.head.errors
+          errors.size shouldBe 2
+          val ddsAErr = errors.find(_.datasourceDescription.contains(ddsA.datasourceDescription)).get
+          val ddsBErr = errors.find(_.datasourceDescription.contains(ddsB.datasourceDescription)).get
+          assertErrorsRelateToCorrectDs(ddsAErr, ddsA)
+          assertErrorsRelateToCorrectDs(ddsBErr, ddsB)
+        }
+      }
+
     }
 
     "has any metrics based checks at all" should {

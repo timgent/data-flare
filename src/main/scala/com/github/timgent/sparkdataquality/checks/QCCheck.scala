@@ -1,6 +1,8 @@
 package com.github.timgent.sparkdataquality.checks
 
 import cats.Show
+import com.github.timgent.sparkdataquality.SdqError
+import com.github.timgent.sparkdataquality.SdqError.MetricCalculationError
 import com.github.timgent.sparkdataquality.metrics.SimpleMetricDescriptor
 import enumeratum._
 
