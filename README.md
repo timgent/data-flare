@@ -5,7 +5,7 @@
 ![Build Status](https://github.com/timgent/spark-data-quality/workflows/Scala%20CI/badge.svg)
 
 # Spark Data Quality
-A data quality library build with spark and deequ, to give you ultimate flexibility and power in ensuring your data
+A data quality library built with Spark, to give you ultimate flexibility and power in ensuring your data
 is of high quality.
 
 Checkout the full documentation here:  
