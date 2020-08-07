@@ -38,14 +38,14 @@ choose
 ## Getting started
 Add the following to your dependencies:
 ```
-libraryDependencies += "com.github.timgent" % "spark-data-quality_2.11" % "@VERSION@"
+libraryDependencies += "com.github.timgent" % "data-flare_2.11" % "@VERSION@"
 ```
 For other build systems like maven, and to check the latest version go to 
-https://search.maven.org/artifact/com.github.timgent/spark-data-quality_2.11
+https://search.maven.org/artifact/com.github.timgent/data-flare_2.11
 
-You can [find the javadocs here](https://www.javadoc.io/doc/com.github.timgent/spark-data-quality_2.11/latest/index.html#package)
+You can [find the javadocs here](https://www.javadoc.io/doc/com.github.timgent/data-flare_2.11/latest/index.html#package)
 
 ## An example
 The rest of the documentation will talk through the main features and how to use them. However some find it easier to
 follow an example, so you can 
-[find some example code and explanation here](https://github.com/timgent/spark-data-quality/tree/master/src/main/scala/com/github/timgent/data-flare/examples).
+[find some example code and explanation here](https://github.com/timgent/data-flare/tree/master/src/main/scala/com/github/timgent/data-flare/examples).

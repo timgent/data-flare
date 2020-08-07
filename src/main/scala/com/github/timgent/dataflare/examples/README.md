@@ -1,5 +1,5 @@
 # Example data flare usage
-This example will take you through the main features of spark-data-quality, and give a short demonstration of what can
+This example will take you through the main features of data-flare, and give a short demonstration of what can
 be achieved once you have some metric and quality check data stored in ElasticSearch.
 
 We will cover:
@@ -18,7 +18,7 @@ from the instructions on the [docker website](https://docs.docker.com/compose/in
 
 Once installed navigate to the examples directory in your terminal and run `docker-compose up`
 ```
-cd spark-data-quality/src/main/scala/com/github/timgent/sparkdataquality/examples
+cd data-flare/src/main/scala/com/github/timgent/sparkdataquality/examples
 docker-compose up
 ```
 

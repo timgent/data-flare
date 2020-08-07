@@ -48,15 +48,15 @@ class Footer extends React.Component {
             <h5>Community</h5>
             <a
               href="https://stackoverflow.com/questions/tagged/"
-              target="spark-data-quality"
+              target="data-flare"
               rel="noreferrer noopener">
               Stack Overflow
             </a>
           </div>
           <div>
             <h5>More</h5>
-            <a href="https://github.com/timgent/spark-data-quality">GitHub</a>
-            <a className="github-button" href="https://github.com/timgent/spark-data-quality" data-icon="octicon-star" aria-label="Star timgent/spark-data-quality on GitHub">Star</a>
+            <a href="https://github.com/timgent/data-flare">GitHub</a>
+            <a className="github-button" href="https://github.com/timgent/data-flare" data-icon="octicon-star" aria-label="Star timgent/data-flare on GitHub">Star</a>
             {this.props.config.twitterUsername && (
               <div className="social">
                 <a

@@ -22,7 +22,7 @@ val myFirstChecksSuite = ChecksSuite(
 )
 ```
 
-Check out the [API docs](/spark-data-quality/api/index.html) for full details of the arguments for a ChecksSuite. The most important thing
+Check out the [API docs](/data-flare/api/index.html) for full details of the arguments for a ChecksSuite. The most important thing
 to know is that all of these arguments except for checkSuiteDescription are optional. We recommend just specifying the
 items you are interested in. Where you don't provide arguments either no checks of that type will be run or the metrics
 or the QC Results won't be stored. The default value for `tags` is an empty map. The default `checkResultCombiner` will
