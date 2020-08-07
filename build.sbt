@@ -1,25 +1,33 @@
 import Dependencies._
 import xerial.sbt.Sonatype.GitHubHosting
 
-lazy val scala212 = "2.12.12"
-lazy val scala211 = "2.11.12"
-lazy val supportedScalaVersions = List(scala212, scala211)
-val versionForDocs = "0.1.10" // TODO: Make this update automatically on release, currently it's manual
+val sparkVersion = settingKey[String]("Spark version")
 
-ThisBuild / scalaVersion := scala211
+val currVersion = "0.1.10"
+
 ThisBuild / organization := "com.github.timgent"
 ThisBuild / organizationName := "timgent"
 
 lazy val root = (project in file("."))
   .settings(
     name := "spark-data-quality",
-    crossScalaVersions := supportedScalaVersions,
-    libraryDependencies ++= List(
+    sparkVersion := System.getProperty("sparkVersion", "2.4.5"),
+    scalaVersion := {
+      if (sparkVersion.value >= "2.4.0")
+        "2.12.10"
+      else
+        "2.11.11"
+    },
+    crossScalaVersions := {
+      if (sparkVersion.value >= "2.4.0")
+        Seq("2.12.10", "2.11.11")
+      else
+        Seq("2.11.11")
+    },
+    version := s"${sparkVersion.value}_$currVersion",
+    libraryDependencies ++= sparkDependencies(sparkVersion.value) ++ List(
       scalaTest,
-      sparkTestingBase,
       scalaMock,
-      sparkCore,
-      sparkSql,
       elastic4s,
       elastic4sTestKit,
       elastic4sCirceJson,
@@ -55,7 +63,7 @@ lazy val docs = project // new documentation project
     docusaurusCreateSite := docusaurusCreateSite.dependsOn(unidoc in Compile).value,
     docusaurusPublishGhpages := docusaurusPublishGhpages.dependsOn(unidoc in Compile).value,
     mdocIn := new File("docs-source"),
-    mdocVariables := Map("VERSION" -> versionForDocs)
+    mdocVariables := Map("VERSION" -> currVersion)
   )
 
 scalacOptions += "-Ypartial-unification"
@@ -72,23 +80,3 @@ publishTo := sonatypePublishToBundle.value
 sonatypeProfileName := "com.github.timgent"
 publishMavenStyle := true
 sonatypeProjectHosting := Some(GitHubHosting("timgent", "spark-data-quality", "tim.gent@gmail.com"))
-
-import ReleaseTransformations._
-
-releaseCrossBuild := true // true if you cross-build the project for multiple Scala versions
-releaseProcess := Seq[ReleaseStep](
-  checkSnapshotDependencies,
-  inquireVersions,
-  runClean,
-  runTest,
-  setReleaseVersion,
-  commitReleaseVersion,
-  tagRelease,
-  // For non cross-build projects, use releaseStepCommand("publishSigned")
-  // For cross-build projects, use releaseStepCommand("+publishSigned")
-  releaseStepCommandAndRemaining("+publishSigned"),
-  releaseStepCommand("sonatypeBundleRelease"),
-  setNextVersion,
-  commitNextVersion,
-  pushChanges
-)
