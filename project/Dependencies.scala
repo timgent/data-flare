@@ -3,10 +3,13 @@ import sbt._
 object Dependencies {
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.1.1" % Test
   lazy val scalaMock = "org.scalamock" %% "scalamock" % "4.4.0" % Test
-  private val sparkVersion = "2.4.5"
-  lazy val sparkTestingBase = "com.holdenkarau" %% "spark-testing-base" % s"${sparkVersion}_0.14.0" % Test
-  lazy val sparkCore = "org.apache.spark" %% "spark-core" % sparkVersion
-  lazy val sparkSql = "org.apache.spark" %% "spark-sql" % sparkVersion
+  def sparkDependencies(sparkVersion: String) =
+    Seq(
+      "org.apache.spark" %% "spark-core" % sparkVersion,
+      "org.apache.spark" %% "spark-sql" % sparkVersion,
+      "com.holdenkarau" %% "spark-testing-base" % s"${sparkVersion}_0.14.0" % Test
+    )
+
   private val elastic4sVersion = "7.1.0"
   lazy val elastic4s = "com.sksamuel.elastic4s" %% "elastic4s-client-esjava" % elastic4sVersion
   lazy val elastic4sTestKit = "com.sksamuel.elastic4s" %% "elastic4s-testkit" % elastic4sVersion % "test"
