@@ -4,11 +4,11 @@ title: Writing your first suite of checks
 sidebar_label: Writing your first suite of checks
 ---
 ## Introduction to ChecksSuite
-The entry point for any SDQ job is a `ChecksSuite`. You can pass in some metadata about the checksuite, details of the 
+The entry point for any Flare job is a `ChecksSuite`. You can pass in some metadata about the checksuite, details of the 
 checks to perform, your repositories for storing metrics and results, and rules about how to calculate an overall 
 check status. For example:
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.checkssuite.ChecksSuite
+import com.github.timgent.dataflare.checkssuite.ChecksSuite
 val myFirstChecksSuite = ChecksSuite(
     checkSuiteDescription = "myFirstChecksSuite",
     tags = ???,
@@ -33,9 +33,9 @@ Let's look at a simple example where we run some performant metric-based checks 
 ```scala mdoc:compile-only
   import java.time.Instant
 
-  import com.github.timgent.sparkdataquality.checks.metrics.SingleMetricCheck
-  import com.github.timgent.sparkdataquality.checkssuite._
-  import com.github.timgent.sparkdataquality.thresholds.AbsoluteThreshold
+  import com.github.timgent.dataflare.checks.metrics.SingleMetricCheck
+  import com.github.timgent.dataflare.checkssuite._
+  import com.github.timgent.dataflare.thresholds.AbsoluteThreshold
   import org.apache.spark.SparkConf
   import org.apache.spark.sql.{Dataset, SparkSession}
 
@@ -74,7 +74,7 @@ metrics in the other sections of the documentation.
 We've built in pretty printing of your `ChecksSuiteResult` as a quick way to get started seeing the results of your
 checks, and to help you in understanding reasons for any failures.
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.checkssuite.ChecksSuiteResult
+import com.github.timgent.dataflare.checkssuite.ChecksSuiteResult
 val someCheckSuiteResult: ChecksSuiteResult = ???
 println(someCheckSuiteResult.prettyPrint)
 ```

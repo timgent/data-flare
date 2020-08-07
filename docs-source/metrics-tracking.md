@@ -7,9 +7,9 @@ It's possible to store metrics to enable tracking even if they aren't being used
 provide a `metricsPersister` to your `ChecksSuite` as well as your `metricsToTrack`. For example:
 
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.checkssuite._
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{SizeMetric, SumValuesMetric}
-import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
+import com.github.timgent.dataflare.checkssuite._
+import com.github.timgent.dataflare.metrics.MetricDescriptor.{SizeMetric, SumValuesMetric}
+import com.github.timgent.dataflare.metrics.MetricValue.LongMetric
 import org.apache.spark.sql.DataFrame
 
 val myDsA: DataFrame = ???

@@ -16,8 +16,8 @@ Size metrics are very straightforward and just count the number of rows in your 
 to the dataset before the rows are counted.
 e.g.
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.SizeMetric
-import com.github.timgent.sparkdataquality.metrics.MetricFilter
+import com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric
+import com.github.timgent.dataflare.metrics.MetricFilter
 import org.apache.spark.sql.functions.col
 
 SizeMetric(MetricFilter(col("fullName").isNotNull, "fullName is not null"))
@@ -28,9 +28,9 @@ A MetricFilter takes a filter condition and a descriptive string which is used f
 SumValuesMetric sums the values in a single column. A filter can be provided (the default is no filter)
 e.g.
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.SumValuesMetric
-import com.github.timgent.sparkdataquality.metrics.MetricFilter
-import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
+import com.github.timgent.dataflare.metrics.MetricDescriptor.SumValuesMetric
+import com.github.timgent.dataflare.metrics.MetricFilter
+import com.github.timgent.dataflare.metrics.MetricValue.LongMetric
 
 SumValuesMetric[LongMetric]("numberOfItems", MetricFilter.noFilter)
 ```
@@ -41,8 +41,8 @@ have fractional values you should use a `DoubleMetric`, but for whole numbers a 
 ComplianceMetric tells you what proportion of rows in a dataset comply with the given constraint. Again a filter can
 be applied before the metric is calculated. For example:
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.metrics.{ComplianceFn, MetricFilter}
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.ComplianceMetric
+import com.github.timgent.dataflare.metrics.{ComplianceFn, MetricFilter}
+import com.github.timgent.dataflare.metrics.MetricDescriptor.ComplianceMetric
 import org.apache.spark.sql.functions.col
 
 ComplianceMetric(ComplianceFn(col("fullName").isNotNull, "fullName is not null"), MetricFilter.noFilter)
@@ -52,8 +52,8 @@ ComplianceMetric(ComplianceFn(col("fullName").isNotNull, "fullName is not null")
 CountDistinctValuesMetric counts the number of distinct values in the given columns. A filter can be applied before the
 metric is calculated. For example:
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.CountDistinctValuesMetric
-import com.github.timgent.sparkdataquality.metrics.MetricFilter
+import com.github.timgent.dataflare.metrics.MetricDescriptor.CountDistinctValuesMetric
+import com.github.timgent.dataflare.metrics.MetricFilter
 
 CountDistinctValuesMetric(List("firstName", "surname"), MetricFilter.noFilter)
 ```
