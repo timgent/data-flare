@@ -9,8 +9,8 @@ solution.
 
 Example:
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.checkssuite._
-import com.github.timgent.sparkdataquality.repository.ElasticSearchQcResultsRepository
+import com.github.timgent.dataflare.checkssuite._
+import com.github.timgent.dataflare.repository.ElasticSearchQcResultsRepository
 import com.sksamuel.elastic4s.Index
 
 import scala.concurrent.ExecutionContext.Implicits.global

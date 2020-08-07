@@ -7,7 +7,7 @@ Performing arbitrary checks is important because not every data quality check yo
 in a metric. Sometimes you will want to do data quality checks that are less performant and more flexible, and
 certainly the performance hit can be worth it if you catch many more data quality issues.
 
-There are 3 types of check included in SDQ that let you do arbitrary checks:
+There are 3 types of check included in Flare that let you do arbitrary checks:
 
 1) ArbSingleDsCheck - perform a check on a single dataset
 2) ArbDualDsCheck - perform a check on a pair of datasets
@@ -17,8 +17,8 @@ There are 3 types of check included in SDQ that let you do arbitrary checks:
 Frequently you will want to make your `ArbSingleDsCheck`s re-usable so that you can use them in a number of places.
 The following example shows one way you may want to use them:
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.checks._
-import com.github.timgent.sparkdataquality.checkssuite._
+import com.github.timgent.dataflare.checks._
+import com.github.timgent.dataflare.checkssuite._
 def hasExpectedColumnsCheck(expectedColumnNames: Set[String]) =
   ArbSingleDsCheck(s"columns == $expectedColumnNames") { ds =>
     val hasExpectedColumns = ds.columns.toSet == expectedColumnNames
@@ -39,8 +39,8 @@ val checksSuite = ChecksSuite(
 ## DualDatasetCheck
 A `ArbDualDsCheck` describes a comparison between 2 datasets that is not based on metrics. For example:
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.checks._
-import com.github.timgent.sparkdataquality.checkssuite._
+import com.github.timgent.dataflare.checks._
+import com.github.timgent.dataflare.checkssuite._
 val columnsMatchCheck = ArbDualDsCheck("check datasets have same columns") { datasetPair =>
   val datasetsHaveSameColumns = datasetPair.ds.columns.toSet == datasetPair.dsToCompare.columns.toSet
   if (datasetsHaveSameColumns)
@@ -59,12 +59,12 @@ val checksSuite = ChecksSuite("dualDatasetChecksSuite", dualDsChecks = Map(
 ```
 
 ## ArbitraryCheck
-An `ArbitraryCheck` is useful when you would like a check included in the output from SDQ, but the other APIs don't
+An `ArbitraryCheck` is useful when you would like a check included in the output from Flare, but the other APIs don't
 support it. For example where you want to do a comparison between 3 datasets. Wherever possible we suggest avoiding
 this API unless you absolutely need it.
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.checks._
-import com.github.timgent.sparkdataquality.checkssuite._
+import com.github.timgent.dataflare.checks._
+import com.github.timgent.dataflare.checkssuite._
 def arbitraryCheck(dsA: DescribedDs, dsB: DescribedDs, dsC: DescribedDs) =
   ArbitraryCheck(s"Check ${dsA.description}, ${dsB.description} and ${dsC.description} all have the same columns") {
     val allColumnsMatch = dsA.ds.columns.toSet == dsB.ds.columns.toSet && dsA.ds.columns.toSet == dsC.ds.columns.toSet

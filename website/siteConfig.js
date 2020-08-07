@@ -23,7 +23,7 @@ const users = [
 const baseUrl = '/spark-data-quality/'
 
 const siteConfig = {
-  title: 'Spark Data Quality', // Title for your website.
+  title: 'Data Flare', // Title for your website.
   tagline: 'Tools to ensure the quality of your data, built on Spark',
   url: 'https://timgent.github.io', // Your website URL
   baseUrl: baseUrl, // Base URL for your project */

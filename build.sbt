@@ -10,7 +10,7 @@ ThisBuild / organizationName := "timgent"
 
 lazy val root = (project in file("."))
   .settings(
-    name := "spark-data-quality",
+    name := "data-flare",
     sparkVersion := System.getProperty("sparkVersion", "2.4.5"),
     scalaVersion := {
       if (sparkVersion.value >= "2.4.0")
@@ -52,11 +52,11 @@ lazy val root = (project in file("."))
   )
 
 lazy val docs = project // new documentation project
-  .in(file("spark-data-quality-docs")) // important: it must not be docs/
+  .in(file("data-flare-docs")) // important: it must not be docs/
   .dependsOn(root)
   .enablePlugins(MdocPlugin, DocusaurusPlugin, ScalaUnidocPlugin)
   .settings(
-    moduleName := "spark-data-quality-docs",
+    moduleName := "data-flare-docs",
     unidocProjectFilter in (ScalaUnidoc, unidoc) := inProjects(root),
     target in (ScalaUnidoc, unidoc) := (baseDirectory in LocalRootProject).value / "website" / "static" / "api",
     cleanFiles += (target in (ScalaUnidoc, unidoc)).value,
@@ -70,13 +70,13 @@ scalacOptions += "-Ypartial-unification"
 developers := List(Developer("timgent", "Tim Gent", "tim.gent@gmail.com", url("https://github.com/timgent")))
 scmInfo := Some(
   ScmInfo(
-    url("https://github.com/timgent/spark-data-quality.git"),
-    "scm:git@github.com:timgent/spark-data-quality.git"
+    url("https://github.com/timgent/data-flare.git"),
+    "scm:git@github.com:timgent/data-flare.git"
   )
 )
-homepage := Some(url("https://github.com/timgent/spark-data-quality"))
+homepage := Some(url("https://github.com/timgent/data-flare"))
 licenses := Seq("Apache License 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.html"))
 publishTo := sonatypePublishToBundle.value
 sonatypeProfileName := "com.github.timgent"
 publishMavenStyle := true
-sonatypeProjectHosting := Some(GitHubHosting("timgent", "spark-data-quality", "tim.gent@gmail.com"))
+sonatypeProjectHosting := Some(GitHubHosting("timgent", "data-flare", "tim.gent@gmail.com"))

@@ -8,7 +8,7 @@ To perform metric based checks on a pair of Datasets you will need to pass a
 `dualDsChecks` argument to your ChecksSuite.
 
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.checkssuite._
+import com.github.timgent.dataflare.checkssuite._
 val checksSuite = ChecksSuite(
   "someChecksSuite", 
   dualDsChecks = ???
@@ -22,9 +22,9 @@ checks will be performed on. The values represent the checks to be done on the p
 You can create a `DualMetricCheck` by specifying the metric you want to compare for each dataset, and providing
 a MetricComparator that describes what comparison to do between the 2 metrics. For example:
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.checks.metrics.DualMetricCheck
-import com.github.timgent.sparkdataquality.metrics.MetricComparator
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor._
+import com.github.timgent.dataflare.checks.metrics.DualMetricCheck
+import com.github.timgent.dataflare.metrics.MetricComparator
+import com.github.timgent.dataflare.metrics.MetricDescriptor._
 DualMetricCheck(SizeMetric(), CountDistinctValuesMetric(onColumns = List("someColumn")), "dsA size is equal to dsB size",
   MetricComparator.metricsAreEqual
 )
@@ -32,17 +32,17 @@ DualMetricCheck(SizeMetric(), CountDistinctValuesMetric(onColumns = List("someCo
 
 You can create your own `MetricComparator` if you choose, for example:
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.metrics.MetricComparator
-import com.github.timgent.sparkdataquality.metrics.MetricValue.LongMetric
+import com.github.timgent.dataflare.metrics.MetricComparator
+import com.github.timgent.dataflare.metrics.MetricValue.LongMetric
 val metricBIsDoubleMetricA = MetricComparator[LongMetric]("metricBIsDoubleMetricA", (metricA, metricB) => metricB == metricA * 2)
 ```
 
 ## Putting it all together
 ```scala mdoc:compile-only
-import com.github.timgent.sparkdataquality.checks.metrics.DualMetricCheck
-import com.github.timgent.sparkdataquality.checkssuite.{ChecksSuite, DescribedDs, DescribedDsPair}
-import com.github.timgent.sparkdataquality.metrics.MetricComparator
-import com.github.timgent.sparkdataquality.metrics.MetricDescriptor.{CountDistinctValuesMetric, SizeMetric}
+import com.github.timgent.dataflare.checks.metrics.DualMetricCheck
+import com.github.timgent.dataflare.checkssuite.{ChecksSuite, DescribedDs, DescribedDsPair}
+import com.github.timgent.dataflare.metrics.MetricComparator
+import com.github.timgent.dataflare.metrics.MetricDescriptor.{CountDistinctValuesMetric, SizeMetric}
 import org.apache.spark.sql.DataFrame
 val myDsA: DataFrame = ???
 val myDsB: DataFrame = ???

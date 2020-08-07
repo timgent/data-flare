@@ -4,9 +4,9 @@
 [![javadoc](https://javadoc.io/badge2/com.github.timgent/spark-data-quality_2.12/javadoc.svg)](https://javadoc.io/doc/com.github.timgent/spark-data-quality_2.12)
 ![Build Status](https://github.com/timgent/spark-data-quality/workflows/Scala%20CI/badge.svg)
 
-# Spark Data Quality
+# Data Flare
 A data quality library built with Spark, to give you ultimate flexibility and power in ensuring your data
 is of high quality.
 
 Checkout the full documentation here:  
-https://timgent.github.io/spark-data-quality
+https://timgent.github.io/data-flare
