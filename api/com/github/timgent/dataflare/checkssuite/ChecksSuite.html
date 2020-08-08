@@ -158,10 +158,6 @@
                         <a class="class" href="" title="Main entry point which contains the suite of checks you want to perform"></a>
                         <a href="" title="Main entry point which contains the suite of checks you want to perform">ChecksSuite</a>
                       </li><li class="current-entities indented5">
-                        <span class="separator"></span>
-                        <a class="trait" href="ChecksSuiteBase.html" title="Defines a suite of checks to be done"></a>
-                        <a href="ChecksSuiteBase.html" title="Defines a suite of checks to be done">ChecksSuiteBase</a>
-                      </li><li class="current-entities indented5">
                         <a class="object" href="ChecksSuiteResult$.html" title=""></a>
                         <a class="class" href="ChecksSuiteResult.html" title=""></a>
                         <a href="ChecksSuiteResult.html" title="">ChecksSuiteResult</a>
@@ -204,7 +200,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">ChecksSuite</span><span class="params">(<span name="checkSuiteDescription">checkSuiteDescription: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="tags">tags: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>, <span name="singleDsChecks">singleDsChecks: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="DescribedDs.html" class="extype" name="com.github.timgent.dataflare.checkssuite.DescribedDs">DescribedDs</a>, <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/QCCheck$$SingleDsCheck.html" class="extype" name="com.github.timgent.dataflare.checks.QCCheck.SingleDsCheck">SingleDsCheck</a>]] = <span class="symbol">Map.empty</span></span>, <span name="dualDsChecks">dualDsChecks: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="DescribedDsPair.html" class="extype" name="com.github.timgent.dataflare.checkssuite.DescribedDsPair">DescribedDsPair</a>, <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/QCCheck$$DualDsQCCheck.html" class="extype" name="com.github.timgent.dataflare.checks.QCCheck.DualDsQCCheck">DualDsQCCheck</a>]] = <span class="symbol">Map.empty</span></span>, <span name="arbitraryChecks">arbitraryChecks: <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/ArbitraryCheck.html" class="extype" name="com.github.timgent.dataflare.checks.ArbitraryCheck">ArbitraryCheck</a>] = <span class="symbol">Seq.empty</span></span>, <span name="metricsToTrack">metricsToTrack: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="DescribedDs.html" class="extype" name="com.github.timgent.dataflare.checkssuite.DescribedDs">DescribedDs</a>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor">MetricDescriptor</span>]] = <span class="symbol">Map.empty</span></span>, <span name="metricsPersister">metricsPersister: <a href="../repository/MetricsPersister.html" class="extype" name="com.github.timgent.dataflare.repository.MetricsPersister">MetricsPersister</a> = <span class="symbol"><span class="name"><a href="../../../../index.html">NullMetricsPersister</a></span></span></span>, <span name="qcResultsRepository">qcResultsRepository: <a href="../repository/QcResultsRepository.html" class="extype" name="com.github.timgent.dataflare.repository.QcResultsRepository">QcResultsRepository</a> = <span class="symbol"><span class="name"><a href="../../../../index.html">new NullQcResultsRepository</a></span></span></span>, <span name="checkResultCombiner">checkResultCombiner: (<span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/CheckResult.html" class="extype" name="com.github.timgent.dataflare.checks.CheckResult">CheckResult</a>]) ⇒ <a href="CheckSuiteStatus.html" class="extype" name="com.github.timgent.dataflare.checkssuite.CheckSuiteStatus">CheckSuiteStatus</a> = <span class="defval" name='<span class="name"><a href="ChecksSuiteResultStatusCalculator$.html">ChecksSuiteResultStatusCalculator.getWorstCheckStatus</a></span>'>...</span></span>)</span><span class="result"> extends <a href="ChecksSuiteBase.html" class="extype" name="com.github.timgent.dataflare.checkssuite.ChecksSuiteBase">ChecksSuiteBase</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">ChecksSuite</span><span class="params">(<span name="checkSuiteDescription">checkSuiteDescription: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="tags">tags: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>, <span name="singleDsChecks">singleDsChecks: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="DescribedDs.html" class="extype" name="com.github.timgent.dataflare.checkssuite.DescribedDs">DescribedDs</a>, <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/QCCheck$$SingleDsCheck.html" class="extype" name="com.github.timgent.dataflare.checks.QCCheck.SingleDsCheck">SingleDsCheck</a>]] = <span class="symbol">Map.empty</span></span>, <span name="dualDsChecks">dualDsChecks: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="DescribedDsPair.html" class="extype" name="com.github.timgent.dataflare.checkssuite.DescribedDsPair">DescribedDsPair</a>, <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/QCCheck$$DualDsQCCheck.html" class="extype" name="com.github.timgent.dataflare.checks.QCCheck.DualDsQCCheck">DualDsQCCheck</a>]] = <span class="symbol">Map.empty</span></span>, <span name="arbitraryChecks">arbitraryChecks: <span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/ArbitraryCheck.html" class="extype" name="com.github.timgent.dataflare.checks.ArbitraryCheck">ArbitraryCheck</a>] = <span class="symbol">Seq.empty</span></span>, <span name="metricsToTrack">metricsToTrack: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="DescribedDs.html" class="extype" name="com.github.timgent.dataflare.checkssuite.DescribedDs">DescribedDs</a>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor">MetricDescriptor</span>]] = <span class="symbol">Map.empty</span></span>, <span name="metricsPersister">metricsPersister: <a href="../repository/MetricsPersister.html" class="extype" name="com.github.timgent.dataflare.repository.MetricsPersister">MetricsPersister</a> = <span class="symbol"><span class="name"><a href="../../../../index.html">NullMetricsPersister</a></span></span></span>, <span name="qcResultsRepository">qcResultsRepository: <a href="../repository/QcResultsRepository.html" class="extype" name="com.github.timgent.dataflare.repository.QcResultsRepository">QcResultsRepository</a> = <span class="symbol"><span class="name"><a href="../../../../index.html">new NullQcResultsRepository</a></span></span></span>, <span name="checkResultCombiner">checkResultCombiner: (<span class="extype" name="scala.Seq">Seq</span>[<a href="../checks/CheckResult.html" class="extype" name="com.github.timgent.dataflare.checks.CheckResult">CheckResult</a>]) ⇒ <a href="CheckSuiteStatus.html" class="extype" name="com.github.timgent.dataflare.checkssuite.CheckSuiteStatus">CheckSuiteStatus</a> = <span class="defval" name='<span class="name"><a href="ChecksSuiteResultStatusCalculator$.html">ChecksSuiteResultStatusCalculator.getWorstCheckStatus</a></span>'>...</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -213,7 +209,7 @@
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="ChecksSuiteBase.html" class="extype" name="com.github.timgent.dataflare.checkssuite.ChecksSuiteBase">ChecksSuiteBase</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -239,7 +235,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="com.github.timgent.dataflare.checkssuite.ChecksSuite"><span>ChecksSuite</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="com.github.timgent.dataflare.checkssuite.ChecksSuiteBase"><span>ChecksSuiteBase</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="com.github.timgent.dataflare.checkssuite.ChecksSuite"><span>ChecksSuite</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -381,7 +377,7 @@
       </span>
       
       
-    </li><li name="com.github.timgent.dataflare.checkssuite.ChecksSuite#checkSuiteDescription" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.github.timgent.dataflare.checkssuite.ChecksSuite#checkSuiteDescription" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="checkSuiteDescription:String"></a>
       <span class="permalink">
       <a href="../../../../../com/github/timgent/dataflare/checkssuite/ChecksSuite.html#checkSuiteDescription:String" title="Permalink">
@@ -396,7 +392,7 @@
         <span class="name">checkSuiteDescription</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       
-      <p class="shortcomment cmt">Description of the check suite</p><div class="fullcomment"><div class="comment cmt"><p>Description of the check suite</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.dataflare.checkssuite.ChecksSuite">ChecksSuite</a> → <a href="ChecksSuiteBase.html" class="extype" name="com.github.timgent.dataflare.checkssuite.ChecksSuiteBase">ChecksSuiteBase</a></dd></dl></div>
+      
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">
@@ -627,9 +623,27 @@
         <span class="name">run</span><span class="params">(<span name="timestamp">timestamp: <span class="extype" name="java.time.Instant">Instant</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: <span class="extype" name="scala.concurrent.Future">Future</span>[<a href="ChecksSuiteResult.html" class="extype" name="com.github.timgent.dataflare.checkssuite.ChecksSuiteResult">ChecksSuiteResult</a>]</span>
       </span>
       
-      <p class="shortcomment cmt">Run all checks in the ChecksSuite
-</p><div class="fullcomment"><div class="comment cmt"><p>Run all checks in the ChecksSuite
-</p></div><dl class="paramcmts block"><dt class="param">timestamp</dt><dd class="cmt"><p>- time the checks are being run</p></dd><dt class="param">ec</dt><dd class="cmt"><p>- execution context</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.dataflare.checkssuite.ChecksSuite">ChecksSuite</a> → <a href="ChecksSuiteBase.html" class="extype" name="com.github.timgent.dataflare.checkssuite.ChecksSuiteBase">ChecksSuiteBase</a></dd></dl></div>
+      <p class="shortcomment cmt">Run all checks in the ChecksSuite asynchronously, returning a Future
+</p><div class="fullcomment"><div class="comment cmt"><p>Run all checks in the ChecksSuite asynchronously, returning a Future
+</p></div><dl class="paramcmts block"><dt class="param">timestamp</dt><dd class="cmt"><p>- time the checks are being run</p></dd><dt class="param">ec</dt><dd class="cmt"><p>- execution context</p></dd></dl></div>
+    </li><li name="com.github.timgent.dataflare.checkssuite.ChecksSuite#runBlocking" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="runBlocking(timestamp:java.time.Instant,timeout:scala.concurrent.duration.Duration)(implicitec:scala.concurrent.ExecutionContext):com.github.timgent.dataflare.checkssuite.ChecksSuiteResult"></a><a id="runBlocking(Instant,Duration)(ExecutionContext):ChecksSuiteResult"></a>
+      <span class="permalink">
+      <a href="../../../../../com/github/timgent/dataflare/checkssuite/ChecksSuite.html#runBlocking(timestamp:java.time.Instant,timeout:scala.concurrent.duration.Duration)(implicitec:scala.concurrent.ExecutionContext):com.github.timgent.dataflare.checkssuite.ChecksSuiteResult" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">runBlocking</span><span class="params">(<span name="timestamp">timestamp: <span class="extype" name="java.time.Instant">Instant</span></span>, <span name="timeout">timeout: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span> = <span class="symbol">1 minute</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: <a href="ChecksSuiteResult.html" class="extype" name="com.github.timgent.dataflare.checkssuite.ChecksSuiteResult">ChecksSuiteResult</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">Run all checks in the ChecksSuite and waits for computations to finish before returning (blocking the thread)
+</p><div class="fullcomment"><div class="comment cmt"><p>Run all checks in the ChecksSuite and waits for computations to finish before returning (blocking the thread)
+</p></div><dl class="paramcmts block"><dt class="param">timestamp</dt><dd class="cmt"><p>- time the checks are being run</p></dd><dt class="param">ec</dt><dd class="cmt"><p>- execution context</p></dd></dl></div>
     </li><li name="com.github.timgent.dataflare.checkssuite.ChecksSuite#singleDsChecks" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="singleDsChecks:Map[com.github.timgent.dataflare.checkssuite.DescribedDs,Seq[com.github.timgent.dataflare.checks.QCCheck.SingleDsCheck]]"></a><a id="singleDsChecks:Map[DescribedDs,Seq[SingleDsCheck]]"></a>
       <span class="permalink">
@@ -764,8 +778,6 @@
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
-            </div><div class="parent" name="com.github.timgent.dataflare.checkssuite.ChecksSuiteBase">
-              <h3>Inherited from <a href="ChecksSuiteBase.html" class="extype" name="com.github.timgent.dataflare.checkssuite.ChecksSuiteBase">ChecksSuiteBase</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
