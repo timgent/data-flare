@@ -9,12 +9,12 @@ import com.github.timgent.dataflare.checkssuite._
 import com.github.timgent.dataflare.examples.Day1Checks.qcResults
 import com.github.timgent.dataflare.examples.ExampleHelpers.{Customer, Order, _}
 import com.github.timgent.dataflare.metrics.MetricDescriptor.{CountDistinctValuesMetric, SizeMetric}
-import com.github.timgent.dataflare.metrics.{ComplianceFn, MetricComparator}
+import com.github.timgent.dataflare.metrics.{ComplianceFn, MetricComparator, MetricFilter}
 import com.github.timgent.dataflare.repository.{ElasticSearchMetricsPersister, ElasticSearchQcResultsRepository}
 import com.github.timgent.dataflare.thresholds.AbsoluteThreshold
 import com.github.timgent.dataflare.utils.DateTimeUtils.InstantExtension
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Dataset, SparkSession}
 import org.apache.spark.sql.functions._
 
 import scala.concurrent.Await
@@ -133,9 +133,9 @@ object Helpers {
     ElasticSearchMetricsPersister(List("http://127.0.0.1:9200"), "order_metrics")
 
   def getCheckSuite(
-                     orderDs: DescribedDs,
-                     customerDs: DescribedDs,
-                     customersWithOrdersDs: DescribedDs
+      orderDs: DescribedDs,
+      customerDs: DescribedDs,
+      customersWithOrdersDs: DescribedDs
   ): ChecksSuite = {
 
     val expectedCustomerColumnsCheck = ArbSingleDsCheck("correctColumns") { ds =>
