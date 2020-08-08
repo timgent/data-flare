@@ -24,24 +24,41 @@ ElasticSearch, so that you can easily graph metrics over time with Kibana. Or yo
 track metrics using a datastore of your choosing.
 
 ## Comparison to other data quality tools
-Flare was inspired by other data quality tools such as [Deequ](https://github.com/awslabs/deequ). We've found other
-libraries can make it more challenging to have complex checks, so Flare tries to give greater flexibility and
-extensibility by:
+Flare was inspired by other data quality tools such as [Deequ](https://github.com/awslabs/deequ). Flare tries to give
+greater flexibility and extensibility by:
 
-* SQD allows metrics-based checks to do comparisons between different metrics and datasets, so that you are able to do
+* Flare allows metrics-based checks to do comparisons between different metrics and datasets, so that you are able to do
 relative comparisons rather than just absolute comparisons.
 * Flare allows the definition of custom checks as part of your ChecksSuite. While not as performant as the checks based on
 metrics, having the flexibility to include these we feel gives more power and choice.
 * All of Flare's storage methods are extensible, giving users the ability to store results and metrics wherever they 
-choose
+choose, and making it easy to use open source tools like ElasticSearch and Kibana to graph metrics over time.
+
+By contrast Deequ:
+* Has a greater range of metric based checks at present, and better support for incremental metric calculation
+* Has some additional features such as suggesting constraints
+* Doesn't allow checks based on comparisons of metrics
+* Doesn't allow any arbitrary checks to be included in a suite of checks
+
+The other popular tools I've seen rely more on configuration files for defining the checks you want. These help
+non-developers read and write data quality checks, but also limit the flexibility you have when deciding what checks 
+to run.
+
+Flare is a good choice if you want to maximise the flexibility you have in defining quality checks, and you expect
+software or data engineers to be writing those checks.
 
 ## Getting started
 Add the following to your dependencies:
 ```
-libraryDependencies += "com.github.timgent" % "data-flare_2.11" % "@VERSION@"
+libraryDependencies += "com.github.timgent" % "data-flare_{scala_version}}" % "{spark_version}_@VERSION@"
+```
+e.g. 
+```
+libraryDependencies += "com.github.timgent" % "data-flare_2.11" % "2.4.5_@VERSION@"
 ```
 For other build systems like maven, and to check the latest version go to 
-https://search.maven.org/artifact/com.github.timgent/data-flare_2.11
+https://search.maven.org/artifact/com.github.timgent/data-flare_2.11 or 
+https://search.maven.org/artifact/com.github.timgent/data-flare_2.12 depending on your scala version 
 
 You can [find the javadocs here](https://www.javadoc.io/doc/com.github.timgent/data-flare_2.11/latest/index.html#package)
 
