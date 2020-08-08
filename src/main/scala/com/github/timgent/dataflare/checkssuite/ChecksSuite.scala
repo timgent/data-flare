@@ -13,7 +13,8 @@ import com.github.timgent.dataflare.metrics.{MetricDescriptor, MetricValue, Metr
 import com.github.timgent.dataflare.repository.{MetricsPersister, NullMetricsPersister, NullQcResultsRepository, QcResultsRepository}
 import org.apache.spark.sql.Dataset
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 /**
   * A dataset with description
@@ -57,7 +58,7 @@ case class ChecksSuite(
     metricsPersister: MetricsPersister = NullMetricsPersister,
     qcResultsRepository: QcResultsRepository = new NullQcResultsRepository,
     checkResultCombiner: Seq[CheckResult] => CheckSuiteStatus = ChecksSuiteResultStatusCalculator.getWorstCheckStatus
-) extends ChecksSuiteBase {
+) {
 
   private val arbSingleDsChecks: Map[DescribedDs, Seq[ArbSingleDsCheck]] = singleDsChecks.map {
     case (dds, checks) =>
@@ -84,13 +85,23 @@ case class ChecksSuite(
   }
 
   /**
-    * Run all checks in the ChecksSuite
+    * Run all checks in the ChecksSuite and waits for computations to finish before returning (blocking the thread)
     *
     * @param timestamp - time the checks are being run
     * @param ec        - execution context
     * @return
     */
-  override def run(timestamp: Instant)(implicit ec: ExecutionContext): Future[ChecksSuiteResult] = {
+  def runBlocking(timestamp: Instant, timeout: Duration = 1 minute)(implicit ec: ExecutionContext) =
+    Await.result(run(timestamp), timeout)
+
+  /**
+    * Run all checks in the ChecksSuite asynchronously, returning a Future
+    *
+    * @param timestamp - time the checks are being run
+    * @param ec        - execution context
+    * @return
+    */
+  def run(timestamp: Instant)(implicit ec: ExecutionContext): Future[ChecksSuiteResult] = {
     val metricBasedCheckResultsFut: Future[Seq[CheckResult]] = runMetricBasedChecks(timestamp)
     val singleDatasetCheckResults: Seq[CheckResult] = for {
       (dds, checks) <- arbSingleDsChecks.toSeq
