@@ -3,7 +3,7 @@ package com.github.timgent.dataflare.checks.metrics
 import com.github.timgent.dataflare.checks.CheckDescription.SingleMetricCheckDescription
 import com.github.timgent.dataflare.checks.QCCheck.SingleDsCheck
 import com.github.timgent.dataflare.checks.{CheckDescription, CheckResult, CheckStatus, QcType, RawCheckResult}
-import com.github.timgent.dataflare.metrics.MetricDescriptor.{ComplianceMetric, CountDistinctValuesMetric, SizeMetric}
+import com.github.timgent.dataflare.metrics.MetricDescriptor.{ComplianceMetric, CountDistinctValuesMetric, DistinctnessMetric, SizeMetric}
 import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.dataflare.metrics.{ComplianceFn, MetricDescriptor, MetricFilter, MetricValue}
 import com.github.timgent.dataflare.thresholds.AbsoluteThreshold
@@ -114,6 +114,23 @@ object SingleMetricCheck {
     thresholdBasedCheck[LongMetric](
       CountDistinctValuesMetric(onColumns, filter),
       s"DistinctValuesCheck on columns: $onColumns with filter: ${filter.filterDescription}",
+      threshold
+    )
+
+  /**
+    * Checks the distinctness level of values across the given columns (result of 1 means every value is distinct)
+    * @param threshold - the threshold for what number of distinct values is acceptable
+    * @param onColumns - the columns to check for distinct values in
+    * @param filter - the filter that is applied before the distinct value count is done
+    */
+  def distinctnessCheck(
+      threshold: AbsoluteThreshold[Double],
+      onColumns: List[String],
+      filter: MetricFilter = MetricFilter.noFilter
+  ): SingleMetricCheck[DoubleMetric] =
+    thresholdBasedCheck[DoubleMetric](
+      DistinctnessMetric(onColumns, filter),
+      s"DistinctnessCheck on columns: $onColumns with filter: ${filter.filterDescription}",
       threshold
     )
 }

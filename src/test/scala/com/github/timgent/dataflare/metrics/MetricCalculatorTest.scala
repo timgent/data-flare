@@ -3,6 +3,7 @@ package com.github.timgent.dataflare.metrics
 import com.github.timgent.dataflare.metrics.MetricCalculator.{
   ComplianceMetricCalculator,
   DistinctValuesMetricCalculator,
+  DistinctnessMetricCalculator,
   SimpleMetricCalculator,
   SizeMetricCalculator,
   SumValuesMetricCalculator
@@ -98,7 +99,7 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
       )
     }
 
-    "apply the provided filter before calculating the compliance in a DataFrame" in {
+    "apply the provided filter before calculating the distinct values in a DataFrame" in {
       testMetricAggFunction(
         ds,
         DistinctValuesMetricCalculator(
@@ -106,6 +107,35 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
           MetricFilter(col("str") =!= "c", "string not equal to c")
         ),
         LongMetric(3)
+      )
+    }
+  }
+
+  "DistinctnessMetricCalculator" should {
+    lazy val ds = Seq(
+      NumberString(1, "a"),
+      NumberString(2, "b"),
+      NumberString(3, "c"),
+      NumberString(3, "d"),
+      NumberString(3, "d") // not distinct
+    ).toDS
+
+    "calculate the distinctness for a set of columns correctly" in {
+      testMetricAggFunction(
+        ds,
+        DistinctnessMetricCalculator(List("number", "str"), MetricFilter.noFilter),
+        DoubleMetric(4d / 5d)
+      )
+    }
+
+    "apply the provided filter before calculating the compliance in a DataFrame" in {
+      testMetricAggFunction(
+        ds,
+        DistinctnessMetricCalculator(
+          List("number", "str"),
+          MetricFilter(col("str") =!= "c", "string not equal to c")
+        ),
+        DoubleMetric(3d / 4d)
       )
     }
   }
