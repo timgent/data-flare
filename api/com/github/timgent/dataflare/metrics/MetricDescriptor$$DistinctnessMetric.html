@@ -175,16 +175,16 @@
                         <a href="MetricDescriptor$$CountDistinctValuesMetric.html" title="A metric that calculates the number of distinct values in a column or across several columns">CountDistinctValuesMetric</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
-                        <a class="class" href="MetricDescriptor$$DistinctnessMetric.html" title="A metric that calculates how distinct values in a column are (where a result of 1 is that all values are distinct)"></a>
-                        <a href="MetricDescriptor$$DistinctnessMetric.html" title="A metric that calculates how distinct values in a column are (where a result of 1 is that all values are distinct)">DistinctnessMetric</a>
+                        <a class="class" href="" title="A metric that calculates how distinct values in a column are (where a result of 1 is that all values are distinct)"></a>
+                        <a href="" title="A metric that calculates how distinct values in a column are (where a result of 1 is that all values are distinct)">DistinctnessMetric</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
                         <a class="trait" href="MetricDescriptor$$Filterable.html" title="A MetricDescriptor which can have the dataset filtered before the metric is calculated"></a>
                         <a href="MetricDescriptor$$Filterable.html" title="A MetricDescriptor which can have the dataset filtered before the metric is calculated">Filterable</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
-                        <a class="class" href="" title="A metric that calculates the number of rows in your dataset"></a>
-                        <a href="" title="A metric that calculates the number of rows in your dataset">SizeMetric</a>
+                        <a class="class" href="MetricDescriptor$$SizeMetric.html" title="A metric that calculates the number of rows in your dataset"></a>
+                        <a href="MetricDescriptor$$SizeMetric.html" title="A metric that calculates the number of rows in your dataset">SizeMetric</a>
                       </li><li class="current-entities indented6">
                         <span class="separator"></span>
                         <a class="class" href="MetricDescriptor$$SumValuesMetric.html" title="A metric that calculates the number of rows in your dataset"></a>
@@ -198,8 +198,8 @@
       <div id="definition">
         <div class="big-circle class">c</div>
         <p id="owner"><a href="../../../../index.html" class="extype" name="com">com</a>.<a href="../../../index.html" class="extype" name="com.github">github</a>.<a href="../../index.html" class="extype" name="com.github.timgent">timgent</a>.<a href="../index.html" class="extype" name="com.github.timgent.dataflare">dataflare</a>.<a href="index.html" class="extype" name="com.github.timgent.dataflare.metrics">metrics</a>.<a href="MetricDescriptor$.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor">MetricDescriptor</a></p>
-        <h1>SizeMetric<span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html" title="Permalink">
+        <h1>DistinctnessMetric<span class="permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span></h1>
@@ -212,12 +212,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">SizeMetric</span><span class="params">(<span name="filter">filter: <a href="MetricFilter.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricFilter">MetricFilter</a> = <span class="symbol"><span class="name"><a href="MetricFilter$.html">MetricFilter.noFilter</a></span></span></span>)</span><span class="result"> extends <span class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor">MetricDescriptor</span> with <a href="MetricDescriptor$$Filterable.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor.Filterable">Filterable</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">DistinctnessMetric</span><span class="params">(<span name="onColumns">onColumns: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="filter">filter: <a href="MetricFilter.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricFilter">MetricFilter</a> = <span class="symbol"><span class="name"><a href="MetricFilter$.html">MetricFilter.noFilter</a></span></span></span>)</span><span class="result"> extends <span class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor">MetricDescriptor</span> with <a href="MetricDescriptor$$Filterable.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor.Filterable">Filterable</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>A metric that calculates the number of rows in your dataset</p></div><dl class="paramcmts block"><dt class="param">filter</dt><dd class="cmt"><p>- filter to be applied before the size is calculated</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>A metric that calculates how distinct values in a column are (where a result of 1 is that all values are distinct)</p></div><dl class="paramcmts block"><dt class="param">onColumns</dt><dd class="cmt"><p>- the columns for which distinctness is being calculated over</p></dd><dt class="param">filter</dt><dd class="cmt"><p>- the filter to be applied before the distinct count is calculated</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -247,7 +247,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric"><span>SizeMetric</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="com.github.timgent.dataflare.metrics.MetricDescriptor.Filterable"><span>Filterable</span></li><li class="in" name="com.github.timgent.dataflare.metrics.MetricDescriptor"><span>MetricDescriptor</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric"><span>DistinctnessMetric</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="com.github.timgent.dataflare.metrics.MetricDescriptor.Filterable"><span>Filterable</span></li><li class="in" name="com.github.timgent.dataflare.metrics.MetricDescriptor"><span>MetricDescriptor</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -267,10 +267,10 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(filter:com.github.timgent.dataflare.metrics.MetricFilter):com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric"></a><a id="&lt;init&gt;:SizeMetric"></a>
+              <ol><li name="com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="&lt;init&gt;(onColumns:List[String],filter:com.github.timgent.dataflare.metrics.MetricFilter):com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric"></a><a id="&lt;init&gt;:DistinctnessMetric"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#&lt;init&gt;(filter:com.github.timgent.dataflare.metrics.MetricFilter):com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#&lt;init&gt;(onColumns:List[String],filter:com.github.timgent.dataflare.metrics.MetricFilter):com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -279,19 +279,19 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">SizeMetric</span><span class="params">(<span name="filter">filter: <a href="MetricFilter.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricFilter">MetricFilter</a> = <span class="symbol"><span class="name"><a href="MetricFilter$.html">MetricFilter.noFilter</a></span></span></span>)</span>
+        <span class="name">DistinctnessMetric</span><span class="params">(<span name="onColumns">onColumns: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="filter">filter: <a href="MetricFilter.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricFilter">MetricFilter</a> = <span class="symbol"><span class="name"><a href="MetricFilter$.html">MetricFilter.noFilter</a></span></span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">filter</dt><dd class="cmt"><p>- filter to be applied before the size is calculated</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">onColumns</dt><dd class="cmt"><p>- the columns for which distinctness is being calculated over</p></dd><dt class="param">filter</dt><dd class="cmt"><p>- the filter to be applied before the distinct count is calculated</p></dd></dl></div>
     </li></ol>
             </div>
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric.MC" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="MC=com.github.timgent.dataflare.metrics.MetricCalculator.SizeMetricCalculator"></a><a id="MC:MC"></a>
+              <ol><li name="com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric.MC" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="MC=com.github.timgent.dataflare.metrics.MetricCalculator.DistinctnessMetricCalculator"></a><a id="MC:MC"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#MC=com.github.timgent.dataflare.metrics.MetricCalculator.SizeMetricCalculator" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#MC=com.github.timgent.dataflare.metrics.MetricCalculator.DistinctnessMetricCalculator" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -300,14 +300,14 @@
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">MC</span><span class="result alias"> = <span class="extype" name="com.github.timgent.dataflare.metrics.MetricCalculator.SizeMetricCalculator">SizeMetricCalculator</span></span>
+        <span class="name">MC</span><span class="result alias"> = <span class="extype" name="com.github.timgent.dataflare.metrics.MetricCalculator.DistinctnessMetricCalculator">DistinctnessMetricCalculator</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric">SizeMetric</a> → MetricDescriptor</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric">DistinctnessMetric</a> → MetricDescriptor</dd></dl></div>
     </li><li name="com.github.timgent.dataflare.metrics.MetricDescriptor.MetricType" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="MetricType=MetricDescriptor.this.MC#MetricType"></a><a id="MetricType:MetricType"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#MetricType=MetricDescriptor.this.MC#MetricType" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#MetricType=MetricDescriptor.this.MC#MetricType" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -316,7 +316,7 @@
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">MetricType</span><span class="result alias"> = <span class="extype" name="com.github.timgent.dataflare.metrics.MetricCalculator.SizeMetricCalculator.MetricType">MetricCalculator.SizeMetricCalculator.MetricType</span></span>
+        <span class="name">MetricType</span><span class="result alias"> = <span class="extype" name="com.github.timgent.dataflare.metrics.MetricCalculator.DistinctnessMetricCalculator.MetricType">MetricCalculator.DistinctnessMetricCalculator.MetricType</span></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>MetricDescriptor</dd></dl></div>
@@ -331,7 +331,7 @@
                 <li name="scala.AnyRef#!=" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a><a id="!=(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#!=(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#!=(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -347,7 +347,7 @@
     </li><li name="scala.AnyRef###" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html###():Int" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html###():Int" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -363,7 +363,7 @@
     </li><li name="scala.AnyRef#==" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a><a id="==(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#==(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#==(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -379,7 +379,7 @@
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#asInstanceOf[T0]:T0" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#asInstanceOf[T0]:T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -395,7 +395,7 @@
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#clone():Object" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#clone():Object" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -419,7 +419,7 @@
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#eq(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#eq(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -432,10 +432,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric#filter" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric#filter" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="filter:com.github.timgent.dataflare.metrics.MetricFilter"></a><a id="filter:MetricFilter"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#filter:com.github.timgent.dataflare.metrics.MetricFilter" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#filter:com.github.timgent.dataflare.metrics.MetricFilter" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -447,11 +447,11 @@
         <span class="name">filter</span><span class="result">: <a href="MetricFilter.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricFilter">MetricFilter</a></span>
       </span>
       
-      <p class="shortcomment cmt">A filter to apply before calculation of the metric</p><div class="fullcomment"><div class="comment cmt"><p>A filter to apply before calculation of the metric</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the MetricFilter</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric">SizeMetric</a> → <a href="MetricDescriptor$$Filterable.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor.Filterable">Filterable</a></dd></dl></div>
+      <p class="shortcomment cmt">A filter to apply before calculation of the metric</p><div class="fullcomment"><div class="comment cmt"><p>A filter to apply before calculation of the metric</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the MetricFilter</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric">DistinctnessMetric</a> → <a href="MetricDescriptor$$Filterable.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor.Filterable">Filterable</a></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#finalize():Unit" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#finalize():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -473,7 +473,7 @@
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#getClass():Class[_]" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#getClass():Class[_]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -492,7 +492,7 @@
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#isInstanceOf[T0]:Boolean" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#isInstanceOf[T0]:Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -505,10 +505,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric#metricCalculator" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="metricCalculator:com.github.timgent.dataflare.metrics.MetricCalculator.SizeMetricCalculator"></a><a id="metricCalculator:SizeMetricCalculator"></a>
+    </li><li name="com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric#metricCalculator" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="metricCalculator:com.github.timgent.dataflare.metrics.MetricCalculator.DistinctnessMetricCalculator"></a><a id="metricCalculator:DistinctnessMetricCalculator"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#metricCalculator:com.github.timgent.dataflare.metrics.MetricCalculator.SizeMetricCalculator" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#metricCalculator:com.github.timgent.dataflare.metrics.MetricCalculator.DistinctnessMetricCalculator" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -517,14 +517,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">metricCalculator</span><span class="result">: <span class="extype" name="com.github.timgent.dataflare.metrics.MetricCalculator.SizeMetricCalculator">SizeMetricCalculator</span></span>
+        <span class="name">metricCalculator</span><span class="result">: <span class="extype" name="com.github.timgent.dataflare.metrics.MetricCalculator.DistinctnessMetricCalculator">DistinctnessMetricCalculator</span></span>
       </span>
       
-      <p class="shortcomment cmt">The metricCalculator which contains key logic for calculating a MetricValue for this MetricDescriptor</p><div class="fullcomment"><div class="comment cmt"><p>The metricCalculator which contains key logic for calculating a MetricValue for this MetricDescriptor</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the MetricCalculator</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric">SizeMetric</a> → MetricDescriptor</dd></dl></div>
-    </li><li name="com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric#metricName" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <p class="shortcomment cmt">The metricCalculator which contains key logic for calculating a MetricValue for this MetricDescriptor</p><div class="fullcomment"><div class="comment cmt"><p>The metricCalculator which contains key logic for calculating a MetricValue for this MetricDescriptor</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the MetricCalculator</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric">DistinctnessMetric</a> → MetricDescriptor</dd></dl></div>
+    </li><li name="com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric#metricName" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="metricName:String"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#metricName:String" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#metricName:String" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -536,11 +536,11 @@
         <span class="name">metricName</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       
-      <p class="shortcomment cmt">A name for the metric</p><div class="fullcomment"><div class="comment cmt"><p>A name for the metric</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric">SizeMetric</a> → MetricDescriptor</dd></dl></div>
+      <p class="shortcomment cmt">A name for the metric</p><div class="fullcomment"><div class="comment cmt"><p>A name for the metric</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric">DistinctnessMetric</a> → MetricDescriptor</dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#ne(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#ne(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -556,7 +556,7 @@
     </li><li name="scala.AnyRef#notify" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#notify():Unit" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#notify():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -575,7 +575,7 @@
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#notifyAll():Unit" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#notifyAll():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -591,10 +591,26 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric#onColumns" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="onColumns:List[String]"></a>
+      <span class="permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#onColumns:List[String]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">onColumns</span><span class="result">: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -607,10 +623,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric#toSimpleMetricDescriptor" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric#toSimpleMetricDescriptor" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toSimpleMetricDescriptor:com.github.timgent.dataflare.metrics.SimpleMetricDescriptor"></a><a id="toSimpleMetricDescriptor:SimpleMetricDescriptor"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#toSimpleMetricDescriptor:com.github.timgent.dataflare.metrics.SimpleMetricDescriptor" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#toSimpleMetricDescriptor:com.github.timgent.dataflare.metrics.SimpleMetricDescriptor" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -622,11 +638,11 @@
         <span class="name">toSimpleMetricDescriptor</span><span class="result">: <span class="extype" name="com.github.timgent.dataflare.metrics.SimpleMetricDescriptor">SimpleMetricDescriptor</span></span>
       </span>
       
-      <p class="shortcomment cmt">A representation of the MetricDescriptor that can be more easily handled for persistence</p><div class="fullcomment"><div class="comment cmt"><p>A representation of the MetricDescriptor that can be more easily handled for persistence</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the SimpleMetricDescriptor</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor.SizeMetric">SizeMetric</a> → MetricDescriptor</dd></dl></div>
+      <p class="shortcomment cmt">A representation of the MetricDescriptor that can be more easily handled for persistence</p><div class="fullcomment"><div class="comment cmt"><p>A representation of the MetricDescriptor that can be more easily handled for persistence</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the SimpleMetricDescriptor</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric">DistinctnessMetric</a> → MetricDescriptor</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#wait():Unit" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#wait():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -648,7 +664,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long,x$2:Int):Unit"></a><a id="wait(Long,Int):Unit"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -670,7 +686,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long):Unit"></a><a id="wait(Long):Unit"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$SizeMetric.html#wait(x$1:Long):Unit" title="Permalink">
+      <a href="../../../../../com/github/timgent/dataflare/metrics/MetricDescriptor$$DistinctnessMetric.html#wait(x$1:Long):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
