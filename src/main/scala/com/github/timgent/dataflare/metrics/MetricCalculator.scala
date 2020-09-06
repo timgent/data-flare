@@ -45,7 +45,8 @@ private[dataflare] object MetricCalculator {
     override def wrapMetricValue(metricValue: Double): DoubleMetric = DoubleMetric(metricValue)
   }
 
-  case class SumValuesMetricCalculator[MV <: NumericMetricValue: MetricValueConstructor](onColumn: String, filter: MetricFilter) extends SimpleMetricCalculator {
+  case class SumValuesMetricCalculator[MV <: NumericMetricValue: MetricValueConstructor](onColumn: String, filter: MetricFilter)
+      extends SimpleMetricCalculator {
     override type MetricType = MV
 
     override def aggFunction: Column = sum(when(filter.filter, col(onColumn)).otherwise(0))
@@ -66,6 +67,23 @@ private[dataflare] object MetricCalculator {
     }
 
     override def wrapMetricValue(metricValue: Long): LongMetric = LongMetric(metricValue)
+  }
+
+  case class DistinctnessMetricCalculator(onColumns: List[String], filter: MetricFilter) extends SimpleMetricCalculator {
+    override type MetricType = DoubleMetric
+
+    override def aggFunction: Column = {
+      val countDistinctCols: List[Column] =
+        onColumns.map(onColumn => when(not(filter.filter), null).otherwise(col(onColumn)))
+      val distinctCount = countDistinct(
+        countDistinctCols.head,
+        countDistinctCols.tail: _*
+      ) // TODO: Handle empty col list case and bad filter case
+      val size = sum(when(filter.filter, 1).otherwise(0))
+      distinctCount / size
+    }
+
+    override def wrapMetricValue(metricValue: Double): DoubleMetric = DoubleMetric(metricValue)
   }
 
 }

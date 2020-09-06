@@ -29,10 +29,6 @@ class MetricsCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Match
       )
     }
 
-    "be able to calculate multiple metrics" in {
-      pending
-    }
-
     "return an error if an invalid MetricDescriptor is given" in {
       val ds = Seq(
         NumberString(1, "a"),

@@ -4,6 +4,7 @@ import cats.Show
 import com.github.timgent.dataflare.metrics.MetricCalculator.{
   ComplianceMetricCalculator,
   DistinctValuesMetricCalculator,
+  DistinctnessMetricCalculator,
   SizeMetricCalculator,
   SumValuesMetricCalculator
 }
@@ -120,6 +121,28 @@ object MetricDescriptor {
       )
     override def metricName: String = "DistinctValues"
     override type MC = DistinctValuesMetricCalculator
+  }
+
+  /**
+    * A metric that calculates how distinct values in a column are (where a result of 1 is that all values are distinct)
+    * @param onColumns - the columns for which distinctness is being calculated over
+    * @param filter - the filter to be applied before the distinct count is calculated
+    */
+  case class DistinctnessMetric(
+      onColumns: List[String],
+      filter: MetricFilter = MetricFilter.noFilter
+  ) extends MetricDescriptor
+      with Filterable {
+    override def metricCalculator: DistinctnessMetricCalculator =
+      DistinctnessMetricCalculator(onColumns, filter)
+    override def toSimpleMetricDescriptor: SimpleMetricDescriptor =
+      SimpleMetricDescriptor(
+        metricName,
+        Some(filter.filterDescription),
+        onColumns = Some(onColumns)
+      )
+    override def metricName: String = "Distinctness"
+    override type MC = DistinctnessMetricCalculator
   }
 }
 
