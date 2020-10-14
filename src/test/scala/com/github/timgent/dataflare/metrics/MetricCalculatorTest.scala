@@ -1,7 +1,6 @@
 package com.github.timgent.dataflare.metrics
 
-import com.github.timgent.dataflare.metrics
-import com.github.timgent.dataflare.metrics.MetricCalculator.{ComplianceMetricCalculator, DistinctValuesMetricCalculator, DistinctnessMetricCalculator, SimpleMetricCalculator, SizeMetricCalculator, SumValuesMetricCalculator}
+import com.github.timgent.dataflare.metrics.MetricCalculator._
 import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.dataflare.utils.CommonFixtures._
 import com.holdenkarau.spark.testing.DatasetSuiteBase

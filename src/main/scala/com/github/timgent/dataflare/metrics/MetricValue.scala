@@ -24,14 +24,19 @@ object MetricValue {
 
 sealed trait MetricValueConstructor[MV <: MetricValue] {
   def apply(value: MV#T): MV
+  def zero: MV#T
 }
 
 object MetricValueConstructor {
   implicit val LongMetricConstructor = new MetricValueConstructor[LongMetric] {
+    override def zero: Long = 0L
+
     override def apply(value: Long): LongMetric = LongMetric(value)
   }
 
   implicit val DoubleMetricConstructor = new MetricValueConstructor[DoubleMetric] {
+    override def zero: Double = 0.0
+
     override def apply(value: Double): DoubleMetric = DoubleMetric(value)
   }
 }
