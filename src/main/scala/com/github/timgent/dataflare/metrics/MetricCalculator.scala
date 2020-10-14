@@ -38,8 +38,11 @@ private[dataflare] object MetricCalculator {
     override type MetricType = DoubleMetric
 
     override def aggFunction: Column = {
-      sum(when(filter.filter and complianceFn.definition, 1).otherwise(0)) /
-        sum(when(filter.filter, 1).otherwise(0))
+
+      val numberOfCompliantRows = sum(when(filter.filter and complianceFn.definition, 1).otherwise(0))
+      val totalRows = sum(when(filter.filter, 1).otherwise(0))
+
+      when(totalRows === 0, 1).otherwise(numberOfCompliantRows/totalRows)
     }
 
     override def wrapMetricValue(metricValue: Double): DoubleMetric = DoubleMetric(metricValue)
