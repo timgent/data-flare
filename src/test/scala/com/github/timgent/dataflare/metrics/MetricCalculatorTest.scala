@@ -85,6 +85,17 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
         DoubleMetric(1.0)
       )
     }
+
+    "compliance check should be 1 for an empty dataset after applying the filter" in {
+      testMetricAggFunction(
+        ds,
+        ComplianceMetricCalculator(
+          ComplianceFn(col("number") <= 9, "Number <= 9"),
+          MetricFilter(lit(false))
+        ),
+        DoubleMetric(1.0)
+      )
+    }
   }
 
   "DistinctValuesMetricCalculator" should {
