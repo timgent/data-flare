@@ -1,13 +1,6 @@
 package com.github.timgent.dataflare.metrics
 
-import com.github.timgent.dataflare.metrics.MetricCalculator.{
-  ComplianceMetricCalculator,
-  DistinctValuesMetricCalculator,
-  DistinctnessMetricCalculator,
-  SimpleMetricCalculator,
-  SizeMetricCalculator,
-  SumValuesMetricCalculator
-}
+import com.github.timgent.dataflare.metrics.MetricCalculator._
 import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric}
 import com.github.timgent.dataflare.utils.CommonFixtures._
 import com.holdenkarau.spark.testing.DatasetSuiteBase
@@ -78,6 +71,29 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
           MetricFilter(col("number") >= 9, "number >= 9")
         ),
         DoubleMetric(0.5)
+      )
+    }
+
+    "compliance check should be 1 for an empty dataset" in {
+      lazy val ds = spark.emptyDataset[NumberString]
+      testMetricAggFunction(
+        ds,
+        ComplianceMetricCalculator(
+          ComplianceFn(col("number") <= 9, "Number <= 9"),
+          MetricFilter.noFilter
+        ),
+        DoubleMetric(1.0)
+      )
+    }
+
+    "compliance check should be 1 for an empty dataset after applying the filter" in {
+      testMetricAggFunction(
+        ds,
+        ComplianceMetricCalculator(
+          ComplianceFn(col("number") <= 9, "Number <= 9"),
+          MetricFilter(lit(false))
+        ),
+        DoubleMetric(1.0)
       )
     }
   }
