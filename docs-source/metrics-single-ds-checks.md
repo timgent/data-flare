@@ -48,6 +48,7 @@ Other available helpers include:
 * sizeCheck
 * complianceCheck
 * distinctValuesCheck
+* distinctnessCheck
 * thresholdBasedCheck
 
 Please check the API docs for the full range of options!
