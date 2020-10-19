@@ -8,6 +8,7 @@ The available metrics are:
 * `SumValuesMetric` - sum up a given column in your dataset
 * `CountDistinctValuesMetric` - count the distinct values across a given set of columns
 * `ComplianceMetric` - calculate the fraction of rows that comply with the given condition
+* `DistinctnessMetric` - calculate the fraction of rows that are unique
 
 With most metrics a filter can be applied before the metric gets calculated - you can see an example of this below. 
 
@@ -56,4 +57,14 @@ import com.github.timgent.dataflare.metrics.MetricDescriptor.CountDistinctValues
 import com.github.timgent.dataflare.metrics.MetricFilter
 
 CountDistinctValuesMetric(List("firstName", "surname"), MetricFilter.noFilter)
+```
+
+## DistinctnessMetric
+DistinctnessMetric calculates, for a given set of columns, how unique those are across the whole dataset. A filter can
+be applied before the metric is calculated. For example:
+```scala mdoc:compile-only
+import com.github.timgent.dataflare.metrics.MetricDescriptor.DistinctnessMetric
+import com.github.timgent.dataflare.metrics.MetricFilter
+
+DistinctnessMetric(List("firstName", "surname"), MetricFilter.noFilter)
 ```
