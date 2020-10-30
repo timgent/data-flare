@@ -2,6 +2,7 @@ package com.github.timgent.dataflare.checkssuite
 
 import java.time.{Instant, LocalDateTime, ZoneOffset}
 
+import com.github.timgent.dataflare.utils.DateTimeUtils.InstantExtension
 import cats.implicits._
 import com.github.timgent.dataflare.FlareError
 import scala.concurrent.Future
@@ -573,7 +574,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
     }
 
     "contains single metric anomaly checks" should {
-      "calculate metrics based checks on single datasets" in {
+      "calculate required metrics and perform the anomaly checks" in {
         val ds = Seq(
           NumberString(1, "a"),
           NumberString(2, "b")
@@ -613,72 +614,6 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
             ),
             now,
             someTags
-          )
-        }
-      }
-
-      "anomaly STD check" in {
-
-        val check: SingleMetricAnomalyCheck[LongMetric] =
-          SingleMetricAnomalyCheck.stdChangeAnomalyCheck(2, 2, SizeMetric())
-
-        val metrics: Map[MetricDescriptor, MetricValue] =
-          Map(SizeMetric() -> LongMetric(60))
-
-        def inner(n: Int): Map[SimpleMetricDescriptor, MetricValue] =
-          Map(
-            SizeMetric().toSimpleMetricDescriptor -> LongMetric(n)
-          )
-
-        val historicMetrics: Map[Instant, Map[SimpleMetricDescriptor, MetricValue]] =
-          Map(
-            LocalDateTime.now().toInstant(ZoneOffset.UTC) -> inner(50),
-            LocalDateTime.now().plusDays(1).toInstant(ZoneOffset.UTC) -> inner(60),
-            LocalDateTime.now().plusDays(2).toInstant(ZoneOffset.UTC) -> inner(70)
-          )
-
-        val result: CheckResult = check.applyCheckOnMetrics(metrics, historicMetrics)
-
-        Future.successful {
-          result shouldBe CheckResult(
-            QcType.SingleMetricAnomalyCheck,
-            CheckStatus.Success,
-            "MetricValue of 60 was not anomalous compared to previous results. Mean: 60.0; STD: 8.16496580927726",
-            SingleMetricCheckDescription("STDChangeAnomalyCheck", SimpleMetricDescriptor("Size", Some("no filter"))),
-            None
-          )
-        }
-      }
-
-      "outlier should be treated as an anomaly" in {
-
-        val check: SingleMetricAnomalyCheck[LongMetric] =
-          SingleMetricAnomalyCheck.stdChangeAnomalyCheck(2, 2, SizeMetric())
-
-        val metrics: Map[MetricDescriptor, MetricValue] =
-          Map(SizeMetric() -> LongMetric(35))
-
-        def inner(n: Int): Map[SimpleMetricDescriptor, MetricValue] =
-          Map(
-            SizeMetric().toSimpleMetricDescriptor -> LongMetric(n)
-          )
-
-        val historicMetrics: Map[Instant, Map[SimpleMetricDescriptor, MetricValue]] =
-          Map(
-            LocalDateTime.now().toInstant(ZoneOffset.UTC) -> inner(50),
-            LocalDateTime.now().plusDays(1).toInstant(ZoneOffset.UTC) -> inner(60),
-            LocalDateTime.now().plusDays(2).toInstant(ZoneOffset.UTC) -> inner(70)
-          )
-
-        val result: CheckResult = check.applyCheckOnMetrics(metrics, historicMetrics)
-
-        Future.successful {
-          result shouldBe CheckResult(
-            QcType.SingleMetricAnomalyCheck,
-            CheckStatus.Error,
-            "MetricValue of 35 was anomalous compared to previous results. Mean: 60.0; STD: 8.16496580927726",
-            SingleMetricCheckDescription("STDChangeAnomalyCheck", SimpleMetricDescriptor("Size", Some("no filter"))),
-            None
           )
         }
       }

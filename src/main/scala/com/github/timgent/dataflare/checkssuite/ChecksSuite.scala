@@ -237,7 +237,12 @@ case class ChecksSuite(
               case Right(metricsForDs: Map[MetricDescriptor, MetricValue]) =>
                 val historicMetricsForOurDs: Map[Instant, Map[SimpleMetricDescriptor, MetricValue]] =
                   allPreviousMetrics.mapValues(_.apply(datasetDescription)) // TODO: Handle error case!
-                check.applyCheckOnMetrics(metricsForDs, historicMetricsForOurDs).withDatasourceDescription(datasetDescription)
+                val historicMetricsForOurMetric = historicMetricsForOurDs
+                  .mapValues { metricsMap =>
+                    metricsMap.get(check.metric.toSimpleMetricDescriptor)
+                  }
+                  .collect { case (instant, Some(metricValue)) => (instant, metricValue) }
+                check.applyCheckOnMetrics(metricsForDs, historicMetricsForOurMetric).withDatasourceDescription(datasetDescription)
             }
           }
           checkResults

@@ -7,7 +7,7 @@ import com.github.timgent.dataflare.checks.CheckDescription.SingleMetricCheckDes
 import com.github.timgent.dataflare.checks.QCCheck.SingleDsCheck
 import com.github.timgent.dataflare.checks._
 import com.github.timgent.dataflare.metrics.MetricValue.LongMetric
-import com.github.timgent.dataflare.metrics.{MetricDescriptor, MetricValue, SimpleMetricDescriptor}
+import com.github.timgent.dataflare.metrics.{MetricDescriptor, MetricValue}
 
 import scala.reflect.ClassTag
 
@@ -36,15 +36,12 @@ case class SingleMetricAnomalyCheck[MV <: MetricValue](metric: MetricDescriptor 
   // typeTag required here to enable match of metric on type MV. Without class tag this type check would be fruitless
   private[dataflare] final def applyCheckOnMetrics(
       metrics: Map[MetricDescriptor, MetricValue],
-      historicMetrics: Map[Instant, Map[SimpleMetricDescriptor, MetricValue]]
+      historicMetrics: Map[Instant, MetricValue]
   )(implicit classTag: ClassTag[MV]): CheckResult = {
     val maybeMetricOfInterest = getMetric(metric, metrics)
-    val relevantHistoricMetrics: Map[Instant, MV#T] =
-      historicMetrics
-        .mapValues { metricsMap =>
-          metricsMap.get(metric.toSimpleMetricDescriptor)
-        }
-        .collect { case (instant, Some(metricValue: MV)) => (instant, metricValue.value) }
+    val relevantHistoricMetrics: Map[Instant, MV#T] = historicMetrics.collect {
+      case (instant, metricValue: MV) => (instant, metricValue.value)
+    }
     maybeMetricOfInterest match {
       case Left(MetricMissing)             => metricNotPresentErrorResult
       case Left(LookedUpMetricOfWrongType) => metricTypeErrorResult
@@ -77,8 +74,8 @@ object SingleMetricAnomalyCheck {
     }
 
   def stdChangeAnomalyCheck(
-      lowerDiviationFactor: Int = 2,
-      higherDiviationFactor: Int = 2,
+      lowerDeviationFactor: Int = 2,
+      higherDeviationFactor: Int = 2,
       metricDescriptor: MetricDescriptor.Aux[LongMetric]
   ): SingleMetricAnomalyCheck[LongMetric] = {
 
@@ -92,8 +89,8 @@ object SingleMetricAnomalyCheck {
         val historicSTD: Double = stdDev(historicValues)
 
         val isValidRange =
-          currentMetricValue >= historicMean - (lowerDiviationFactor * historicSTD) &&
-            currentMetricValue <= (higherDiviationFactor * historicSTD) + historicMean
+          currentMetricValue >= historicMean - (lowerDeviationFactor * historicSTD) &&
+            currentMetricValue <= (higherDeviationFactor * historicSTD) + historicMean
 
         if (isValidRange)
           RawCheckResult(
