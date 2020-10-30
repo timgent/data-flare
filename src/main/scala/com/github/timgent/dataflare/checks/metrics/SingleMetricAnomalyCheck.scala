@@ -2,6 +2,7 @@ package com.github.timgent.dataflare.checks.metrics
 
 import java.time.Instant
 
+import com.github.timgent.dataflare.FlareError.{LookedUpMetricOfWrongType, MetricMissing}
 import com.github.timgent.dataflare.checks.CheckDescription.SingleMetricCheckDescription
 import com.github.timgent.dataflare.checks.QCCheck.SingleDsCheck
 import com.github.timgent.dataflare.checks._
@@ -33,25 +34,21 @@ case class SingleMetricAnomalyCheck[MV <: MetricValue](metric: MetricDescriptor 
   }
 
   // typeTag required here to enable match of metric on type MV. Without class tag this type check would be fruitless
-  private[dataflare] final def applyCheckOnMetrics( // TODO: Remove duplication with SingleMetricCheck
+  private[dataflare] final def applyCheckOnMetrics(
       metrics: Map[MetricDescriptor, MetricValue],
       historicMetrics: Map[Instant, Map[SimpleMetricDescriptor, MetricValue]]
   )(implicit classTag: ClassTag[MV]): CheckResult = {
-    val metricOfInterestOpt: Option[MetricValue] =
-      metrics.get(metric).map(metricValue => metricValue)
-    val relevantHistoricMetrics =
+    val maybeMetricOfInterest = getMetric(metric, metrics)
+    val relevantHistoricMetrics: Map[Instant, MV#T] =
       historicMetrics
-        .mapValues { m =>
-          m(metric.toSimpleMetricDescriptor).value
+        .mapValues { metricsMap =>
+          metricsMap.get(metric.toSimpleMetricDescriptor)
         }
-        .asInstanceOf[Map[Instant, MV#T]]
-    metricOfInterestOpt match {
-      case Some(metric) =>
-        metric match {
-          case metric: MV => applyCheck(metric, relevantHistoricMetrics)
-          case _          => metricTypeErrorResult
-        }
-      case None => metricNotPresentErrorResult
+        .collect { case (instant, Some(metricValue: MV)) => (instant, metricValue.value) }
+    maybeMetricOfInterest match {
+      case Left(MetricMissing)             => metricNotPresentErrorResult
+      case Left(LookedUpMetricOfWrongType) => metricTypeErrorResult
+      case Right(metric)                   => applyCheck(metric, relevantHistoricMetrics)
     }
   }
 
