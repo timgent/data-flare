@@ -22,6 +22,8 @@ case class SingleMetricCheck[MV <: MetricValue](metric: MetricDescriptor { type 
 ) extends MetricsBasedCheck
     with SingleDsCheck {
 
+  override def qcType: QcType = QcType.SingleMetricCheck
+
   override def description: CheckDescription = SingleMetricCheckDescription(checkDescription, metric.toSimpleMetricDescriptor)
 
   def applyCheck(metric: MV): CheckResult = {

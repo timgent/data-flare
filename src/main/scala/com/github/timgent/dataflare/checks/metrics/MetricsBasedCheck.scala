@@ -5,8 +5,6 @@ import com.github.timgent.dataflare.checks.{CheckResult, CheckStatus, Datasource
 
 private[dataflare] trait MetricsBasedCheck extends QCCheck {
 
-  override def qcType: QcType = QcType.SingleMetricCheck
-
   private[dataflare] def getMetricErrorCheckResult(datasourceDescription: DatasourceDescription, err: MetricCalculationError*) =
     CheckResult(
       qcType,

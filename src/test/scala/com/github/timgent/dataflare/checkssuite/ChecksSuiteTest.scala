@@ -1,6 +1,6 @@
 package com.github.timgent.dataflare.checkssuite
 
-import java.time.Instant
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 
 import cats.implicits._
 import com.github.timgent.dataflare.FlareError
@@ -8,7 +8,7 @@ import com.github.timgent.dataflare.FlareError.MetricCalculationError
 import com.github.timgent.dataflare.checks.ArbDualDsCheck.DatasetPair
 import com.github.timgent.dataflare.checks.CheckDescription.{DualMetricCheckDescription, SingleMetricCheckDescription}
 import com.github.timgent.dataflare.checks.DatasourceDescription.{DualDsDescription, SingleDsDescription}
-import com.github.timgent.dataflare.checks.metrics.{DualMetricCheck, SingleMetricCheck}
+import com.github.timgent.dataflare.checks.metrics.{DualMetricCheck, SingleMetricAnomalyCheck, SingleMetricCheck}
 import com.github.timgent.dataflare.checks._
 import com.github.timgent.dataflare.metrics.MetricDescriptor.{SizeMetric, SumValuesMetric}
 import com.github.timgent.dataflare.metrics.MetricValue.LongMetric
@@ -569,6 +569,53 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
           )
         }
       }
+    }
+
+    "contains single metric anomaly checks" should {
+      "calculate metrics based checks on single datasets" in {
+        val ds = Seq(
+          NumberString(1, "a"),
+          NumberString(2, "b")
+        ).toDS
+
+        val checks: Map[DescribedDs, Seq[SingleMetricAnomalyCheck[LongMetric]]] = Map(
+          DescribedDs(ds, datasourceDescription) ->
+            Seq(SingleMetricAnomalyCheck.absoluteChangeAnomalyCheck(0, 0, SizeMetric()))
+        )
+        val checkSuiteDescription = "my first metricsCheckSuite"
+        val mockMetricsPersister = new InMemoryMetricsPersister()
+        val metricsBasedChecksSuite =
+          ChecksSuite(checkSuiteDescription, singleDsChecks = checks, tags = someTags, metricsPersister = mockMetricsPersister)
+
+        for {
+          _ <- mockMetricsPersister.save(
+            LocalDateTime.now.minusDays(1).toInstant(ZoneOffset.UTC),
+            Map(
+              SingleDsDescription(datasourceDescription) -> Map(
+                SizeMetric().toSimpleMetricDescriptor -> LongMetric(10)
+              )
+            )
+          )
+          checkResults: ChecksSuiteResult <- metricsBasedChecksSuite.run(now)
+        } yield {
+          checkResults shouldBe ChecksSuiteResult(
+            CheckSuiteStatus.Error,
+            checkSuiteDescription,
+            Seq(
+              CheckResult(
+                QcType.SingleMetricAnomalyCheck,
+                CheckStatus.Error,
+                "MetricValue of 2 was anomalous compared to previous result of 10",
+                SingleMetricCheckDescription("SizeCheck", SimpleMetricDescriptor("Size", Some("no filter"))),
+                Some(SingleDsDescription(datasourceDescription))
+              )
+            ),
+            now,
+            someTags
+          )
+        }
+      }
+
     }
   }
 }
