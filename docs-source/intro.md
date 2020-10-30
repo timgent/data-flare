@@ -65,4 +65,4 @@ You can [find the javadocs here](https://www.javadoc.io/doc/com.github.timgent/d
 ## An example
 The rest of the documentation will talk through the main features and how to use them. However some find it easier to
 follow an example, so you can 
-[find some example code and explanation here](https://github.com/timgent/data-flare/tree/master/src/main/scala/com/github/timgent/data-flare/examples).
+[find some example code and explanation here](https://github.com/timgent/data-flare/tree/master/src/main/scala/com/github/timgent/dataflare/examples).
