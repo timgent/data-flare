@@ -4,7 +4,7 @@ import java.time.Instant
 
 import com.github.timgent.dataflare.checks.CheckDescription.SingleMetricCheckDescription
 import com.github.timgent.dataflare.checks.QCCheck.SingleDsCheck
-import com.github.timgent.dataflare.checks.{CheckDescription, CheckResult, QcType, RawCheckResult}
+import com.github.timgent.dataflare.checks.{CheckDescription, CheckResult, CheckStatus, QcType, RawCheckResult}
 import com.github.timgent.dataflare.metrics.MetricValue.LongMetric
 import com.github.timgent.dataflare.metrics.{MetricDescriptor, MetricValue}
 import com.github.timgent.dataflare.repository.MetricsPersister
@@ -37,6 +37,21 @@ object SingleMetricAnomalyCheck {
   def absoluteChangeAnomalyCheck(
       maxReduction: Long,
       maxIncrease: Long,
-      metricDescriptor: MetricDescriptor
-  ): SingleMetricAnomalyCheck[LongMetric] = ???
+      metricDescriptor: MetricDescriptor.Aux[LongMetric]
+  ): SingleMetricAnomalyCheck[LongMetric] =
+    SingleMetricAnomalyCheck[LongMetric](metricDescriptor, "some check description") { (currentMetricValue, historicMetricValues) =>
+      val (lastMetricTimestamp, lastMetricValue) = historicMetricValues.maxBy(_._1)
+      val isWithinAcceptableRange =
+        (lastMetricValue + maxIncrease) <= currentMetricValue && (lastMetricValue - maxReduction) >= currentMetricValue
+      if (isWithinAcceptableRange)
+        RawCheckResult(
+          CheckStatus.Success,
+          s"MetricValue of $currentMetricValue was anomalous compared to previous result of $lastMetricValue"
+        )
+      else
+        RawCheckResult(
+          CheckStatus.Error,
+          s"MetricValue of $currentMetricValue was not anomalous compared to previous result of $lastMetricValue"
+        )
+    }
 }

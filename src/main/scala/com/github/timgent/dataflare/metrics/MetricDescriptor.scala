@@ -38,6 +38,7 @@ private[dataflare] trait MetricDescriptor {
 }
 
 object MetricDescriptor {
+  type Aux[A] = MetricDescriptor { type MetricType = A }
 
   /**
     * A MetricDescriptor which can have the dataset filtered before the metric is calculated
