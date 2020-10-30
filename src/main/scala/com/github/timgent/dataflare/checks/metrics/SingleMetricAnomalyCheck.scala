@@ -61,10 +61,10 @@ object SingleMetricAnomalyCheck {
   def absoluteChangeAnomalyCheck(
       maxReduction: Long,
       maxIncrease: Long,
-      metricDescriptor: MetricDescriptor.Aux[LongMetric]
+      metricDescriptor: MetricDescriptor.Aux[LongMetric] // SizeMetric
   ): SingleMetricAnomalyCheck[LongMetric] =
     SingleMetricAnomalyCheck[LongMetric](metricDescriptor, "AbsoluteChangeAnomalyCheck") { (currentMetricValue, historicMetricValues) =>
-      val (lastMetricTimestamp, lastMetricValue) = historicMetricValues.maxBy(_._1)
+      val (_, lastMetricValue) = historicMetricValues.maxBy(_._1)
       val isWithinAcceptableRange =
         (lastMetricValue + maxIncrease) <= currentMetricValue && (lastMetricValue - maxReduction) >= currentMetricValue
       if (isWithinAcceptableRange)
@@ -78,4 +78,38 @@ object SingleMetricAnomalyCheck {
           s"MetricValue of $currentMetricValue was anomalous compared to previous result of $lastMetricValue"
         )
     }
+
+  def stdChangeAnomalyCheck(
+      lowerDiviationFactor: Int = 2,
+      higherDiviationFactor: Int = 2,
+      metricDescriptor: MetricDescriptor.Aux[LongMetric]
+  ): SingleMetricAnomalyCheck[LongMetric] = {
+
+    SingleMetricAnomalyCheck[LongMetric](metricDescriptor, "STDChangeAnomalyCheck") {
+      (currentMetricValue: Long, historicMetricValues: Map[Instant, Long]) =>
+        import com.github.timgent.dataflare.utils.stats.{mean, stdDev}
+
+        val historicValues = historicMetricValues.values
+
+        val historicMean: Double = mean(historicValues)
+        val historicSTD: Double = stdDev(historicValues)
+
+        val isValidRange =
+          currentMetricValue >= historicMean - (lowerDiviationFactor * historicSTD) &&
+            currentMetricValue <= (higherDiviationFactor * historicSTD) + historicMean
+
+        if (isValidRange)
+          RawCheckResult(
+            CheckStatus.Success,
+            s"MetricValue of $currentMetricValue was not anomalous compared to previous results. Mean: $historicMean; STD: $historicSTD"
+          )
+        else
+          RawCheckResult(
+            CheckStatus.Error,
+            s"MetricValue of $currentMetricValue was anomalous compared to previous results. Mean: $historicMean; STD: $historicSTD"
+          )
+
+    }
+  }
+
 }
