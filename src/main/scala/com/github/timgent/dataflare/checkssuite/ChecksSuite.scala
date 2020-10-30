@@ -235,11 +235,12 @@ case class ChecksSuite(
             maybeMetricsForDs match {
               case Left(err) => check.getMetricErrorCheckResult(dds.datasourceDescription, err)
               case Right(metricsForDs: Map[MetricDescriptor, MetricValue]) =>
-                val historicMetricsForOurDs: Map[Instant, Map[SimpleMetricDescriptor, MetricValue]] =
-                  allPreviousMetrics.mapValues(_.apply(datasetDescription)) // TODO: Handle error case!
-                val historicMetricsForOurMetric = historicMetricsForOurDs
-                  .mapValues { metricsMap =>
-                    metricsMap.get(check.metric.toSimpleMetricDescriptor)
+                val historicMetricsForOurMetric = allPreviousMetrics
+                  .mapValues { ddsToMetricsMap =>
+                    for {
+                      metricsMap <- ddsToMetricsMap.get(datasetDescription)
+                      metricValue <- metricsMap.get(check.metric.toSimpleMetricDescriptor)
+                    } yield metricValue
                   }
                   .collect { case (instant, Some(metricValue)) => (instant, metricValue) }
                 check.applyCheckOnMetrics(metricsForDs, historicMetricsForOurMetric).withDatasourceDescription(datasetDescription)
