@@ -606,7 +606,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
                 QcType.SingleMetricAnomalyCheck,
                 CheckStatus.Error,
                 "MetricValue of 2 was anomalous compared to previous result of 10",
-                SingleMetricCheckDescription("SizeCheck", SimpleMetricDescriptor("Size", Some("no filter"))),
+                SingleMetricCheckDescription("AbsoluteChangeAnomalyCheck", SimpleMetricDescriptor("Size", Some("no filter"))),
                 Some(SingleDsDescription(datasourceDescription))
               )
             ),

@@ -8,8 +8,8 @@ import com.github.timgent.dataflare.checks.ArbDualDsCheck.DatasetPair
 import com.github.timgent.dataflare.checks.DatasourceDescription.{DualDsDescription, SingleDsDescription}
 import com.github.timgent.dataflare.checks.QCCheck.{DualDsQCCheck, SingleDsCheck}
 import com.github.timgent.dataflare.checks._
-import com.github.timgent.dataflare.checks.metrics.{DualMetricCheck, SingleMetricCheck}
-import com.github.timgent.dataflare.metrics.{MetricDescriptor, MetricValue, MetricsCalculator}
+import com.github.timgent.dataflare.checks.metrics.{DualMetricCheck, SingleMetricAnomalyCheck, SingleMetricCheck}
+import com.github.timgent.dataflare.metrics.{MetricDescriptor, MetricValue, MetricsCalculator, SimpleMetricDescriptor}
 import com.github.timgent.dataflare.repository.{MetricsPersister, NullMetricsPersister, NullQcResultsRepository, QcResultsRepository}
 import org.apache.spark.sql.Dataset
 
@@ -69,6 +69,12 @@ case class ChecksSuite(
   private val singleMetricChecks: Map[DescribedDs, Seq[SingleMetricCheck[_]]] = singleDsChecks.map {
     case (dds, checks) =>
       val relevantChecks = checks.collect { case check: SingleMetricCheck[_] => check }
+      (dds, relevantChecks)
+  }
+
+  private val singleMetricAnomalyChecks: Map[DescribedDs, Seq[SingleMetricAnomalyCheck[_]]] = singleDsChecks.map {
+    case (dds, checks) =>
+      val relevantChecks = checks.collect { case check: SingleMetricAnomalyCheck[_] => check }
       (dds, relevantChecks)
   }
 
@@ -138,11 +144,17 @@ case class ChecksSuite(
     */
   private def getMinimumRequiredMetrics(
       seqSingleDatasetMetricsChecks: Map[DescribedDs, Seq[SingleMetricCheck[_]]],
+      seqSingleDatasetMetricAnomalyChecks: Map[DescribedDs, Seq[SingleMetricAnomalyCheck[_]]],
       seqDualDatasetMetricChecks: Map[DescribedDsPair, Seq[DualMetricCheck[_]]],
       trackMetrics: Map[DescribedDs, Seq[MetricDescriptor]]
   ): Map[DescribedDs, List[MetricDescriptor]] = {
     val singleDatasetMetricDescriptors: Map[DescribedDs, List[MetricDescriptor]] = (for {
       (dds, checks) <- seqSingleDatasetMetricsChecks
+      metricDescriptors = checks.map(_.metric).toList
+    } yield (dds, metricDescriptors)).groupBy(_._1).mapValues(_.flatMap(_._2).toList)
+
+    val singleDatasetAnomalyMetricDescriptors: Map[DescribedDs, List[MetricDescriptor]] = (for {
+      (dds, checks) <- seqSingleDatasetMetricAnomalyChecks
       metricDescriptors = checks.map(_.metric).toList
     } yield (dds, metricDescriptors)).groupBy(_._1).mapValues(_.flatMap(_._2).toList)
 
@@ -159,7 +171,7 @@ case class ChecksSuite(
     } yield (describedDatasetB, metricDescriptors)).groupBy(_._1).mapValues(_.flatMap(_._2).toList)
 
     val allMetricDescriptors: Map[DescribedDs, List[MetricDescriptor]] =
-      (singleDatasetMetricDescriptors |+| dualDatasetAMetricDescriptors |+| dualDatasetBMetricDescriptors
+      (singleDatasetMetricDescriptors |+| singleDatasetAnomalyMetricDescriptors |+| dualDatasetAMetricDescriptors |+| dualDatasetBMetricDescriptors
         |+| trackMetrics.mapValues(_.toList))
         .mapValues(_.distinct)
 
@@ -170,7 +182,12 @@ case class ChecksSuite(
       timestamp: Instant
   )(implicit ec: ExecutionContext): Future[Seq[CheckResult]] = {
     val allMetricDescriptors: Map[DescribedDs, List[MetricDescriptor]] =
-      getMinimumRequiredMetrics(singleMetricChecks, dualMetricChecks, metricsToTrack)
+      getMinimumRequiredMetrics(
+        singleMetricChecks,
+        singleMetricAnomalyChecks,
+        dualMetricChecks,
+        metricsToTrack
+      )
     val calculatedMetrics: Map[DescribedDs, Either[MetricCalculationError, Map[MetricDescriptor, MetricValue]]] =
       allMetricDescriptors.map {
         case (describedDataset, metricDescriptors) =>
@@ -178,6 +195,8 @@ case class ChecksSuite(
             MetricsCalculator.calculateMetrics(describedDataset, metricDescriptors)
           (describedDataset, metricValues)
       }
+    val allPreviousMetricsFut: Future[Map[Instant, Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]]] =
+      metricsPersister.loadAll
 
     val metricsToSave = calculatedMetrics.collect {
       case (describedDataset, Right(metrics)) =>
@@ -192,6 +211,7 @@ case class ChecksSuite(
 
     for {
       _ <- storedMetricsFut
+      allPreviousMetrics: Map[Instant, Map[SingleDsDescription, Map[SimpleMetricDescriptor, MetricValue]]] <- allPreviousMetricsFut
     } yield {
       val singleDatasetCheckResults: Seq[CheckResult] = singleMetricChecks.toSeq.flatMap {
         case (dds, checks) =>
@@ -202,6 +222,22 @@ case class ChecksSuite(
               case Left(err) => check.getMetricErrorCheckResult(dds.datasourceDescription, err)
               case Right(metricsForDs: Map[MetricDescriptor, MetricValue]) =>
                 check.applyCheckOnMetrics(metricsForDs).withDatasourceDescription(datasetDescription)
+            }
+          }
+          checkResults
+      }
+
+      val singleDatasetAnomalyCheckResults: Seq[CheckResult] = singleMetricAnomalyChecks.toSeq.flatMap {
+        case (dds, checks) =>
+          val datasetDescription = SingleDsDescription(dds.description)
+          val maybeMetricsForDs: Either[MetricCalculationError, Map[MetricDescriptor, MetricValue]] = calculatedMetrics(dds)
+          val checkResults: Seq[CheckResult] = checks.map { check =>
+            maybeMetricsForDs match {
+              case Left(err) => check.getMetricErrorCheckResult(dds.datasourceDescription, err)
+              case Right(metricsForDs: Map[MetricDescriptor, MetricValue]) =>
+                val historicMetricsForOurDs: Map[Instant, Map[SimpleMetricDescriptor, MetricValue]] =
+                  allPreviousMetrics.mapValues(_.apply(datasetDescription)) // TODO: Handle error case!
+                check.applyCheckOnMetrics(metricsForDs, historicMetricsForOurDs).withDatasourceDescription(datasetDescription)
             }
           }
           checkResults
@@ -229,7 +265,7 @@ case class ChecksSuite(
           checkResults
       }
 
-      singleDatasetCheckResults ++ dualDatasetCheckResults
+      singleDatasetCheckResults ++ dualDatasetCheckResults ++ singleDatasetAnomalyCheckResults
     }
 
   }
