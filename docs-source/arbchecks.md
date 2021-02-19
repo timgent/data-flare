@@ -58,6 +58,9 @@ val checksSuite = ChecksSuite("dualDatasetChecksSuite", dualDsChecks = Map(
 ))
 ```
 
+### DualDatasetCheck helpers
+* ArbDualDsCheck.dsSchemasMatch - checks if 2 schemas exactly match
+
 ## ArbitraryCheck
 An `ArbitraryCheck` is useful when you would like a check included in the output from Flare, but the other APIs don't
 support it. For example where you want to do a comparison between 3 datasets. Wherever possible we suggest avoiding
