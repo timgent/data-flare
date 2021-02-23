@@ -54,18 +54,19 @@ object ArbDualDsCheck {
 
   private def zipWithIndex[T](rdd: RDD[T]): RDD[(Long, T)] = rdd.zipWithIndex.map { case (row, i) => (i, row) }
 
-  val dsContentMatches: ArbDualDsCheck = ArbDualDsCheck("Dataset content matches") { dsPair =>
+  /**
+    * Checks that dfs match exactly and are in the same order
+    */
+  val dfsMatchOrdered: ArbDualDsCheck = ArbDualDsCheck("Dataset content matches") { dsPair =>
     import cats.implicits._
     val schemaMatchCheckResult = doSchemasMatch(dsPair)
     schemaMatchCheckResult match {
       case Left(errMsg) => RawCheckResult(CheckStatus.Error, errMsg)
       case Right(schema) =>
-        val dsOrdered = dsPair.ds.orderBy(dsPair.ds.columns.map(col): _*)
-        val dsOrderedRdd = dsOrdered.toDF.rdd
-        val dsToCompareOrderedRdd =
-          dsPair.dsToCompare.repartition(dsOrderedRdd.getNumPartitions).orderBy(dsPair.ds.columns.map(col): _*).toDF.rdd
-        val dsWithIndex: RDD[(Long, Row)] = zipWithIndex(dsOrderedRdd)
-        val dsToCompareWithIndex: RDD[(Long, Row)] = zipWithIndex(dsToCompareOrderedRdd)
+        val dsRdd = dsPair.ds.toDF.rdd
+        val dsToCompareRdd = dsPair.dsToCompare.toDF.rdd
+        val dsWithIndex: RDD[(Long, Row)] = zipWithIndex(dsRdd)
+        val dsToCompareWithIndex: RDD[(Long, Row)] = zipWithIndex(dsToCompareRdd)
         val joined: RDD[(Option[Row], Option[Row])] = dsWithIndex.fullOuterJoin(dsToCompareWithIndex).map(_._2)
 
         val sampleMismatchedRows: RDD[(Option[Row], Option[Row])] = joined.mapPartitions { it =>
@@ -96,7 +97,7 @@ object ArbDualDsCheck {
               val prettyDsToCompareRow = prettyRow(dsToCompareRow, schema)
               RawCheckResult(
                 CheckStatus.Error,
-                s"Sorted datasets encountered first mismatch at ds row: $prettyDsRow. dsToCompareRow: $prettyDsToCompareRow"
+                s"Datasets encountered first mismatch at ds row: $prettyDsRow. dsToCompareRow: $prettyDsToCompareRow"
               )
             case (Some(dsRow), None) =>
               RawCheckResult(CheckStatus.Error, s"ds had extras rows, first extra row found: ${prettyRow(dsRow, schema)}")
@@ -104,8 +105,7 @@ object ArbDualDsCheck {
               RawCheckResult(CheckStatus.Error, s"dsToCompare had extras rows, first extra row found: ${prettyRow(dsToCompareRow, schema)}")
             case (None, None) =>
               throw new RuntimeException(
-                "Please report this issue to the library authors, this " +
-                  "should never happen!"
+                "Please report this issue to the library authors, this should never happen!"
               )
           }
         }
