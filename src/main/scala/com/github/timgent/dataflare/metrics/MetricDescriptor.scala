@@ -1,7 +1,8 @@
 package com.github.timgent.dataflare.metrics
 
 import cats.Show
-import com.github.timgent.dataflare.metrics.MetricCalculator.{ComplianceMetricCalculator, DistinctValuesMetricCalculator, DistinctnessMetricCalculator, MinValuesMetricCalculator, SizeMetricCalculator, SumValuesMetricCalculator}
+import com.github.timgent.dataflare.metrics.MetricCalculator.{ComplianceMetricCalculator, DistinctValuesMetricCalculator
+  , DistinctnessMetricCalculator, MaxValueMetricCalculator, MinValueMetricCalculator, SizeMetricCalculator, SumValuesMetricCalculator}
 import com.github.timgent.dataflare.metrics.MetricValue.NumericMetricValue
 
 /**
@@ -73,16 +74,43 @@ object MetricDescriptor {
     override type MC = SumValuesMetricCalculator[MV]
   }
 
-  case class MinValuesMetric[MV <: NumericMetricValue: MetricValueConstructor](
+  /**
+    * A metric that calculates the min value of rows in your dataset
+    * @param onColumn
+    * @param filter filter to be applied before the size is calculated
+    * @param
+    * @tparam MV
+    */
+
+  case class MinValueMetric[MV <: NumericMetricValue: MetricValueConstructor](
       onColumn: String,
       filter: MetricFilter = MetricFilter.noFilter
   ) extends MetricDescriptor
       with Filterable {
-    override def metricCalculator: MinValuesMetricCalculator[MV] = MinValuesMetricCalculator[MV](onColumn, filter)
+    override def metricCalculator: MinValueMetricCalculator[MV] = MinValueMetricCalculator[MV](onColumn, filter)
     override def toSimpleMetricDescriptor: SimpleMetricDescriptor =
       SimpleMetricDescriptor(metricName, Some(filter.filterDescription), onColumn = Some(onColumn))
     override def metricName: String = "MinValue"
-    override type MC = MinValuesMetricCalculator[MV]
+    override type MC = MinValueMetricCalculator[MV]
+  }
+
+  /**
+    *
+    * @param onColumn
+    * @param filter
+    * @param
+    * @tparam MV
+    */
+  case class MaxValueMetric[MV <: NumericMetricValue: MetricValueConstructor](
+       onColumn: String,
+       filter: MetricFilter = MetricFilter.noFilter
+     ) extends MetricDescriptor
+    with Filterable {
+    override def metricCalculator: MaxValueMetricCalculator[MV] = MaxValueMetricCalculator[MV](onColumn, filter)
+    override def toSimpleMetricDescriptor: SimpleMetricDescriptor =
+      SimpleMetricDescriptor(metricName, Some(filter.filterDescription), onColumn = Some(onColumn))
+    override def metricName: String = "MaxValue"
+    override type MC = MaxValueMetricCalculator[MV]
   }
 
   /**

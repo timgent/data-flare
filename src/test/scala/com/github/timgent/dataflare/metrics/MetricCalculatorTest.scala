@@ -181,4 +181,56 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
       )
     }
   }
+
+  "MinValueMetricCalculator" should {
+    lazy val ds = Seq(
+      NumberString(1, "a"),
+      NumberString(2, "b"),
+      NumberString(3, "c"),
+      NumberString(3, "d"),
+      NumberString(3, "d") // not distinct
+    ).toDS
+
+    "calculate the min of values for a given column" in {
+      testMetricAggFunction(
+        ds,
+        MinValueMetricCalculator[LongMetric]("number", MetricFilter.noFilter),
+        LongMetric(1)
+      )
+    }
+
+    "apply the provided filter before calculating the compliance in a DataFrame" in {
+      testMetricAggFunction(
+        ds,
+        MinValueMetricCalculator[LongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
+        LongMetric(Long.MinValue)
+      )
+    }
+  }
+
+  "MaxValueMetricCalculator" should {
+    lazy val ds = Seq(
+      NumberString(1, "a"),
+      NumberString(2, "b"),
+      NumberString(3, "c"),
+      NumberString(3, "d"),
+      NumberString(3, "d") // not distinct
+    ).toDS
+
+    "calculate the min of values for a given column" in {
+      testMetricAggFunction(
+        ds,
+        MaxValueMetricCalculator[LongMetric]("number", MetricFilter.noFilter),
+        LongMetric(3)
+      )
+    }
+
+    "apply the provided filter before calculating the compliance in a DataFrame" in {
+      testMetricAggFunction(
+        ds,
+        MaxValueMetricCalculator[LongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
+        LongMetric(Long.MaxValue)
+      )
+    }
+  }
 }

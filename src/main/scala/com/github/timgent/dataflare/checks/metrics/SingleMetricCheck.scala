@@ -3,7 +3,7 @@ package com.github.timgent.dataflare.checks.metrics
 import com.github.timgent.dataflare.checks.CheckDescription.SingleMetricCheckDescription
 import com.github.timgent.dataflare.checks.QCCheck.SingleDsCheck
 import com.github.timgent.dataflare.checks.{CheckDescription, CheckResult, CheckStatus, QcType, RawCheckResult}
-import com.github.timgent.dataflare.metrics.MetricDescriptor.{ComplianceMetric, CountDistinctValuesMetric, DistinctnessMetric, MinValuesMetric, SizeMetric}
+import com.github.timgent.dataflare.metrics.MetricDescriptor.{ComplianceMetric, CountDistinctValuesMetric, DistinctnessMetric, MaxValueMetric, MinValueMetric, SizeMetric, SumValuesMetric}
 import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric, NumericMetricValue}
 import com.github.timgent.dataflare.metrics.{ComplianceFn, MetricDescriptor, MetricFilter, MetricValue, MetricValueConstructor}
 import com.github.timgent.dataflare.thresholds.AbsoluteThreshold
@@ -84,17 +84,45 @@ object SingleMetricCheck {
     thresholdBasedCheck[LongMetric](SizeMetric(filter), s"SizeCheck", threshold)
 
   /**
-    * Checks the min value of rows in a dataset after the given filter is applied is within the given threshold
+    * Checks the sum of value of rows in a dataset for a given col after the given filter is applied
+    * is within the given threshold
     * @param threshold
+    * @param onColumn
     * @param filter
+    * @tparam MV
+    * @return
+    */
+  def sumValueCheck[MV <: NumericMetricValue: MetricValueConstructor]
+  (threshold: AbsoluteThreshold[MV#T], onColumn: String, filter: MetricFilter = MetricFilter.noFilter)
+  : SingleMetricCheck[MV] =
+    thresholdBasedCheck[MV](SumValuesMetric(onColumn, filter), "MinValueCheck", threshold)
+
+  /**
+    * Checks the min value of rows in a dataset for a given col after the given filter is applied
+    * is within the given threshold
+    * @param threshold the threshold for what fraction of rows is acceptable
+    * @param onColumn column on which min value needs to be computed
+    * @param filter the filter that is applied before the dataset min value is computed
     * @return
     */
   def minValueCheck[MV <: NumericMetricValue: MetricValueConstructor]
   (threshold: AbsoluteThreshold[MV#T], onColumn: String, filter: MetricFilter = MetricFilter.noFilter)
   : SingleMetricCheck[MV] =
-    thresholdBasedCheck[MV](MinValuesMetric(onColumn, filter), "MinValueCheck", threshold)
+    thresholdBasedCheck[MV](MinValueMetric(onColumn, filter), "MinValueCheck", threshold)
 
-  //MV <: NumericMetricValue: MetricValueConstructor
+  /**
+    * Checks the max value of rows in a dataset for a given col after the given filter is applied
+    * is within the given threshold
+    * @param threshold the threshold for what fraction of rows is acceptable
+    * @param onColumn column on which max value needs to be computed
+    * @param filter the filter that is applied before the dataset max value is computed
+    * @tparam MV
+    * @return
+    */
+  def maxValueCheck[MV <: NumericMetricValue: MetricValueConstructor]
+  (threshold: AbsoluteThreshold[MV#T], onColumn: String, filter: MetricFilter = MetricFilter.noFilter)
+  : SingleMetricCheck[MV] =
+    thresholdBasedCheck[MV](MaxValueMetric(onColumn, filter), "MaxValueCheck", threshold)
 
   /**
     * Checks the fraction of rows that are compliant with the given complianceFn

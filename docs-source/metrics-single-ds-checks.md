@@ -50,6 +50,9 @@ Other available helpers include:
 * distinctValuesCheck
 * distinctnessCheck
 * thresholdBasedCheck
+* sumValuesCheck
+* minValueCheck
+* maxValueCheck
 
 Please check the API docs for the full range of options!
 

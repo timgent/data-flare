@@ -9,4 +9,4 @@ A data quality library built with Spark, to give you ultimate flexibility and po
 is of high quality.
 
 Checkout the full documentation here:  
-link : https://timgent.github.io/data-flare
+https://timgent.github.io/data-flare
