@@ -184,11 +184,10 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
 
   "MinValueMetricCalculator" should {
     lazy val ds = Seq(
-      NumberString(1, "a"),
-      NumberString(2, "b"),
-      NumberString(3, "c"),
-      NumberString(3, "d"),
-      NumberString(3, "d") // not distinct
+      NumberString(2, "a"),
+      NumberString(3, "b"),
+      NumberString(4, "c"),
+      NumberString(1, "d")
     ).toDS
 
     "calculate the min of values for a given column" in {
@@ -203,7 +202,15 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
       testMetricAggFunction(
         ds,
         MinValueMetricCalculator[LongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
-        LongMetric(Long.MinValue)
+        LongMetric(2)
+      )
+    }
+
+    "handle Empty dataset for calculating the compliance in a DataFrame" in {
+      testMetricAggFunction(
+        ds.filter(col("number") === 5),
+        MinValueMetricCalculator[LongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
+        LongMetric(0)
       )
     }
   }
@@ -213,15 +220,14 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
       NumberString(1, "a"),
       NumberString(2, "b"),
       NumberString(3, "c"),
-      NumberString(3, "d"),
-      NumberString(3, "d") // not distinct
+      NumberString(4, "d")
     ).toDS
 
-    "calculate the min of values for a given column" in {
+    "calculate the max of values for a given column" in {
       testMetricAggFunction(
         ds,
         MaxValueMetricCalculator[LongMetric]("number", MetricFilter.noFilter),
-        LongMetric(3)
+        LongMetric(4)
       )
     }
 
@@ -229,7 +235,15 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
       testMetricAggFunction(
         ds,
         MaxValueMetricCalculator[LongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
-        LongMetric(Long.MaxValue)
+        LongMetric(3)
+      )
+    }
+
+    "handle empty dataset for calculating the compliance in a DataFrame" in {
+      testMetricAggFunction(
+        ds.filter(col("number") === 5),
+        MaxValueMetricCalculator[LongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
+        LongMetric(0)
       )
     }
   }

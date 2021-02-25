@@ -80,7 +80,7 @@ private[dataflare] object MetricCalculator {
 
     override type MetricType = MV
 
-    override def aggFunction: Column = min(when(filter.filter, col(onColumn)).otherwise(metricValueConstructor.minValue))
+    override def aggFunction: Column = min(when(filter.filter, col(onColumn)).otherwise(metricValueConstructor.maxValue))
   }
 
   case class MaxValueMetricCalculator[MV <: NumericMetricValue: MetricValueConstructor](onColumn: String, filter: MetricFilter)
@@ -89,7 +89,7 @@ private[dataflare] object MetricCalculator {
 
     override type MetricType = MV
 
-    override def aggFunction: Column = max(when(filter.filter, col(onColumn)).otherwise(metricValueConstructor.maxValue))
+    override def aggFunction: Column = max(when(filter.filter, col(onColumn)).otherwise(metricValueConstructor.minValue))
   }
 
   case class DistinctValuesMetricCalculator(onColumns: List[String], filter: MetricFilter) extends LongMetricCalculator {

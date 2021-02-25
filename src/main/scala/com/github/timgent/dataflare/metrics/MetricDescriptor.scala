@@ -78,10 +78,8 @@ object MetricDescriptor {
     * A metric that calculates the min value of rows in your dataset
     * @param onColumn
     * @param filter filter to be applied before the size is calculated
-    * @param
     * @tparam MV
     */
-
   case class MinValueMetric[MV <: NumericMetricValue: MetricValueConstructor](
       onColumn: String,
       filter: MetricFilter = MetricFilter.noFilter
@@ -98,7 +96,6 @@ object MetricDescriptor {
     *
     * @param onColumn
     * @param filter
-    * @param
     * @tparam MV
     */
   case class MaxValueMetric[MV <: NumericMetricValue: MetricValueConstructor](
