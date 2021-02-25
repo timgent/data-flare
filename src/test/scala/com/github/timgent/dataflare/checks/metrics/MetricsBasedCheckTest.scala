@@ -4,7 +4,7 @@ import com.github.timgent.dataflare.checks.CheckDescription.{DualMetricCheckDesc
 import com.github.timgent.dataflare.checks.DatasourceDescription.DualDsDescription
 import com.github.timgent.dataflare.checks.{CheckResult, CheckStatus, QcType, RawCheckResult}
 import com.github.timgent.dataflare.metrics.MetricDescriptor.{SizeMetric, SumValuesMetric}
-import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric}
+import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric, OptLongMetric}
 import com.github.timgent.dataflare.metrics.{MetricComparator, MetricDescriptor, MetricFilter, SimpleMetricDescriptor}
 import com.github.timgent.dataflare.thresholds.AbsoluteThreshold
 import com.github.timgent.dataflare.utils.CommonFixtures._
@@ -196,5 +196,9 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
         )
       )
     }
+  }
+
+  "optThresholdBasedCheck" should {
+    //    TODO: Write a test!!
   }
 }

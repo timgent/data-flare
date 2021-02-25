@@ -3,8 +3,16 @@ package com.github.timgent.dataflare.checks.metrics
 import com.github.timgent.dataflare.checks.CheckDescription.SingleMetricCheckDescription
 import com.github.timgent.dataflare.checks.QCCheck.SingleDsCheck
 import com.github.timgent.dataflare.checks.{CheckDescription, CheckResult, CheckStatus, QcType, RawCheckResult}
-import com.github.timgent.dataflare.metrics.MetricDescriptor.{ComplianceMetric, CountDistinctValuesMetric, DistinctnessMetric, MaxValueMetric, MinValueMetric, SizeMetric, SumValuesMetric}
-import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric, NumericMetricValue}
+import com.github.timgent.dataflare.metrics.MetricDescriptor.{
+  ComplianceMetric,
+  CountDistinctValuesMetric,
+  DistinctnessMetric,
+  MaxValueMetric,
+  MinValueMetric,
+  SizeMetric,
+  SumValuesMetric
+}
+import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric, NumericMetricValue, OptNumericMetricValue}
 import com.github.timgent.dataflare.metrics.{ComplianceFn, MetricDescriptor, MetricFilter, MetricValue, MetricValueConstructor}
 import com.github.timgent.dataflare.thresholds.AbsoluteThreshold
 
@@ -76,6 +84,41 @@ object SingleMetricCheck {
   }
 
   /**
+    * A check based on a single optional metric that checks if that metric is within the given threshold. If the metric
+    * has a value of None the check will automatically fail
+    * @param metricDescriptor - describes the metric the check will be done on
+    * @param description - the user friendly description for this check
+    * @param threshold - the threshold that the metric must be within to pass
+    * @tparam MV - the type of the MetricValue that will be calculated in order to complete this check
+    * @return
+    */
+  def optThresholdBasedCheck[MV <: OptNumericMetricValue](
+      metricDescriptor: MetricDescriptor { type MetricType = MV },
+      description: String,
+      threshold: AbsoluteThreshold[MV#U]
+  ): SingleMetricCheck[MV] = {
+    SingleMetricCheck(metricDescriptor, description) { maybeMetricValue: MV#T =>
+      maybeMetricValue match {
+        case Some(metricValue) if threshold.isWithinThreshold(metricValue) =>
+          RawCheckResult(
+            CheckStatus.Success,
+            s"${metricDescriptor.metricName} of ${metricValue} was within the range $threshold"
+          )
+        case Some(metricValue) =>
+          RawCheckResult(
+            CheckStatus.Error,
+            s"${metricDescriptor.metricName} of ${metricValue} was outside the range $threshold"
+          )
+        case None =>
+          RawCheckResult(
+            CheckStatus.Success,
+            s"${metricDescriptor.metricName} returned a value of None which was not within the range $threshold"
+          )
+      }
+    }
+  }
+
+  /**
     * Checks the count of rows in a dataset after the given filter is applied is within the given threshold
     * @param threshold
     * @param filter - filter to be applied before rows are counted
@@ -92,9 +135,11 @@ object SingleMetricCheck {
     * @tparam MV
     * @return
     */
-  def sumValueCheck[MV <: NumericMetricValue: MetricValueConstructor]
-  (threshold: AbsoluteThreshold[MV#T], onColumn: String, filter: MetricFilter = MetricFilter.noFilter)
-  : SingleMetricCheck[MV] =
+  def sumValueCheck[MV <: NumericMetricValue: MetricValueConstructor](
+      threshold: AbsoluteThreshold[MV#T],
+      onColumn: String,
+      filter: MetricFilter = MetricFilter.noFilter
+  ): SingleMetricCheck[MV] =
     thresholdBasedCheck[MV](SumValuesMetric(onColumn, filter), "MinValueCheck", threshold)
 
   /**
@@ -105,10 +150,12 @@ object SingleMetricCheck {
     * @param filter the filter that is applied before the dataset min value is computed
     * @return
     */
-  def minValueCheck[MV <: NumericMetricValue: MetricValueConstructor]
-  (threshold: AbsoluteThreshold[MV#T], onColumn: String, filter: MetricFilter = MetricFilter.noFilter)
-  : SingleMetricCheck[MV] =
-    thresholdBasedCheck[MV](MinValueMetric(onColumn, filter), "MinValueCheck", threshold)
+  def minValueCheck[MV <: OptNumericMetricValue: MetricValueConstructor](
+      threshold: AbsoluteThreshold[MV#U],
+      onColumn: String,
+      filter: MetricFilter = MetricFilter.noFilter
+  ): SingleMetricCheck[MV] =
+    optThresholdBasedCheck[MV](MinValueMetric[MV](onColumn, filter), "MinValueCheck", threshold)
 
   /**
     * Checks the max value of rows in a dataset for a given col after the given filter is applied
@@ -119,9 +166,11 @@ object SingleMetricCheck {
     * @tparam MV
     * @return
     */
-  def maxValueCheck[MV <: NumericMetricValue: MetricValueConstructor]
-  (threshold: AbsoluteThreshold[MV#T], onColumn: String, filter: MetricFilter = MetricFilter.noFilter)
-  : SingleMetricCheck[MV] =
+  def maxValueCheck[MV <: OptNumericMetricValue: MetricValueConstructor](
+      threshold: AbsoluteThreshold[MV#T],
+      onColumn: String,
+      filter: MetricFilter = MetricFilter.noFilter
+  ): SingleMetricCheck[MV] =
     thresholdBasedCheck[MV](MaxValueMetric(onColumn, filter), "MaxValueCheck", threshold)
 
   /**

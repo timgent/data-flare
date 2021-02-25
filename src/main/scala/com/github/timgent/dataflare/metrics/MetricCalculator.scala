@@ -1,6 +1,6 @@
 package com.github.timgent.dataflare.metrics
 
-import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric, NumericMetricValue}
+import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric, NumericMetricValue, OptNumericMetricValue}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{Column, Row}
 
@@ -35,6 +35,26 @@ private[dataflare] object MetricCalculator {
     }
 
     def filter: MetricFilter
+  }
+
+  /**
+    * MetricCalculator that calculates metrics based on a simple aggregation function on the whole dataset,
+    * tailored to metrics that can return None values
+    */
+  sealed trait SimpleOptMetricCalculator extends SimpleMetricCalculator {
+    override type MetricType <: OptNumericMetricValue
+
+    override def valueFromRow(row: Row, index: Int): MetricType = {
+      // Here we must get underlying type U. If we used MetricType#T, row.getAs
+      // wouldn't respect this at runtime, returning the underlying type instead,
+      // and it would fail to construct the metric
+      val metricValue: Option[MetricType#U] =
+        Option(row.getAs[MetricType#U](index)) // empty DS would return null from row.getAs, hence use of option here
+      metricValue match {
+        case Some(value) => metricValueConstructor.apply(Some(value))
+        case None        => metricValueConstructor.apply(metricValueForEmptyDs)
+      }
+    }
   }
 
   sealed trait DoubleMetricCalculator extends SimpleMetricCalculator {
@@ -74,22 +94,24 @@ private[dataflare] object MetricCalculator {
     override def aggFunction: Column = sum(when(filter.filter, col(onColumn)).otherwise(0))
   }
 
-  case class MinValueMetricCalculator[MV <: NumericMetricValue: MetricValueConstructor](onColumn: String, filter: MetricFilter)
-    extends SimpleMetricCalculator {
+  case class MinValueMetricCalculator[MV <: OptNumericMetricValue: MetricValueConstructor](onColumn: String, filter: MetricFilter)
+      extends SimpleOptMetricCalculator {
     override protected def metricValueConstructor: MetricValueConstructor[MV] = implicitly[MetricValueConstructor[MV]]
 
     override type MetricType = MV
 
-    override def aggFunction: Column = min(when(filter.filter, col(onColumn)).otherwise(metricValueConstructor.maxValue))
+    // .get here is safe as maxValue will always be a Some. Required as Spark can't handle the optional value
+    override def aggFunction: Column = min(when(filter.filter, col(onColumn)).otherwise(metricValueConstructor.maxValue.get))
   }
 
-  case class MaxValueMetricCalculator[MV <: NumericMetricValue: MetricValueConstructor](onColumn: String, filter: MetricFilter)
-    extends SimpleMetricCalculator {
+  case class MaxValueMetricCalculator[MV <: OptNumericMetricValue: MetricValueConstructor](onColumn: String, filter: MetricFilter)
+      extends SimpleOptMetricCalculator {
     override protected def metricValueConstructor: MetricValueConstructor[MV] = implicitly[MetricValueConstructor[MV]]
 
     override type MetricType = MV
 
-    override def aggFunction: Column = max(when(filter.filter, col(onColumn)).otherwise(metricValueConstructor.minValue))
+    // .get here is safe as minValue will always be a Some. Required as Spark can't handle the optional value
+    override def aggFunction: Column = max(when(filter.filter, col(onColumn)).otherwise(metricValueConstructor.minValue.get))
   }
 
   case class DistinctValuesMetricCalculator(onColumns: List[String], filter: MetricFilter) extends LongMetricCalculator {
