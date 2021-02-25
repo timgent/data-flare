@@ -198,7 +198,7 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
       )
     }
 
-    "apply the provided filter before calculating the compliance in a DataFrame" in {
+    "apply the provided filter before calculating the minValue in a DataFrame" in {
       testMetricAggFunction(
         ds,
         MinValueMetricCalculator[LongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
@@ -206,7 +206,7 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
       )
     }
 
-    "handle Empty dataset for calculating the compliance in a DataFrame" in {
+    "handle Empty dataset for calculating the minValue in a DataFrame" in {
       testMetricAggFunction(
         ds.filter(col("number") === 5),
         MinValueMetricCalculator[LongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
@@ -231,7 +231,7 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
       )
     }
 
-    "apply the provided filter before calculating the compliance in a DataFrame" in {
+    "apply the provided filter before calculating the maxValue in a DataFrame" in {
       testMetricAggFunction(
         ds,
         MaxValueMetricCalculator[LongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
@@ -239,7 +239,7 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
       )
     }
 
-    "handle empty dataset for calculating the compliance in a DataFrame" in {
+    "handle empty dataset for calculating the maxValue in a DataFrame" in {
       testMetricAggFunction(
         ds.filter(col("number") === 5),
         MaxValueMetricCalculator[LongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
