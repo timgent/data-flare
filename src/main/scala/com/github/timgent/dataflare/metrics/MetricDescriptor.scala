@@ -1,13 +1,7 @@
 package com.github.timgent.dataflare.metrics
 
 import cats.Show
-import com.github.timgent.dataflare.metrics.MetricCalculator.{
-  ComplianceMetricCalculator,
-  DistinctValuesMetricCalculator,
-  DistinctnessMetricCalculator,
-  SizeMetricCalculator,
-  SumValuesMetricCalculator
-}
+import com.github.timgent.dataflare.metrics.MetricCalculator.{ComplianceMetricCalculator, DistinctValuesMetricCalculator, DistinctnessMetricCalculator, MinValuesMetricCalculator, SizeMetricCalculator, SumValuesMetricCalculator}
 import com.github.timgent.dataflare.metrics.MetricValue.NumericMetricValue
 
 /**
@@ -77,6 +71,18 @@ object MetricDescriptor {
       SimpleMetricDescriptor(metricName, Some(filter.filterDescription), onColumn = Some(onColumn))
     override def metricName: String = "SumValues"
     override type MC = SumValuesMetricCalculator[MV]
+  }
+
+  case class MinValuesMetric[MV <: NumericMetricValue: MetricValueConstructor](
+      onColumn: String,
+      filter: MetricFilter = MetricFilter.noFilter
+  ) extends MetricDescriptor
+      with Filterable {
+    override def metricCalculator: MinValuesMetricCalculator[MV] = MinValuesMetricCalculator[MV](onColumn, filter)
+    override def toSimpleMetricDescriptor: SimpleMetricDescriptor =
+      SimpleMetricDescriptor(metricName, Some(filter.filterDescription), onColumn = Some(onColumn))
+    override def metricName: String = "MinValue"
+    override type MC = MinValuesMetricCalculator[MV]
   }
 
   /**

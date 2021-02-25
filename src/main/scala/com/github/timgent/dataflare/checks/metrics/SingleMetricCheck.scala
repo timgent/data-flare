@@ -3,9 +3,9 @@ package com.github.timgent.dataflare.checks.metrics
 import com.github.timgent.dataflare.checks.CheckDescription.SingleMetricCheckDescription
 import com.github.timgent.dataflare.checks.QCCheck.SingleDsCheck
 import com.github.timgent.dataflare.checks.{CheckDescription, CheckResult, CheckStatus, QcType, RawCheckResult}
-import com.github.timgent.dataflare.metrics.MetricDescriptor.{ComplianceMetric, CountDistinctValuesMetric, DistinctnessMetric, SizeMetric}
-import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric}
-import com.github.timgent.dataflare.metrics.{ComplianceFn, MetricDescriptor, MetricFilter, MetricValue}
+import com.github.timgent.dataflare.metrics.MetricDescriptor.{ComplianceMetric, CountDistinctValuesMetric, DistinctnessMetric, MinValuesMetric, SizeMetric}
+import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric, NumericMetricValue}
+import com.github.timgent.dataflare.metrics.{ComplianceFn, MetricDescriptor, MetricFilter, MetricValue, MetricValueConstructor}
 import com.github.timgent.dataflare.thresholds.AbsoluteThreshold
 
 import scala.reflect.ClassTag
@@ -82,6 +82,19 @@ object SingleMetricCheck {
     */
   def sizeCheck(threshold: AbsoluteThreshold[Long], filter: MetricFilter = MetricFilter.noFilter): SingleMetricCheck[LongMetric] =
     thresholdBasedCheck[LongMetric](SizeMetric(filter), s"SizeCheck", threshold)
+
+  /**
+    * Checks the min value of rows in a dataset after the given filter is applied is within the given threshold
+    * @param threshold
+    * @param filter
+    * @return
+    */
+  def minValueCheck[MV <: NumericMetricValue: MetricValueConstructor]
+  (threshold: AbsoluteThreshold[MV#T], onColumn: String, filter: MetricFilter = MetricFilter.noFilter)
+  : SingleMetricCheck[MV] =
+    thresholdBasedCheck[MV](MinValuesMetric(onColumn, filter), "MinValueCheck", threshold)
+
+  //MV <: NumericMetricValue: MetricValueConstructor
 
   /**
     * Checks the fraction of rows that are compliant with the given complianceFn

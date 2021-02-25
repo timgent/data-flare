@@ -74,6 +74,15 @@ private[dataflare] object MetricCalculator {
     override def aggFunction: Column = sum(when(filter.filter, col(onColumn)).otherwise(0))
   }
 
+  case class MinValuesMetricCalculator[MV <: NumericMetricValue: MetricValueConstructor](onColumn: String, filter: MetricFilter)
+    extends SimpleMetricCalculator {
+    override protected def metricValueConstructor: MetricValueConstructor[MV] = implicitly[MetricValueConstructor[MV]]
+
+    override type MetricType = MV
+
+    override def aggFunction: Column = min(when(filter.filter, col(onColumn)).otherwise())
+  }
+
   case class DistinctValuesMetricCalculator(onColumns: List[String], filter: MetricFilter) extends LongMetricCalculator {
     override def aggFunction: Column = {
       val countDistinctCols: List[Column] =
