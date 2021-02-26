@@ -3,8 +3,8 @@ package com.github.timgent.dataflare.checks.metrics
 import com.github.timgent.dataflare.checks.CheckDescription.{DualMetricCheckDescription, SingleMetricCheckDescription}
 import com.github.timgent.dataflare.checks.DatasourceDescription.DualDsDescription
 import com.github.timgent.dataflare.checks.{CheckResult, CheckStatus, QcType, RawCheckResult}
-import com.github.timgent.dataflare.metrics.MetricDescriptor.{SizeMetric, SumValuesMetric}
-import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric, OptLongMetric}
+import com.github.timgent.dataflare.metrics.MetricDescriptor.{MinValueMetric, SizeMetric, SumValuesMetric}
+import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric, OptDoubleMetric, OptLongMetric}
 import com.github.timgent.dataflare.metrics.{MetricComparator, MetricDescriptor, MetricFilter, SimpleMetricDescriptor}
 import com.github.timgent.dataflare.thresholds.AbsoluteThreshold
 import com.github.timgent.dataflare.utils.CommonFixtures._
@@ -198,7 +198,91 @@ class MetricsBasedCheckTest extends AnyWordSpec with DatasetSuiteBase with Match
     }
   }
 
-  "optThresholdBasedCheck" should {
-    //    TODO: Write a test!!
+  "SingleMetricCheck.minValueCheck" should {
+    "fail when the dataset is empty" in {
+      val check = SingleMetricCheck.minValueCheck[OptDoubleMetric](AbsoluteThreshold(0.9, 21.5), "some_column", MetricFilter.noFilter)
+      val result: CheckResult = check.applyCheckOnMetrics(Map(check.metric -> OptDoubleMetric(None)))
+      result shouldBe CheckResult(
+        QcType.SingleMetricCheck,
+        CheckStatus.Error,
+        "MinValue returned a value of None which was not within the range between 0.9 and 21.5",
+        SingleMetricCheckDescription(
+          "MinValueCheck",
+          SimpleMetricDescriptor("MinValue", Some("no filter"), onColumn = Some("some_column"))
+        )
+      )
+    }
+
+    "succeed when the min value is within the given threshold" in {
+      val check = SingleMetricCheck.minValueCheck[OptDoubleMetric](AbsoluteThreshold(0.9, 21.5), "some_column", MetricFilter.noFilter)
+      val result: CheckResult = check.applyCheckOnMetrics(Map(check.metric -> OptDoubleMetric(Some(0.9))))
+      result shouldBe CheckResult(
+        QcType.SingleMetricCheck,
+        CheckStatus.Success,
+        "MinValue of 0.9 was within the range between 0.9 and 21.5",
+        SingleMetricCheckDescription(
+          "MinValueCheck",
+          SimpleMetricDescriptor("MinValue", Some("no filter"), onColumn = Some("some_column"))
+        )
+      )
+    }
+
+    "fail when the min value is outside the given threshold" in {
+      val check = SingleMetricCheck.minValueCheck[OptDoubleMetric](AbsoluteThreshold(0.9, 21.5), "some_column", MetricFilter.noFilter)
+      val result: CheckResult = check.applyCheckOnMetrics(Map(check.metric -> OptDoubleMetric(Some(0.8))))
+      result shouldBe CheckResult(
+        QcType.SingleMetricCheck,
+        CheckStatus.Error,
+        "MinValue of 0.8 was outside the range between 0.9 and 21.5",
+        SingleMetricCheckDescription(
+          "MinValueCheck",
+          SimpleMetricDescriptor("MinValue", Some("no filter"), onColumn = Some("some_column"))
+        )
+      )
+    }
+  }
+
+  "SingleMetricCheck.maxValueCheck" should {
+    "fail when the dataset is empty" in {
+      val check = SingleMetricCheck.maxValueCheck[OptDoubleMetric](AbsoluteThreshold(0.9, 21.5), "some_column", MetricFilter.noFilter)
+      val result: CheckResult = check.applyCheckOnMetrics(Map(check.metric -> OptDoubleMetric(None)))
+      result shouldBe CheckResult(
+        QcType.SingleMetricCheck,
+        CheckStatus.Error,
+        "MaxValue returned a value of None which was not within the range between 0.9 and 21.5",
+        SingleMetricCheckDescription(
+          "MaxValueCheck",
+          SimpleMetricDescriptor("MaxValue", Some("no filter"), onColumn = Some("some_column"))
+        )
+      )
+    }
+
+    "succeed when the max value is within the given threshold" in {
+      val check = SingleMetricCheck.maxValueCheck[OptDoubleMetric](AbsoluteThreshold(0.9, 21.5), "some_column", MetricFilter.noFilter)
+      val result: CheckResult = check.applyCheckOnMetrics(Map(check.metric -> OptDoubleMetric(Some(21.5))))
+      result shouldBe CheckResult(
+        QcType.SingleMetricCheck,
+        CheckStatus.Success,
+        "MaxValue of 21.5 was within the range between 0.9 and 21.5",
+        SingleMetricCheckDescription(
+          "MaxValueCheck",
+          SimpleMetricDescriptor("MaxValue", Some("no filter"), onColumn = Some("some_column"))
+        )
+      )
+    }
+
+    "fail when the max value is outside the given threshold" in {
+      val check = SingleMetricCheck.maxValueCheck[OptDoubleMetric](AbsoluteThreshold(0.9, 21.4), "some_column", MetricFilter.noFilter)
+      val result: CheckResult = check.applyCheckOnMetrics(Map(check.metric -> OptDoubleMetric(Some(21.5))))
+      result shouldBe CheckResult(
+        QcType.SingleMetricCheck,
+        CheckStatus.Error,
+        "MaxValue of 21.5 was outside the range between 0.9 and 21.4",
+        SingleMetricCheckDescription(
+          "MaxValueCheck",
+          SimpleMetricDescriptor("MaxValue", Some("no filter"), onColumn = Some("some_column"))
+        )
+      )
+    }
   }
 }
