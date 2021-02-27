@@ -1,10 +1,9 @@
 package com.github.timgent.dataflare.repository
 
 import java.time.Instant
-
 import cats.syntax.either._
 import com.github.timgent.dataflare.checks.DatasourceDescription.SingleDsDescription
-import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric}
+import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric, OptDoubleMetric, OptLongMetric}
 import com.github.timgent.dataflare.metrics.{MetricValue, SimpleMetricDescriptor}
 import com.sksamuel.elastic4s.ElasticDsl.{bulk, indexInto, _}
 import com.sksamuel.elastic4s.circe._
@@ -27,8 +26,10 @@ private object EsMetricsDocument {
   private implicit val metricValueEncoder: Encoder[MetricValue] = new Encoder[MetricValue] {
     override def apply(a: MetricValue): Json = {
       a match {
-        case LongMetric(value)               => Json.obj("value" -> value.asJson, "type" -> Json.fromString("LongMetric"))
-        case MetricValue.DoubleMetric(value) => Json.obj("value" -> value.asJson, "type" -> Json.fromString("DoubleMetric"))
+        case LongMetric(value)                  => Json.obj("value" -> value.asJson, "type" -> Json.fromString("LongMetric"))
+        case MetricValue.DoubleMetric(value)    => Json.obj("value" -> value.asJson, "type" -> Json.fromString("DoubleMetric"))
+        case MetricValue.OptDoubleMetric(value) => Json.obj("value" -> value.asJson, "type" -> Json.fromString("OptDoubleMetric"))
+        case MetricValue.OptLongMetric(value)   => Json.obj("value" -> value.asJson, "type" -> Json.fromString("OptLongMetric"))
       }
     }
   }
@@ -38,8 +39,10 @@ private object EsMetricsDocument {
         metricType <- c.downField("type").as[String]
         value = c.downField("value")
         metricValue <- metricType match {
-          case "LongMetric"   => value.as[Long].map(LongMetric)
-          case "DoubleMetric" => value.as[Double].map(DoubleMetric)
+          case "LongMetric"      => value.as[Long].map(LongMetric)
+          case "DoubleMetric"    => value.as[Double].map(DoubleMetric)
+          case "OptLongMetric"   => value.as[Option[Long]].map(OptLongMetric)
+          case "OptDoubleMetric" => value.as[Option[Double]].map(OptDoubleMetric)
         }
       } yield metricValue
     }

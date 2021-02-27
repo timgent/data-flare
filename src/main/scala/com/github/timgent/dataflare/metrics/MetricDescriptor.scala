@@ -1,9 +1,16 @@
 package com.github.timgent.dataflare.metrics
 
 import cats.Show
-import com.github.timgent.dataflare.metrics.MetricCalculator.{ComplianceMetricCalculator, DistinctValuesMetricCalculator
-  , DistinctnessMetricCalculator, MaxValueMetricCalculator, MinValueMetricCalculator, SizeMetricCalculator, SumValuesMetricCalculator}
-import com.github.timgent.dataflare.metrics.MetricValue.NumericMetricValue
+import com.github.timgent.dataflare.metrics.MetricCalculator.{
+  ComplianceMetricCalculator,
+  DistinctValuesMetricCalculator,
+  DistinctnessMetricCalculator,
+  MaxValueMetricCalculator,
+  MinValueMetricCalculator,
+  SizeMetricCalculator,
+  SumValuesMetricCalculator
+}
+import com.github.timgent.dataflare.metrics.MetricValue.{NumericMetricValue, OptNumericMetricValue}
 
 /**
   * Describes the metric being calculated
@@ -80,7 +87,7 @@ object MetricDescriptor {
     * @param filter filter to be applied before the size is calculated
     * @tparam MV
     */
-  case class MinValueMetric[MV <: NumericMetricValue: MetricValueConstructor](
+  case class MinValueMetric[MV <: OptNumericMetricValue: MetricValueConstructor](
       onColumn: String,
       filter: MetricFilter = MetricFilter.noFilter
   ) extends MetricDescriptor
@@ -98,11 +105,11 @@ object MetricDescriptor {
     * @param filter
     * @tparam MV
     */
-  case class MaxValueMetric[MV <: NumericMetricValue: MetricValueConstructor](
-       onColumn: String,
-       filter: MetricFilter = MetricFilter.noFilter
-     ) extends MetricDescriptor
-    with Filterable {
+  case class MaxValueMetric[MV <: OptNumericMetricValue: MetricValueConstructor](
+      onColumn: String,
+      filter: MetricFilter = MetricFilter.noFilter
+  ) extends MetricDescriptor
+      with Filterable {
     override def metricCalculator: MaxValueMetricCalculator[MV] = MaxValueMetricCalculator[MV](onColumn, filter)
     override def toSimpleMetricDescriptor: SimpleMetricDescriptor =
       SimpleMetricDescriptor(metricName, Some(filter.filterDescription), onColumn = Some(onColumn))
