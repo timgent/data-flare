@@ -56,8 +56,7 @@ class ArbDualDsCheckTest extends AnyWordSpec with DatasetSuiteBase with Matchers
       val df1 = DescribedDs(
         List(
           SampleData1("same", "same", "same", 1),
-          SampleData1("df1only", "same", "same", 2),
-          SampleData1("df1only", "same", "same", 3)
+          SampleData1("df1only", "same", "same", 2)
         ).toDS,
         "df1"
       )

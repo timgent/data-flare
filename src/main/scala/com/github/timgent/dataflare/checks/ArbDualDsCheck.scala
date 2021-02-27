@@ -53,6 +53,9 @@ object ArbDualDsCheck {
 
   private def zipWithIndex[T](rdd: RDD[T]): RDD[(Long, T)] = rdd.zipWithIndex.map { case (row, i) => (i, row) }
 
+  /**
+    * Check that dfs match exactly regardless of content
+    */
   val dfsMatchUnordered: ArbDualDsCheck = ArbDualDsCheck("Unordered dataset content matches") { dsPair =>
     val schemaMatchCheckResult = doSchemasMatch(dsPair)
     schemaMatchCheckResult match {
@@ -138,6 +141,7 @@ object ArbDualDsCheck {
           RawCheckResult(CheckStatus.Success, "Datasets are identical")
         } else {
           val sampleMismatchedRowPair = sampleMismatchedRows.first
+          sampleMismatchedRows.unpersist(false)
           sampleMismatchedRowPair match {
             case (Some(dsRow), Some(dsToCompareRow)) =>
               val prettyDsRow = prettyRow(dsRow, schema)
