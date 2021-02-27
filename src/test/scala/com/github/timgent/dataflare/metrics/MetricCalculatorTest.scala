@@ -1,7 +1,7 @@
 package com.github.timgent.dataflare.metrics
 
 import com.github.timgent.dataflare.metrics.MetricCalculator._
-import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric}
+import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric, OptLongMetric}
 import com.github.timgent.dataflare.utils.CommonFixtures._
 import com.holdenkarau.spark.testing.DatasetSuiteBase
 import org.apache.spark.sql.Dataset
@@ -178,6 +178,72 @@ class MetricCalculatorTest extends AnyWordSpec with DatasetSuiteBase with Matche
         ds,
         SumValuesMetricCalculator[LongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
         LongMetric(6)
+      )
+    }
+  }
+
+  "MinValueMetricCalculator" should {
+    lazy val ds = Seq(
+      NumberString(2, "a"),
+      NumberString(3, "b"),
+      NumberString(4, "c"),
+      NumberString(1, "d")
+    ).toDS
+
+    "calculate the min of values for a given column" in {
+      testMetricAggFunction(
+        ds,
+        MinValueMetricCalculator[OptLongMetric]("number", MetricFilter.noFilter),
+        OptLongMetric(Some(1))
+      )
+    }
+
+    "apply the provided filter before calculating the minValue in a DataFrame" in {
+      testMetricAggFunction(
+        ds,
+        MinValueMetricCalculator[OptLongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
+        OptLongMetric(Some(2))
+      )
+    }
+
+    "handle Empty dataset for calculating the minValue in a DataFrame" in {
+      testMetricAggFunction(
+        ds.filter(col("number") === 5),
+        MinValueMetricCalculator[OptLongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
+        OptLongMetric(None)
+      )
+    }
+  }
+
+  "MaxValueMetricCalculator" should {
+    lazy val ds = Seq(
+      NumberString(1, "a"),
+      NumberString(2, "b"),
+      NumberString(3, "c"),
+      NumberString(4, "d")
+    ).toDS
+
+    "calculate the max of values for a given column" in {
+      testMetricAggFunction(
+        ds,
+        MaxValueMetricCalculator[OptLongMetric]("number", MetricFilter.noFilter),
+        OptLongMetric(Some(4))
+      )
+    }
+
+    "apply the provided filter before calculating the maxValue in a DataFrame" in {
+      testMetricAggFunction(
+        ds,
+        MaxValueMetricCalculator[OptLongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
+        OptLongMetric(Some(3))
+      )
+    }
+
+    "handle empty dataset for calculating the maxValue in a DataFrame" in {
+      testMetricAggFunction(
+        ds.filter(col("number") === 5),
+        MaxValueMetricCalculator[OptLongMetric]("number", MetricFilter(col("str") =!= lit("d"), "not d")),
+        OptLongMetric(None)
       )
     }
   }

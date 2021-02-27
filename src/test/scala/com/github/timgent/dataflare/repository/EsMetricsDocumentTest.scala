@@ -2,7 +2,7 @@ package com.github.timgent.dataflare.repository
 
 import com.fortysevendeg.scalacheck.datetime.jdk8.ArbitraryJdk8.arbInstantJdk8
 import com.github.timgent.dataflare.checks.DatasourceDescription.SingleDsDescription
-import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric}
+import com.github.timgent.dataflare.metrics.MetricValue.{DoubleMetric, LongMetric, OptDoubleMetric, OptLongMetric}
 import com.github.timgent.dataflare.metrics.{MetricValue, SimpleMetricDescriptor}
 import com.github.timgent.dataflare.utils.CommonFixtures._
 import io.circe.parser._
@@ -16,8 +16,12 @@ import com.github.timgent.dataflare.generators.Generators.arbSimpleMetricDescrip
 
 class EsMetricsDocumentTest extends AnyWordSpec with Matchers with ScalaCheckDrivenPropertyChecks {
   private val longMetricGen = Gen.resultOf(LongMetric)
+  private val optLongMetricGen = Gen.resultOf(OptLongMetric)
   private val doubleMetricGen = Gen.resultOf(DoubleMetric)
-  private implicit val arbMetricValue: Arbitrary[MetricValue] = Arbitrary(Gen.oneOf(longMetricGen, doubleMetricGen))
+  private val optDoubleMetricGen = Gen.resultOf(OptDoubleMetric)
+  private implicit val arbMetricValue: Arbitrary[MetricValue] = Arbitrary(
+    Gen.oneOf(longMetricGen, doubleMetricGen, optLongMetricGen, optDoubleMetricGen)
+  )
   implicit private val esMetricsDocumentArb = Arbitrary(for {
     timestamp <- arbInstantJdk8.arbitrary
     datasetDescription <- arbString.arbitrary.map(SingleDsDescription)
