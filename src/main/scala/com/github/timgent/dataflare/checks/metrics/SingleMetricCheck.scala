@@ -195,7 +195,7 @@ object SingleMetricCheck {
   ): SingleMetricCheck[OptDoubleMetric] = minValueCheck[OptDoubleMetric](threshold, onColumn, filter)
 
   /**
-    * Checks the min value of a given column in a dataset after the given filter is applied
+    * Checks the max value of a given column in a dataset after the given filter is applied
     * is within the given threshold
     * @param threshold the threshold for what fraction of rows is acceptable
     * @param onColumn column on which min value needs to be computed

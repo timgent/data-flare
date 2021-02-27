@@ -9,6 +9,8 @@ The available metrics are:
 * `CountDistinctValuesMetric` - count the distinct values across a given set of columns
 * `ComplianceMetric` - calculate the fraction of rows that comply with the given condition
 * `DistinctnessMetric` - calculate the fraction of rows that are unique
+* `MinValueMetric` - calculate the minimum value in a given column. Returns None if no rows in the dataset
+* `MaxValueMetric` - calculate the maximum value in a given column. Returns None if no rows in the dataset
 
 With most metrics a filter can be applied before the metric gets calculated - you can see an example of this below. 
 
@@ -68,3 +70,17 @@ import com.github.timgent.dataflare.metrics.MetricFilter
 
 DistinctnessMetric(List("firstName", "surname"), MetricFilter.noFilter)
 ```
+
+## MinValueMetric and MaxValueMetric
+These calculate the minimum/maximum value of a given column in a Dataset. You must specify if they operate on columns
+with Ints or Longs (by using OptLongMetric) or Doubles (by using OptDoubleMetric). A filter can be provided For example:
+```scala mdoc:compile-only
+import com.github.timgent.dataflare.metrics.MetricDescriptor.MinValueMetric
+import com.github.timgent.dataflare.metrics.MetricFilter
+import com.github.timgent.dataflare.metrics.MetricValue.OptLongMetric
+
+MinValueMetric[OptLongMetric]("age", MetricFilter.noFilter)
+```
+The reason these checks use OptLongMetric or OptDouble metric is because in the case of an empty Dataset the only
+sensible metric value to calculate is None. These types of metric value calculate metrics that are options to
+acknowledge this possibility.
