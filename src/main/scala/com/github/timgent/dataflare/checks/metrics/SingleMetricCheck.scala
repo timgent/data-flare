@@ -147,7 +147,7 @@ object SingleMetricCheck {
       onColumn: String,
       filter: MetricFilter = MetricFilter.noFilter
   ): SingleMetricCheck[MV] =
-    thresholdBasedCheck[MV](SumValuesMetric(onColumn, filter), "MinValueCheck", threshold)
+    thresholdBasedCheck[MV](SumValuesMetric(onColumn, filter), "SumValueCheck", threshold)
 
   /**
     * Checks the min value of a given column in a dataset after the given filter is applied
