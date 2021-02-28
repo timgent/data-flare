@@ -396,6 +396,42 @@
       </span>
       
       <p class="shortcomment cmt">Checks the distinctness level of values across the given columns (result of 1 means every value is distinct)</p><div class="fullcomment"><div class="comment cmt"><p>Checks the distinctness level of values across the given columns (result of 1 means every value is distinct)</p></div><dl class="paramcmts block"><dt class="param">threshold</dt><dd class="cmt"><p>- the threshold for what number of distinct values is acceptable</p></dd><dt class="param">onColumns</dt><dd class="cmt"><p>- the columns to check for distinct values in</p></dd><dt class="param">filter</dt><dd class="cmt"><p>- the filter that is applied before the distinct value count is done</p></dd></dl></div>
+    </li><li name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck#doubleMaxValueCheck" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="doubleMaxValueCheck(threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[Double],onColumn:String,filter:com.github.timgent.dataflare.metrics.MetricFilter):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[com.github.timgent.dataflare.metrics.MetricValue.OptDoubleMetric]"></a><a id="doubleMaxValueCheck(AbsoluteThreshold[Double],String,MetricFilter):SingleMetricCheck[OptDoubleMetric]"></a>
+      <span class="permalink">
+      <a href="../../../../../../com/github/timgent/dataflare/checks/metrics/SingleMetricCheck$.html#doubleMaxValueCheck(threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[Double],onColumn:String,filter:com.github.timgent.dataflare.metrics.MetricFilter):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[com.github.timgent.dataflare.metrics.MetricValue.OptDoubleMetric]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">doubleMaxValueCheck</span><span class="params">(<span name="threshold">threshold: <a href="../../thresholds/AbsoluteThreshold.html" class="extype" name="com.github.timgent.dataflare.thresholds.AbsoluteThreshold">AbsoluteThreshold</a>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="onColumn">onColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="filter">filter: <a href="../../metrics/MetricFilter.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricFilter">MetricFilter</a> = <span class="symbol"><span class="name"><a href="../../../../../index.html">MetricFilter.noFilter</a></span></span></span>)</span><span class="result">: <a href="SingleMetricCheck.html" class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck">SingleMetricCheck</a>[<a href="../../metrics/MetricValue$$OptDoubleMetric.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricValue.OptDoubleMetric">OptDoubleMetric</a>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Checks the max value of a given Double column in a dataset after the given filter is applied
+is within the given threshold</p><div class="fullcomment"><div class="comment cmt"><p>Checks the max value of a given Double column in a dataset after the given filter is applied
+is within the given threshold</p></div><dl class="paramcmts block"><dt class="param">threshold</dt><dd class="cmt"><p>the threshold for what fraction of rows is acceptable</p></dd><dt class="param">onColumn</dt><dd class="cmt"><p>column on which max value needs to be computed</p></dd><dt class="param">filter</dt><dd class="cmt"><p>the filter that is applied before the dataset max value is computed</p></dd></dl></div>
+    </li><li name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck#doubleMinValueCheck" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="doubleMinValueCheck(threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[Double],onColumn:String,filter:com.github.timgent.dataflare.metrics.MetricFilter):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[com.github.timgent.dataflare.metrics.MetricValue.OptDoubleMetric]"></a><a id="doubleMinValueCheck(AbsoluteThreshold[Double],String,MetricFilter):SingleMetricCheck[OptDoubleMetric]"></a>
+      <span class="permalink">
+      <a href="../../../../../../com/github/timgent/dataflare/checks/metrics/SingleMetricCheck$.html#doubleMinValueCheck(threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[Double],onColumn:String,filter:com.github.timgent.dataflare.metrics.MetricFilter):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[com.github.timgent.dataflare.metrics.MetricValue.OptDoubleMetric]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">doubleMinValueCheck</span><span class="params">(<span name="threshold">threshold: <a href="../../thresholds/AbsoluteThreshold.html" class="extype" name="com.github.timgent.dataflare.thresholds.AbsoluteThreshold">AbsoluteThreshold</a>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="onColumn">onColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="filter">filter: <a href="../../metrics/MetricFilter.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricFilter">MetricFilter</a> = <span class="symbol"><span class="name"><a href="../../../../../index.html">MetricFilter.noFilter</a></span></span></span>)</span><span class="result">: <a href="SingleMetricCheck.html" class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck">SingleMetricCheck</a>[<a href="../../metrics/MetricValue$$OptDoubleMetric.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricValue.OptDoubleMetric">OptDoubleMetric</a>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Checks the min value of a given Double column in a dataset after the given filter is applied
+is within the given threshold</p><div class="fullcomment"><div class="comment cmt"><p>Checks the min value of a given Double column in a dataset after the given filter is applied
+is within the given threshold</p></div><dl class="paramcmts block"><dt class="param">threshold</dt><dd class="cmt"><p>the threshold for what fraction of rows is acceptable</p></dd><dt class="param">onColumn</dt><dd class="cmt"><p>column on which min value needs to be computed</p></dd><dt class="param">filter</dt><dd class="cmt"><p>the filter that is applied before the dataset min value is computed</p></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -504,6 +540,80 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck#longMaxValueCheck" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="longMaxValueCheck(threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[Long],onColumn:String,filter:com.github.timgent.dataflare.metrics.MetricFilter):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[com.github.timgent.dataflare.metrics.MetricValue.OptLongMetric]"></a><a id="longMaxValueCheck(AbsoluteThreshold[Long],String,MetricFilter):SingleMetricCheck[OptLongMetric]"></a>
+      <span class="permalink">
+      <a href="../../../../../../com/github/timgent/dataflare/checks/metrics/SingleMetricCheck$.html#longMaxValueCheck(threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[Long],onColumn:String,filter:com.github.timgent.dataflare.metrics.MetricFilter):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[com.github.timgent.dataflare.metrics.MetricValue.OptLongMetric]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">longMaxValueCheck</span><span class="params">(<span name="threshold">threshold: <a href="../../thresholds/AbsoluteThreshold.html" class="extype" name="com.github.timgent.dataflare.thresholds.AbsoluteThreshold">AbsoluteThreshold</a>[<span class="extype" name="scala.Long">Long</span>]</span>, <span name="onColumn">onColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="filter">filter: <a href="../../metrics/MetricFilter.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricFilter">MetricFilter</a> = <span class="symbol"><span class="name"><a href="../../../../../index.html">MetricFilter.noFilter</a></span></span></span>)</span><span class="result">: <a href="SingleMetricCheck.html" class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck">SingleMetricCheck</a>[<a href="../../metrics/MetricValue$$OptLongMetric.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricValue.OptLongMetric">OptLongMetric</a>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Checks the max value of a given Int or Long column in a dataset after the given filter is applied
+is within the given threshold</p><div class="fullcomment"><div class="comment cmt"><p>Checks the max value of a given Int or Long column in a dataset after the given filter is applied
+is within the given threshold</p></div><dl class="paramcmts block"><dt class="param">threshold</dt><dd class="cmt"><p>the threshold for what fraction of rows is acceptable</p></dd><dt class="param">onColumn</dt><dd class="cmt"><p>column on which max value needs to be computed</p></dd><dt class="param">filter</dt><dd class="cmt"><p>the filter that is applied before the dataset max value is computed</p></dd></dl></div>
+    </li><li name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck#longMinValueCheck" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="longMinValueCheck(threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[Long],onColumn:String,filter:com.github.timgent.dataflare.metrics.MetricFilter):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[com.github.timgent.dataflare.metrics.MetricValue.OptLongMetric]"></a><a id="longMinValueCheck(AbsoluteThreshold[Long],String,MetricFilter):SingleMetricCheck[OptLongMetric]"></a>
+      <span class="permalink">
+      <a href="../../../../../../com/github/timgent/dataflare/checks/metrics/SingleMetricCheck$.html#longMinValueCheck(threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[Long],onColumn:String,filter:com.github.timgent.dataflare.metrics.MetricFilter):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[com.github.timgent.dataflare.metrics.MetricValue.OptLongMetric]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">longMinValueCheck</span><span class="params">(<span name="threshold">threshold: <a href="../../thresholds/AbsoluteThreshold.html" class="extype" name="com.github.timgent.dataflare.thresholds.AbsoluteThreshold">AbsoluteThreshold</a>[<span class="extype" name="scala.Long">Long</span>]</span>, <span name="onColumn">onColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="filter">filter: <a href="../../metrics/MetricFilter.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricFilter">MetricFilter</a> = <span class="symbol"><span class="name"><a href="../../../../../index.html">MetricFilter.noFilter</a></span></span></span>)</span><span class="result">: <a href="SingleMetricCheck.html" class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck">SingleMetricCheck</a>[<a href="../../metrics/MetricValue$$OptLongMetric.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricValue.OptLongMetric">OptLongMetric</a>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Checks the min value of a given Int or Long column in a dataset after the given filter is applied
+is within the given threshold</p><div class="fullcomment"><div class="comment cmt"><p>Checks the min value of a given Int or Long column in a dataset after the given filter is applied
+is within the given threshold</p></div><dl class="paramcmts block"><dt class="param">threshold</dt><dd class="cmt"><p>the threshold for what fraction of rows is acceptable</p></dd><dt class="param">onColumn</dt><dd class="cmt"><p>column on which min value needs to be computed</p></dd><dt class="param">filter</dt><dd class="cmt"><p>the filter that is applied before the dataset min value is computed</p></dd></dl></div>
+    </li><li name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck#maxValueCheck" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="maxValueCheck[MV&lt;:com.github.timgent.dataflare.metrics.MetricValue.OptNumericMetricValue](threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[MV#U],onColumn:String,filter:com.github.timgent.dataflare.metrics.MetricFilter)(implicitevidence$3:com.github.timgent.dataflare.metrics.MetricValueConstructor[MV]):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[MV]"></a><a id="maxValueCheck[MV&lt;:OptNumericMetricValue](AbsoluteThreshold[SingleMetricCheck.maxValueCheck.MV.U],String,MetricFilter)(MetricValueConstructor[MV]):SingleMetricCheck[MV]"></a>
+      <span class="permalink">
+      <a href="../../../../../../com/github/timgent/dataflare/checks/metrics/SingleMetricCheck$.html#maxValueCheck[MV&lt;:com.github.timgent.dataflare.metrics.MetricValue.OptNumericMetricValue](threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[MV#U],onColumn:String,filter:com.github.timgent.dataflare.metrics.MetricFilter)(implicitevidence$3:com.github.timgent.dataflare.metrics.MetricValueConstructor[MV]):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[MV]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">maxValueCheck</span><span class="tparams">[<span name="MV">MV &lt;: <a href="../../metrics/MetricValue$$OptNumericMetricValue.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricValue.OptNumericMetricValue">OptNumericMetricValue</a></span>]</span><span class="params">(<span name="threshold">threshold: <a href="../../thresholds/AbsoluteThreshold.html" class="extype" name="com.github.timgent.dataflare.thresholds.AbsoluteThreshold">AbsoluteThreshold</a>[<span class="extype" name="com.github.timgent.dataflare.metrics.MetricValue.OptNumericMetricValue.U">SingleMetricCheck.maxValueCheck.MV.U</span>]</span>, <span name="onColumn">onColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="filter">filter: <a href="../../metrics/MetricFilter.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricFilter">MetricFilter</a> = <span class="symbol"><span class="name"><a href="../../../../../index.html">MetricFilter.noFilter</a></span></span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../metrics/MetricValueConstructor.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricValueConstructor">MetricValueConstructor</a>[<span class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck.maxValueCheck.MV">MV</span>]</span>)</span><span class="result">: <a href="SingleMetricCheck.html" class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck">SingleMetricCheck</a>[<span class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck.maxValueCheck.MV">MV</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Checks the max value of a given column in a dataset after the given filter is applied
+is within the given threshold</p><div class="fullcomment"><div class="comment cmt"><p>Checks the max value of a given column in a dataset after the given filter is applied
+is within the given threshold</p></div><dl class="paramcmts block"><dt class="tparam">MV</dt><dd class="cmt"><p>- type of optional metric value that will be used (should match the column type you're calculating the
+           metric on)</p></dd><dt class="param">threshold</dt><dd class="cmt"><p>the threshold for what fraction of rows is acceptable</p></dd><dt class="param">onColumn</dt><dd class="cmt"><p>column on which min value needs to be computed</p></dd><dt class="param">filter</dt><dd class="cmt"><p>the filter that is applied before the dataset min value is computed</p></dd></dl></div>
+    </li><li name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck#minValueCheck" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="minValueCheck[MV&lt;:com.github.timgent.dataflare.metrics.MetricValue.OptNumericMetricValue](threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[MV#U],onColumn:String,filter:com.github.timgent.dataflare.metrics.MetricFilter)(implicitevidence$2:com.github.timgent.dataflare.metrics.MetricValueConstructor[MV]):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[MV]"></a><a id="minValueCheck[MV&lt;:OptNumericMetricValue](AbsoluteThreshold[SingleMetricCheck.minValueCheck.MV.U],String,MetricFilter)(MetricValueConstructor[MV]):SingleMetricCheck[MV]"></a>
+      <span class="permalink">
+      <a href="../../../../../../com/github/timgent/dataflare/checks/metrics/SingleMetricCheck$.html#minValueCheck[MV&lt;:com.github.timgent.dataflare.metrics.MetricValue.OptNumericMetricValue](threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[MV#U],onColumn:String,filter:com.github.timgent.dataflare.metrics.MetricFilter)(implicitevidence$2:com.github.timgent.dataflare.metrics.MetricValueConstructor[MV]):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[MV]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">minValueCheck</span><span class="tparams">[<span name="MV">MV &lt;: <a href="../../metrics/MetricValue$$OptNumericMetricValue.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricValue.OptNumericMetricValue">OptNumericMetricValue</a></span>]</span><span class="params">(<span name="threshold">threshold: <a href="../../thresholds/AbsoluteThreshold.html" class="extype" name="com.github.timgent.dataflare.thresholds.AbsoluteThreshold">AbsoluteThreshold</a>[<span class="extype" name="com.github.timgent.dataflare.metrics.MetricValue.OptNumericMetricValue.U">SingleMetricCheck.minValueCheck.MV.U</span>]</span>, <span name="onColumn">onColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="filter">filter: <a href="../../metrics/MetricFilter.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricFilter">MetricFilter</a> = <span class="symbol"><span class="name"><a href="../../../../../index.html">MetricFilter.noFilter</a></span></span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../metrics/MetricValueConstructor.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricValueConstructor">MetricValueConstructor</a>[<span class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck.minValueCheck.MV">MV</span>]</span>)</span><span class="result">: <a href="SingleMetricCheck.html" class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck">SingleMetricCheck</a>[<span class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck.minValueCheck.MV">MV</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Checks the min value of a given column in a dataset after the given filter is applied
+is within the given threshold</p><div class="fullcomment"><div class="comment cmt"><p>Checks the min value of a given column in a dataset after the given filter is applied
+is within the given threshold</p></div><dl class="paramcmts block"><dt class="tparam">MV</dt><dd class="cmt"><p>- type of optional metric value that will be used (should match the column type you're calculating the
+           metric on)</p></dd><dt class="param">threshold</dt><dd class="cmt"><p>the threshold for what fraction of rows is acceptable</p></dd><dt class="param">onColumn</dt><dd class="cmt"><p>column on which min value needs to be computed</p></dd><dt class="param">filter</dt><dd class="cmt"><p>the filter that is applied before the dataset min value is computed</p></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -558,6 +668,23 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck#optThresholdBasedCheck" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="optThresholdBasedCheck[MV&lt;:com.github.timgent.dataflare.metrics.MetricValue.OptNumericMetricValue](metricDescriptor:com.github.timgent.dataflare.metrics.MetricDescriptor{typeMetricType=MV},description:String,threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[MV#U]):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[MV]"></a><a id="optThresholdBasedCheck[MV&lt;:OptNumericMetricValue](MetricDescriptor{typeMetricType=MV},String,AbsoluteThreshold[SingleMetricCheck.optThresholdBasedCheck.MV.U]):SingleMetricCheck[MV]"></a>
+      <span class="permalink">
+      <a href="../../../../../../com/github/timgent/dataflare/checks/metrics/SingleMetricCheck$.html#optThresholdBasedCheck[MV&lt;:com.github.timgent.dataflare.metrics.MetricValue.OptNumericMetricValue](metricDescriptor:com.github.timgent.dataflare.metrics.MetricDescriptor{typeMetricType=MV},description:String,threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[MV#U]):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[MV]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">optThresholdBasedCheck</span><span class="tparams">[<span name="MV">MV &lt;: <a href="../../metrics/MetricValue$$OptNumericMetricValue.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricValue.OptNumericMetricValue">OptNumericMetricValue</a></span>]</span><span class="params">(<span name="metricDescriptor">metricDescriptor: <span class="extype" name="com.github.timgent.dataflare.metrics.MetricDescriptor">MetricDescriptor</span> { type MetricType = MV }</span>, <span name="description">description: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="threshold">threshold: <a href="../../thresholds/AbsoluteThreshold.html" class="extype" name="com.github.timgent.dataflare.thresholds.AbsoluteThreshold">AbsoluteThreshold</a>[<span class="extype" name="com.github.timgent.dataflare.metrics.MetricValue.OptNumericMetricValue.U">SingleMetricCheck.optThresholdBasedCheck.MV.U</span>]</span>)</span><span class="result">: <a href="SingleMetricCheck.html" class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck">SingleMetricCheck</a>[<span class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck.optThresholdBasedCheck.MV">MV</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">A check based on a single optional metric that checks if that metric is within the given threshold.</p><div class="fullcomment"><div class="comment cmt"><p>A check based on a single optional metric that checks if that metric is within the given threshold. If the metric
+has a value of None the check will automatically fail</p></div><dl class="paramcmts block"><dt class="tparam">MV</dt><dd class="cmt"><p>- the type of the MetricValue that will be calculated in order to complete this check</p></dd><dt class="param">metricDescriptor</dt><dd class="cmt"><p>- describes the metric the check will be done on</p></dd><dt class="param">description</dt><dd class="cmt"><p>- the user friendly description for this check</p></dd><dt class="param">threshold</dt><dd class="cmt"><p>- the threshold that the metric must be within to pass</p></dd></dl></div>
     </li><li name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck#sizeCheck" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="sizeCheck(threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[Long],filter:com.github.timgent.dataflare.metrics.MetricFilter):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[com.github.timgent.dataflare.metrics.MetricValue.LongMetric]"></a><a id="sizeCheck(AbsoluteThreshold[Long],MetricFilter):SingleMetricCheck[LongMetric]"></a>
       <span class="permalink">
@@ -574,6 +701,23 @@
       </span>
       
       <p class="shortcomment cmt">Checks the count of rows in a dataset after the given filter is applied is within the given threshold</p><div class="fullcomment"><div class="comment cmt"><p>Checks the count of rows in a dataset after the given filter is applied is within the given threshold</p></div><dl class="paramcmts block"><dt class="param">filter</dt><dd class="cmt"><p>- filter to be applied before rows are counted</p></dd></dl></div>
+    </li><li name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck#sumValueCheck" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="sumValueCheck[MV&lt;:com.github.timgent.dataflare.metrics.MetricValue.NumericMetricValue](threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[MV#T],onColumn:String,filter:com.github.timgent.dataflare.metrics.MetricFilter)(implicitevidence$1:com.github.timgent.dataflare.metrics.MetricValueConstructor[MV]):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[MV]"></a><a id="sumValueCheck[MV&lt;:NumericMetricValue](AbsoluteThreshold[SingleMetricCheck.sumValueCheck.MV.T],String,MetricFilter)(MetricValueConstructor[MV]):SingleMetricCheck[MV]"></a>
+      <span class="permalink">
+      <a href="../../../../../../com/github/timgent/dataflare/checks/metrics/SingleMetricCheck$.html#sumValueCheck[MV&lt;:com.github.timgent.dataflare.metrics.MetricValue.NumericMetricValue](threshold:com.github.timgent.dataflare.thresholds.AbsoluteThreshold[MV#T],onColumn:String,filter:com.github.timgent.dataflare.metrics.MetricFilter)(implicitevidence$1:com.github.timgent.dataflare.metrics.MetricValueConstructor[MV]):com.github.timgent.dataflare.checks.metrics.SingleMetricCheck[MV]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sumValueCheck</span><span class="tparams">[<span name="MV">MV &lt;: <a href="../../metrics/MetricValue$$NumericMetricValue.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricValue.NumericMetricValue">NumericMetricValue</a></span>]</span><span class="params">(<span name="threshold">threshold: <a href="../../thresholds/AbsoluteThreshold.html" class="extype" name="com.github.timgent.dataflare.thresholds.AbsoluteThreshold">AbsoluteThreshold</a>[<span class="extype" name="com.github.timgent.dataflare.metrics.MetricValue.T">SingleMetricCheck.sumValueCheck.MV.T</span>]</span>, <span name="onColumn">onColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="filter">filter: <a href="../../metrics/MetricFilter.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricFilter">MetricFilter</a> = <span class="symbol"><span class="name"><a href="../../../../../index.html">MetricFilter.noFilter</a></span></span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../metrics/MetricValueConstructor.html" class="extype" name="com.github.timgent.dataflare.metrics.MetricValueConstructor">MetricValueConstructor</a>[<span class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck.sumValueCheck.MV">MV</span>]</span>)</span><span class="result">: <a href="SingleMetricCheck.html" class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck">SingleMetricCheck</a>[<span class="extype" name="com.github.timgent.dataflare.checks.metrics.SingleMetricCheck.sumValueCheck.MV">MV</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Checks the sum of value of rows in a dataset for a given col after the given filter is applied
+is within the given threshold</p>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
