@@ -118,18 +118,19 @@ object ArbDualDsCheck {
         val dsWithIndex: RDD[(Long, Row)] = zipWithIndex(dsRdd)
         val dsToCompareWithIndex: RDD[(Long, Row)] = zipWithIndex(dsToCompareRdd)
         val joined: RDD[(Option[Row], Option[Row])] = dsWithIndex.fullOuterJoin(dsToCompareWithIndex).map(_._2)
-
+        type E[O] = Either[(Option[Row], Option[Row]), O]
         val sampleMismatchedRows: RDD[(Option[Row], Option[Row])] = joined.mapPartitions { it =>
-          val allRowsInPartitionMatch: Either[(Option[Row], Option[Row]), Unit] = Foldable[Stream].foldM(it.toStream, ()) {
-            case (_, (Some(rdd1Row), Some(rdd2Row))) =>
-              if (rdd1Row != rdd2Row) {
-                Left((Some(rdd1Row), Some(rdd2Row)))
-              } else {
-                Right(())
-              }
-            case (_, (Some(rdd1Row), None)) => Left(Some(rdd1Row), None)
-            case (_, (None, Some(rdd2Row))) => Left(None, Some(rdd2Row))
-          }
+          val allRowsInPartitionMatch: Either[(Option[Row], Option[Row]), Unit] =
+            Foldable[Stream].foldM[E, (Option[Row], Option[Row]), Unit](it.toStream, ()) {
+              case (_, (Some(rdd1Row), Some(rdd2Row))) =>
+                if (rdd1Row != rdd2Row) {
+                  Left((Some(rdd1Row), Some(rdd2Row)))
+                } else {
+                  Right(())
+                }
+              case (_, (Some(rdd1Row), None)) => Left(Some(rdd1Row), None)
+              case (_, (None, Some(rdd2Row))) => Left(None, Some(rdd2Row))
+            }
           allRowsInPartitionMatch match {
             case Left(firstMismatchedRow) => Iterator(firstMismatchedRow)
             case Right(_)                 => Iterator.empty
