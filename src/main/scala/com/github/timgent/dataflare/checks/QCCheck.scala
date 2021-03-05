@@ -65,9 +65,9 @@ object CheckStatus extends Enum[CheckStatus] {
   case object Error extends CheckStatus
 }
 
-private[dataflare] sealed trait QcType extends EnumEntry
+sealed trait QcType extends EnumEntry
 
-private[dataflare] object QcType extends Enum[QcType] {
+object QcType extends Enum[QcType] {
   val values = findValues
   case object ArbSingleDsCheck extends QcType
   case object ArbDualDsCheck extends QcType
