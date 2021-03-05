@@ -198,6 +198,10 @@
                         <a class="trait" href="QCCheck.html" title="Represents a check to be done"></a>
                         <a href="QCCheck.html" title="Represents a check to be done">QCCheck</a>
                       </li><li class="current-entities indented5">
+                        <a class="object" href="QcType$.html" title=""></a>
+                        <a class="trait" href="QcType.html" title=""></a>
+                        <a href="QcType.html" title="">QcType</a>
+                      </li><li class="current-entities indented5">
                         <span class="separator"></span>
                         <a class="class" href="RawCheckResult.html" title="Check result without additional information about datasource and check description"></a>
                         <a href="RawCheckResult.html" title="Check result without additional information about datasource and check description">RawCheckResult</a>
@@ -439,7 +443,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="The result of a check" href="CheckResult.html"><span class="name">CheckResult</span></a><span class="params">(<span name="qcType">qcType: <span class="extype" name="com.github.timgent.dataflare.checks.QcType">QcType</span></span>, <span name="status">status: <a href="CheckStatus.html" class="extype" name="com.github.timgent.dataflare.checks.CheckStatus">CheckStatus</a></span>, <span name="resultDescription">resultDescription: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="checkDescription">checkDescription: <a href="CheckDescription.html" class="extype" name="com.github.timgent.dataflare.checks.CheckDescription">CheckDescription</a></span>, <span name="datasourceDescription">datasourceDescription: <span class="extype" name="scala.Option">Option</span>[<a href="DatasourceDescription.html" class="extype" name="com.github.timgent.dataflare.checks.DatasourceDescription">DatasourceDescription</a>] = <span class="symbol">None</span></span>, <span name="errors">errors: <span class="extype" name="scala.Seq">Seq</span>[<a href="../FlareError.html" class="extype" name="com.github.timgent.dataflare.FlareError">FlareError</a>] = <span class="symbol">Seq.empty</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="The result of a check" href="CheckResult.html"><span class="name">CheckResult</span></a><span class="params">(<span name="qcType">qcType: <a href="QcType.html" class="extype" name="com.github.timgent.dataflare.checks.QcType">QcType</a></span>, <span name="status">status: <a href="CheckStatus.html" class="extype" name="com.github.timgent.dataflare.checks.CheckStatus">CheckStatus</a></span>, <span name="resultDescription">resultDescription: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="checkDescription">checkDescription: <a href="CheckDescription.html" class="extype" name="com.github.timgent.dataflare.checks.CheckDescription">CheckDescription</a></span>, <span name="datasourceDescription">datasourceDescription: <span class="extype" name="scala.Option">Option</span>[<a href="DatasourceDescription.html" class="extype" name="com.github.timgent.dataflare.checks.DatasourceDescription">DatasourceDescription</a>] = <span class="symbol">None</span></span>, <span name="errors">errors: <span class="extype" name="scala.Seq">Seq</span>[<a href="../FlareError.html" class="extype" name="com.github.timgent.dataflare.FlareError">FlareError</a>] = <span class="symbol">Seq.empty</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       <p class="shortcomment cmt">The result of a check</p><div class="fullcomment"><div class="comment cmt"><p>The result of a check</p></div><dl class="paramcmts block"><dt class="param">status</dt><dd class="cmt"><p>- status of the check</p></dd><dt class="param">resultDescription</dt><dd class="cmt"><p>- description of the check result</p></dd><dt class="param">checkDescription</dt><dd class="cmt"><p>- description of the check</p></dd><dt class="param">datasourceDescription</dt><dd class="cmt"><p>- optional description of the datasource used in the check</p></dd><dt class="param">errors</dt><dd class="cmt"><p>- any errors that occured when trying to execute the check</p></dd></dl></div>
@@ -493,6 +497,22 @@
       
       <p class="shortcomment cmt">Represents a check to be done
 </p>
+    </li><li name="com.github.timgent.dataflare.checks.QcType" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="QcTypeextendsEnumEntry"></a><a id="QcType:QcType"></a>
+      <span class="permalink">
+      <a href="../../../../../com/github/timgent/dataflare/checks/QcType.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="QcType.html"><span class="name">QcType</span></a><span class="result"> extends <span class="extype" name="enumeratum.EnumEntry">EnumEntry</span></span>
+      </span>
+      
+      
     </li><li name="com.github.timgent.dataflare.checks.RawCheckResult" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="RawCheckResultextendsProductwithSerializable"></a><a id="RawCheckResult:RawCheckResult"></a>
       <span class="permalink">
@@ -644,6 +664,22 @@
       </span>
       <span class="symbol">
         <a title="" href="QCCheck$.html"><span class="name">QCCheck</span></a>
+      </span>
+      
+      
+    </li><li name="com.github.timgent.dataflare.checks.QcType" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="QcType"></a><a id="QcType:QcType"></a>
+      <span class="permalink">
+      <a href="../../../../../com/github/timgent/dataflare/checks/QcType$.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="QcType$.html"><span class="name">QcType</span></a><span class="result"> extends <span class="extype" name="enumeratum.Enum">Enum</span>[<a href="QcType.html" class="extype" name="com.github.timgent.dataflare.checks.QcType">QcType</a>]</span>
       </span>
       
       
