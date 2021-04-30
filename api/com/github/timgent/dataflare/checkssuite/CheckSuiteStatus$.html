@@ -202,7 +202,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">CheckSuiteStatus</span><span class="result"> extends <span class="extype" name="enumeratum.Enum">Enum</span>[<a href="CheckSuiteStatus.html" class="extype" name="com.github.timgent.dataflare.checkssuite.CheckSuiteStatus">CheckSuiteStatus</a>]</span>
+        <span class="name">CheckSuiteStatus</span><span class="result"> extends <span class="extype" name="enumeratum.Enum">Enum</span>[<a href="CheckSuiteStatus.html" class="extype" name="com.github.timgent.dataflare.checkssuite.CheckSuiteStatus">CheckSuiteStatus</a>] with <span class="extype" name="enumeratum.CirceEnum">CirceEnum</span>[<a href="CheckSuiteStatus.html" class="extype" name="com.github.timgent.dataflare.checkssuite.CheckSuiteStatus">CheckSuiteStatus</a>]</span>
       </span>
       </h4>
 
@@ -211,7 +211,7 @@
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="enumeratum.Enum">Enum</span>[<a href="CheckSuiteStatus.html" class="extype" name="com.github.timgent.dataflare.checkssuite.CheckSuiteStatus">CheckSuiteStatus</a>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="enumeratum.CirceEnum">CirceEnum</span>[<a href="CheckSuiteStatus.html" class="extype" name="com.github.timgent.dataflare.checkssuite.CheckSuiteStatus">CheckSuiteStatus</a>], <span class="extype" name="enumeratum.Enum">Enum</span>[<a href="CheckSuiteStatus.html" class="extype" name="com.github.timgent.dataflare.checkssuite.CheckSuiteStatus">CheckSuiteStatus</a>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -237,7 +237,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="com.github.timgent.dataflare.checkssuite.CheckSuiteStatus"><span>CheckSuiteStatus</span></li><li class="in" name="enumeratum.Enum"><span>Enum</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="com.github.timgent.dataflare.checkssuite.CheckSuiteStatus"><span>CheckSuiteStatus</span></li><li class="in" name="enumeratum.CirceEnum"><span>CirceEnum</span></li><li class="in" name="enumeratum.Enum"><span>Enum</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -328,6 +328,38 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="enumeratum.CirceEnum#circeDecoder" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="circeDecoder:io.circe.Decoder[A]"></a><a id="circeDecoder:Decoder[CheckSuiteStatus]"></a>
+      <span class="permalink">
+      <a href="../../../../../com/github/timgent/dataflare/checkssuite/CheckSuiteStatus$.html#circeDecoder:io.circe.Decoder[A]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">circeDecoder</span><span class="result">: <span class="extype" name="io.circe.Decoder">Decoder</span>[<a href="CheckSuiteStatus.html" class="extype" name="com.github.timgent.dataflare.checkssuite.CheckSuiteStatus">CheckSuiteStatus</a>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>CirceEnum</dd></dl></div>
+    </li><li name="enumeratum.CirceEnum#circeEncoder" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="circeEncoder:io.circe.Encoder[A]"></a><a id="circeEncoder:Encoder[CheckSuiteStatus]"></a>
+      <span class="permalink">
+      <a href="../../../../../com/github/timgent/dataflare/checkssuite/CheckSuiteStatus$.html#circeEncoder:io.circe.Encoder[A]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">circeEncoder</span><span class="result">: <span class="extype" name="io.circe.Encoder">Encoder</span>[<a href="CheckSuiteStatus.html" class="extype" name="com.github.timgent.dataflare.checkssuite.CheckSuiteStatus">CheckSuiteStatus</a>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>CirceEnum</dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">
@@ -988,7 +1020,9 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="enumeratum.Enum">
+        <div class="parent" name="enumeratum.CirceEnum">
+              <h3>Inherited from <span class="extype" name="enumeratum.CirceEnum">CirceEnum</span>[<a href="CheckSuiteStatus.html" class="extype" name="com.github.timgent.dataflare.checkssuite.CheckSuiteStatus">CheckSuiteStatus</a>]</h3>
+            </div><div class="parent" name="enumeratum.Enum">
               <h3>Inherited from <span class="extype" name="enumeratum.Enum">Enum</span>[<a href="CheckSuiteStatus.html" class="extype" name="com.github.timgent.dataflare.checkssuite.CheckSuiteStatus">CheckSuiteStatus</a>]</h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
