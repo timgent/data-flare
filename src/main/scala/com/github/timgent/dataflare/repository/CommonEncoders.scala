@@ -5,7 +5,7 @@ import io.circe.generic.semiauto.deriveDecoder
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax._
 
-private[repository] object CommonEncoders {
+private[dataflare] object CommonEncoders {
   implicit val metricDescriptorEncoder: Encoder[SimpleMetricDescriptor] = new Encoder[SimpleMetricDescriptor] {
     override def apply(a: SimpleMetricDescriptor): Json = {
       val fields: List[(String, Json)] = List(

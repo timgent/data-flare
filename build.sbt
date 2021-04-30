@@ -32,6 +32,7 @@ lazy val root = (project in file("."))
       elastic4sTestKit,
       elastic4sCirceJson,
       enumeratum,
+      enumeratumCirce,
       cats,
       spire,
       scalacheck,

@@ -47,7 +47,7 @@ object ChecksSuiteResult {
   */
 sealed trait CheckSuiteStatus extends EnumEntry
 
-object CheckSuiteStatus extends Enum[CheckSuiteStatus] {
+object CheckSuiteStatus extends Enum[CheckSuiteStatus] with CirceEnum[CheckSuiteStatus] {
   val values = findValues
   case object Success extends CheckSuiteStatus
   case object Warning extends CheckSuiteStatus

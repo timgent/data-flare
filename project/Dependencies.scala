@@ -15,6 +15,7 @@ object Dependencies {
   lazy val elastic4sTestKit = "com.sksamuel.elastic4s" %% "elastic4s-testkit" % elastic4sVersion % "test"
   lazy val elastic4sCirceJson = "com.sksamuel.elastic4s" %% "elastic4s-json-circe" % elastic4sVersion
   lazy val enumeratum = "com.beachape" %% "enumeratum" % "1.5.15"
+  lazy val enumeratumCirce = "com.beachape" %% "enumeratum-circe" % "1.5.15"
   lazy val cats = "org.typelevel" %% "cats-core" % "2.0.0"
   lazy val scalacheck = "org.scalatestplus" %% "scalatestplus-scalacheck" % "3.1.0.0-RC2" % Test
   lazy val scalacheckToolboxDatetime = "com.47deg" %% "scalacheck-toolbox-datetime" % "0.3.5" % Test

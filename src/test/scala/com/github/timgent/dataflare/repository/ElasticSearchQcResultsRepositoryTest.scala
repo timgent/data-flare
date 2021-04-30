@@ -1,7 +1,6 @@
 package com.github.timgent.dataflare.repository
 
 import java.time.Instant
-
 import com.fortysevendeg.scalacheck.datetime.jdk8.ArbitraryJdk8.arbInstantJdk8
 import com.github.timgent.dataflare.checks.CheckDescription.{
   DualMetricCheckDescription,
@@ -14,6 +13,7 @@ import com.github.timgent.dataflare.checks.{CheckDescription, CheckResult, Check
 import com.github.timgent.dataflare.checkssuite.CheckSuiteStatus.{Error, Success}
 import com.github.timgent.dataflare.checkssuite.{CheckSuiteStatus, ChecksSuiteResult}
 import com.github.timgent.dataflare.generators.Generators.arbSimpleMetricDescriptor
+import com.github.timgent.dataflare.json.CustomEncodings.{checksSuiteResultDecoder, checksSuiteResultEncoder, datasourceDescriptionEncoder}
 import com.github.timgent.dataflare.utils.CommonFixtures._
 import com.sksamuel.elastic4s.testkit.DockerTests
 import io.circe.parser._
@@ -130,7 +130,6 @@ class ElasticSearchQcResultsRepositoryTest
   }
 
   "ElasticSearchQcResultsRepository.checksSuiteResultEncoder" should {
-    import ElasticSearchQcResultsRepository.checksSuiteResultEncoder
     "encode a ChecksSuiteResult in JSON as expected" in {
       val json = ChecksSuiteResult(
         CheckSuiteStatus.Success,
@@ -202,7 +201,6 @@ class ElasticSearchQcResultsRepositoryTest
   }
 
   "ElasticSearchQcResultsRepository.datasourceDescriptionEncoder" should {
-    import ElasticSearchQcResultsRepository.datasourceDescriptionEncoder
     "encoder SingleDsDescription correctly" in {
       val description: DatasourceDescription = SingleDsDescription("myDatasource")
       val json = description.asJson
