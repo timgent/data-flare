@@ -14,6 +14,7 @@ import io.circe.Decoder.Result
 import io.circe.generic.semiauto.deriveEncoder
 import io.circe.syntax.EncoderOps
 import io.circe.{Decoder, Encoder, HCursor, Json}
+import cats.implicits.catsSyntaxEither
 
 import java.time.Instant
 
