@@ -3,7 +3,7 @@ import xerial.sbt.Sonatype.GitHubHosting
 
 val sparkVersion = settingKey[String]("Spark version")
 
-val currVersion = "0.1.13"
+val currVersion = "0.1.14"
 
 ThisBuild / organization := "com.github.timgent"
 ThisBuild / organizationName := "timgent"
