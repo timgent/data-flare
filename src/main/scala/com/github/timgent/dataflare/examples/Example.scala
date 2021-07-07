@@ -1,25 +1,25 @@
 package com.github.timgent.dataflare.examples
 
-import java.time.{LocalDateTime, ZoneOffset}
-
 import cats.implicits._
 import com.github.timgent.dataflare.checks.metrics.{DualMetricCheck, SingleMetricCheck}
 import com.github.timgent.dataflare.checks.{ArbSingleDsCheck, CheckStatus, RawCheckResult}
 import com.github.timgent.dataflare.checkssuite._
-import com.github.timgent.dataflare.examples.Day1Checks.qcResults
 import com.github.timgent.dataflare.examples.ExampleHelpers.{Customer, Order, _}
 import com.github.timgent.dataflare.metrics.MetricDescriptor.{CountDistinctValuesMetric, SizeMetric}
-import com.github.timgent.dataflare.metrics.{ComplianceFn, MetricComparator, MetricFilter}
-import com.github.timgent.dataflare.repository.{ElasticSearchMetricsPersister, ElasticSearchQcResultsRepository}
+import com.github.timgent.dataflare.metrics.{ComplianceFn, MetricComparator}
+import com.github.timgent.dataflare.repository.{DfApiQcResultsRepository, ElasticSearchMetricsPersister, ElasticSearchQcResultsRepository}
 import com.github.timgent.dataflare.thresholds.AbsoluteThreshold
 import com.github.timgent.dataflare.utils.DateTimeUtils.InstantExtension
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.{Dataset, SparkSession}
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
+import sttp.client3.UriContext
 
+import java.time.{LocalDateTime, ZoneOffset}
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+import scala.sys.exit
 
 object ExampleHelpers {
   val sparkConf = new SparkConf().setAppName("SparkDataQualityExample").setMaster("local")
@@ -131,6 +131,7 @@ object Helpers {
     ElasticSearchQcResultsRepository(List("http://127.0.0.1:9200"), "orders_qc_results")
   val esMetricsPersister =
     ElasticSearchMetricsPersister(List("http://127.0.0.1:9200"), "order_metrics")
+  val apiQcResultsRepository = new DfApiQcResultsRepository(uri"http://127.0.0.1:8080")
 
   def getCheckSuite(
       orderDs: DescribedDs,
@@ -185,7 +186,7 @@ object Helpers {
       singleDsChecks = singleDsChecks |+| Map(customerDs -> List(expectedCustomerColumnsCheck)),
       dualDsChecks = dualDsMetricChecks,
       metricsPersister = esMetricsPersister,
-      qcResultsRepository = qcResultsRepository
+      qcResultsRepository = apiQcResultsRepository
     )
 
     checksSuite
@@ -199,12 +200,14 @@ object Day1Checks extends App {
   val checksSuite = Helpers.getCheckSuite(orderDs, customerDs, customersWithOrdersDs)
 
   val allQcResultsFuture = checksSuite.run(monday)
-  val qcResults = Await.result(allQcResultsFuture, 10 seconds)
+  val allQcResults = Await.result(allQcResultsFuture, 10 seconds)
 
-  if (qcResults.overallStatus == CheckSuiteStatus.Success)
+  if (allQcResults.overallStatus == CheckSuiteStatus.Success)
     println("All checks completed successfully!!")
   else
     println("Checks failed :(")
+
+  exit(0)
 }
 
 object Day2Checks extends App {
@@ -216,10 +219,12 @@ object Day2Checks extends App {
   val allQcResultsFuture = checksSuite.run(tuesday)
   val allQcResults = Await.result(allQcResultsFuture, 10 seconds)
 
-  if (qcResults.overallStatus == CheckSuiteStatus.Success)
+  if (allQcResults.overallStatus == CheckSuiteStatus.Success)
     println("All checks completed successfully!!")
   else
     println("Checks failed :(")
+
+  exit(0)
 }
 
 object Day3Checks extends App {
@@ -231,8 +236,10 @@ object Day3Checks extends App {
   val allQcResultsFuture = checksSuite.run(wednesday)
   val allQcResults = Await.result(allQcResultsFuture, 10 seconds)
 
-  if (qcResults.overallStatus == CheckSuiteStatus.Success)
+  if (allQcResults.overallStatus == CheckSuiteStatus.Success)
     println("All checks completed successfully!!")
   else
     println("Checks failed :(")
+
+  exit(0)
 }
