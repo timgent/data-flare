@@ -71,7 +71,7 @@ class DfApiQcResultsRepositoryTest
         )
       )
 
-      def storedResultsFut(): Future[List[ChecksSuiteResult]] = repo.loadAll
+      def storedResultsFut(): Future[List[ChecksSuiteResult]] = repo.loadAll.map(_.right.get)
 
       for {
         _ <- repo.save(initialResultsToInsert)

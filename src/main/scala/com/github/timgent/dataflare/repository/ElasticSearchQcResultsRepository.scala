@@ -2,7 +2,7 @@ package com.github.timgent.dataflare.repository
 
 import com.github.timgent.dataflare.checkssuite.ChecksSuiteResult
 import com.github.timgent.dataflare.json.CustomEncodings.{checksSuiteResultDecoder, checksSuiteResultEncoder}
-import com.github.timgent.dataflare.repository.QcResultsRepoErr.SaveQcResultErr
+import com.github.timgent.dataflare.repository.QcResultsRepoErr.{LoadQcResultErr, SaveQcResultErr}
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.circe._
 import com.sksamuel.elastic4s.http.JavaClient
@@ -30,11 +30,11 @@ class ElasticSearchQcResultsRepository(client: ElasticClient, index: Index)(impl
       }
   }
 
-  override def loadAll: Future[List[ChecksSuiteResult]] = {
+  override def loadAll: Future[Either[LoadQcResultErr, List[ChecksSuiteResult]]] = {
     val resp = client.execute {
       search(index) query matchAllQuery
     }
-    resp.map(_.result.hits.hits.map(_.to[ChecksSuiteResult]).toList)
+    resp.map(response => Right(response.result.hits.hits.map(_.to[ChecksSuiteResult]).toList))
   }
 }
 

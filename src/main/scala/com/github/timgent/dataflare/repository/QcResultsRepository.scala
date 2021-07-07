@@ -1,6 +1,7 @@
 package com.github.timgent.dataflare.repository
 
 import com.github.timgent.dataflare.checkssuite.{ChecksSuiteErr, ChecksSuiteResult}
+import com.github.timgent.dataflare.repository.QcResultsRepoErr.{LoadQcResultErr, QcResultsRepoException}
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,22 +34,36 @@ trait QcResultsRepository {
     * Load all check results in the repository
     * @return
     */
-  def loadAll: Future[List[ChecksSuiteResult]]
+  def loadAll: Future[Either[LoadQcResultErr, List[ChecksSuiteResult]]]
 }
 
-sealed trait QcResultsRepoErr extends ChecksSuiteErr
+sealed trait QcResultsRepoErr extends ChecksSuiteErr {
+  def throwErr: Nothing =
+    e match {
+      case Some(e) => throw new QcResultsRepoException(err, e)
+      case None    => throw new QcResultsRepoException(err)
+    }
+  def err: String
+  def e: Option[Throwable]
+}
 
 object QcResultsRepoErr {
 
-  class QcResultsRepoException(msg: String) extends Exception(msg)
+  class QcResultsRepoException(msg: String) extends Exception(msg) {
+    def this(message: String, cause: Throwable) {
+      this(message)
+      initCause(cause)
+    }
+  }
 
   /**
     * Represents an error that occurred when saving QC Results
     * @param err describes the error that was encountered
     */
   case class SaveQcResultErr(err: String) extends QcResultsRepoErr {
-    override def throwErr: Nothing = throw new QcResultsRepoException(err)
+    override def e: Option[Throwable] = None
   }
+  case class LoadQcResultErr(err: String, e: Option[Throwable]) extends QcResultsRepoErr
 }
 
 /**
@@ -64,7 +79,7 @@ class InMemoryQcResultsRepository extends QcResultsRepository {
     Future.successful(qcResults.map(Right(_)))
   }
 
-  override def loadAll: Future[List[ChecksSuiteResult]] = Future.successful(savedResults.toList)
+  override def loadAll: Future[Either[LoadQcResultErr, List[ChecksSuiteResult]]] = Future.successful(Right(savedResults.toList))
 }
 
 /**
@@ -76,5 +91,5 @@ class NullQcResultsRepository extends QcResultsRepository {
   override def saveV2(qcResults: List[ChecksSuiteResult]): Future[List[Either[QcResultsRepoErr, ChecksSuiteResult]]] =
     Future.successful(qcResults.map(Right(_)))
 
-  override def loadAll: Future[List[ChecksSuiteResult]] = Future.successful(List.empty)
+  override def loadAll: Future[Either[LoadQcResultErr, List[ChecksSuiteResult]]] = Future.successful(Right(List.empty))
 }

@@ -3,7 +3,7 @@ package com.github.timgent.dataflare.repository
 import cats.implicits._
 import com.github.timgent.dataflare.checkssuite.ChecksSuiteResult
 import com.github.timgent.dataflare.json.CustomEncodings.{checksSuiteResultDecoder, checksSuiteResultEncoder}
-import com.github.timgent.dataflare.repository.QcResultsRepoErr.SaveQcResultErr
+import com.github.timgent.dataflare.repository.QcResultsRepoErr.{LoadQcResultErr, SaveQcResultErr}
 import io.circe.parser._
 import io.circe.syntax._
 import sttp.client3._
@@ -43,16 +43,20 @@ class DfApiQcResultsRepository(host: Uri)(implicit val ec: ExecutionContext) ext
     *
     * @return
     */
-  override def loadAll: Future[List[ChecksSuiteResult]] =
+  override def loadAll: Future[Either[LoadQcResultErr, List[ChecksSuiteResult]]] =
     basicRequest
       .contentType("application/json")
       .get(host.addPath("qcresults"))
       .send(backend)
-      .map { r =>
-        val o: Either[String, String] = r.body
-        val p = parse(o.right.get).right
-        val pp = p.get.as[List[ChecksSuiteResult]]
-        val ppp = pp.right.get
-        ppp
+      .map { response =>
+        for {
+          bodyStr <- response.body.leftMap(err => LoadQcResultErr("Received an unsuccessful response from the API: " + err, None))
+          bodyJson <-
+            parse(bodyStr).leftMap(err => LoadQcResultErr("Response json was not valid JSON: " + err.message, Some(err.underlying)))
+          deserializedBody <-
+            bodyJson
+              .as[List[ChecksSuiteResult]]
+              .leftMap(err => LoadQcResultErr("Response JSON could not be deserialized: " + err.message, None))
+        } yield deserializedBody
       }
 }

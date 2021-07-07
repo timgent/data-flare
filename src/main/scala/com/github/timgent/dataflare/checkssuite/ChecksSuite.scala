@@ -1,7 +1,6 @@
 package com.github.timgent.dataflare.checkssuite
 
 import java.time.Instant
-
 import cats.implicits._
 import com.github.timgent.dataflare.FlareError.MetricCalculationError
 import com.github.timgent.dataflare.checks.ArbDualDsCheck.DatasetPair
@@ -10,6 +9,7 @@ import com.github.timgent.dataflare.checks.QCCheck.{DualDsQCCheck, SingleDsCheck
 import com.github.timgent.dataflare.checks._
 import com.github.timgent.dataflare.checks.metrics.{DualMetricCheck, SingleMetricCheck}
 import com.github.timgent.dataflare.metrics.{MetricDescriptor, MetricValue, MetricsCalculator}
+import com.github.timgent.dataflare.repository.QcResultsRepoErr.QcResultsRepoException
 import com.github.timgent.dataflare.repository.{MetricsPersister, NullMetricsPersister, NullQcResultsRepository, QcResultsRepository}
 import org.apache.spark.sql.Dataset
 
