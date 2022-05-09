@@ -22,4 +22,6 @@ object Dependencies {
   lazy val scalacheckToolboxMagic = "com.47deg" %% "scalacheck-toolbox-magic" % "0.3.5" % Test
   lazy val scalacheckToolboxCombinators = "com.47deg" %% "scalacheck-toolbox-combinators" % "0.3.5" % Test
   lazy val spire = "org.typelevel" %% "spire" % "0.14.1"
+  lazy val sttp = "com.softwaremill.sttp.client3" %% "core" % "3.3.4"
+  lazy val asyncSttp = "com.softwaremill.sttp.client3" %% "async-http-client-backend-future" % "3.3.4"
 }

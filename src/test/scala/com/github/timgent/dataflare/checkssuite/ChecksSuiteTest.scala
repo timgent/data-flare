@@ -420,9 +420,9 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
 
         for {
           qcResults: ChecksSuiteResult <- qualityChecks.run(now)
-          persistedQcResults: Seq[ChecksSuiteResult] <- qcResultsRepository.loadAll
+          persistedQcResults <- qcResultsRepository.loadAll
         } yield {
-          checkResultAndPersistedResult(qcResults, persistedQcResults.head)(
+          checkResultAndPersistedResult(qcResults, persistedQcResults.right.get.head)(
             timestamp = now,
             checkSuiteDescription = "DB: X, table: Y",
             checkStatus = CheckSuiteStatus.Error,
@@ -485,9 +485,9 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
 
         for {
           qcResults: ChecksSuiteResult <- qualityChecks.run(now)
-          persistedQcResults: Seq[ChecksSuiteResult] <- qcResultsRepository.loadAll
+          persistedQcResults <- qcResultsRepository.loadAll
         } yield {
-          checkResultAndPersistedResult(qcResults, persistedQcResults.head)(
+          checkResultAndPersistedResult(qcResults, persistedQcResults.right.get.head)(
             timestamp = now,
             checkSuiteDescription = "table A vs table B comparison",
             checkStatus = CheckSuiteStatus.Error,
@@ -541,7 +541,7 @@ class ChecksSuiteTest extends AsyncWordSpec with DatasetSuiteBase with Matchers 
 
         for {
           qcResults: ChecksSuiteResult <- qualityChecks.run(now)
-          persistedQcResults: Seq[ChecksSuiteResult] <- qcResultsRepository.loadAll
+          persistedQcResults <- qcResultsRepository.loadAll.map(_.right.get)
         } yield {
           qcResults.timestamp shouldBe now
           qcResults.checkSuiteDescription shouldBe "table A, table B, and table C comparison"

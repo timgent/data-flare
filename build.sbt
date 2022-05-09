@@ -38,7 +38,9 @@ lazy val root = (project in file("."))
       scalacheck,
       scalacheckToolboxDatetime,
       scalacheckToolboxMagic,
-      scalacheckToolboxCombinators
+      scalacheckToolboxCombinators,
+      sttp,
+      asyncSttp
     ),
     fork in Test := true,
     parallelExecution in Test := false,

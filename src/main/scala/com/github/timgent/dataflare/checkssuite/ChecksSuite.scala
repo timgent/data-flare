@@ -1,7 +1,6 @@
 package com.github.timgent.dataflare.checkssuite
 
 import java.time.Instant
-
 import cats.implicits._
 import com.github.timgent.dataflare.FlareError.MetricCalculationError
 import com.github.timgent.dataflare.checks.ArbDualDsCheck.DatasetPair
@@ -10,6 +9,7 @@ import com.github.timgent.dataflare.checks.QCCheck.{DualDsQCCheck, SingleDsCheck
 import com.github.timgent.dataflare.checks._
 import com.github.timgent.dataflare.checks.metrics.{DualMetricCheck, SingleMetricCheck}
 import com.github.timgent.dataflare.metrics.{MetricDescriptor, MetricValue, MetricsCalculator}
+import com.github.timgent.dataflare.repository.QcResultsRepoErr.QcResultsRepoException
 import com.github.timgent.dataflare.repository.{MetricsPersister, NullMetricsPersister, NullQcResultsRepository, QcResultsRepository}
 import org.apache.spark.sql.Dataset
 
@@ -35,6 +35,10 @@ case class DescribedDsPair(ds: DescribedDs, dsToCompare: DescribedDs) {
   def datasourceDescription: DualDsDescription = DualDsDescription(ds.description, dsToCompare.description)
 
   private[dataflare] def rawDatasetPair = DatasetPair(ds.ds, dsToCompare.ds)
+}
+
+trait ChecksSuiteErr {
+  def throwErr: Nothing
 }
 
 /**
@@ -91,8 +95,21 @@ case class ChecksSuite(
     * @param ec        - execution context
     * @return
     */
-  def runBlocking(timestamp: Instant, timeout: Duration = 1 minute)(implicit ec: ExecutionContext) =
+  @deprecated("Will be replaced by runBlockingV2 which surfaces errors", "July 2021")
+  def runBlocking(timestamp: Instant, timeout: Duration = 1 minute)(implicit ec: ExecutionContext): ChecksSuiteResult =
     Await.result(run(timestamp), timeout)
+
+  /**
+    * Run all checks in the ChecksSuite and waits for computations to finish before returning (blocking the thread)
+    *
+    * @param timestamp - time the checks are being run
+    * @param ec        - execution context
+    * @return either an error or the ChecksSuiteResult
+    */
+  def runBlockingV2(timestamp: Instant, timeout: Duration = 1 minute)(implicit
+      ec: ExecutionContext
+  ): Either[ChecksSuiteErr, ChecksSuiteResult] =
+    Await.result(runV2(timestamp), timeout)
 
   /**
     * Run all checks in the ChecksSuite asynchronously, returning a Future
@@ -101,7 +118,23 @@ case class ChecksSuite(
     * @param ec        - execution context
     * @return
     */
+  @deprecated("Will be replaced by runV2 which surfaces errors in the return type", "July 2021")
   def run(timestamp: Instant)(implicit ec: ExecutionContext): Future[ChecksSuiteResult] = {
+    runV2(timestamp).map {
+      case Left(err)               => err.throwErr
+      case Right(checkSuiteResult) => checkSuiteResult
+    }
+  }
+
+  /**
+    * Run all checks in the ChecksSuite asynchronously, returning a Future with either an
+    * error of the ChecksSuiteResult
+    *
+    * @param timestamp - time the checks are being run
+    * @param ec        - execution context
+    * @return
+    */
+  def runV2(timestamp: Instant)(implicit ec: ExecutionContext): Future[Either[ChecksSuiteErr, ChecksSuiteResult]] = {
     val metricBasedCheckResultsFut: Future[Seq[CheckResult]] = runMetricBasedChecks(timestamp)
     val singleDatasetCheckResults: Seq[CheckResult] = for {
       (dds, checks) <- arbSingleDsChecks.toSeq
@@ -127,9 +160,9 @@ case class ChecksSuite(
         timestamp = timestamp,
         tags
       )
-      _ <- qcResultsRepository.save(checkSuiteResult)
+      maybeSavedCheckSuiteResult <- qcResultsRepository.saveV2(checkSuiteResult)
     } yield {
-      checkSuiteResult
+      maybeSavedCheckSuiteResult
     }
   }
 
