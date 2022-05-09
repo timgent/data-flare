@@ -1,5 +1,7 @@
 package com.github.timgent.dataflare.checks.metrics
 
+import com.github.timgent.dataflare.FlareError
+import com.github.timgent.dataflare.FlareError.{LookedUpMetricOfWrongType, MetricMissing}
 import com.github.timgent.dataflare.checks.CheckDescription.SingleMetricCheckDescription
 import com.github.timgent.dataflare.checks.QCCheck.SingleDsCheck
 import com.github.timgent.dataflare.checks.{CheckDescription, CheckResult, CheckStatus, QcType, RawCheckResult}
@@ -37,6 +39,8 @@ case class SingleMetricCheck[MV <: MetricValue](metric: MetricDescriptor { type 
 ) extends MetricsBasedCheck
     with SingleDsCheck {
 
+  override def qcType: QcType = QcType.SingleMetricCheck
+
   override def description: CheckDescription = SingleMetricCheckDescription(checkDescription, metric.toSimpleMetricDescriptor)
 
   def applyCheck(metric: MV): CheckResult = {
@@ -47,15 +51,11 @@ case class SingleMetricCheck[MV <: MetricValue](metric: MetricDescriptor { type 
   private[dataflare] final def applyCheckOnMetrics(
       metrics: Map[MetricDescriptor, MetricValue]
   )(implicit classTag: ClassTag[MV]): CheckResult = {
-    val metricOfInterestOpt: Option[MetricValue] =
-      metrics.get(metric).map(metricValue => metricValue)
-    metricOfInterestOpt match {
-      case Some(metric) =>
-        metric match { // TODO: Look into heterogenous maps to avoid this type test - https://github.com/milessabin/shapeless/wiki/Feature-overview:-shapeless-1.2.4#heterogenous-maps
-          case metric: MV => applyCheck(metric)
-          case _          => metricTypeErrorResult
-        }
-      case None => metricNotPresentErrorResult
+    val maybeMetric: Either[FlareError, MV] = getMetric(metric, metrics)
+    maybeMetric match {
+      case Left(MetricMissing)             => metricNotPresentErrorResult
+      case Left(LookedUpMetricOfWrongType) => metricTypeErrorResult
+      case Right(metric)                   => applyCheck(metric)
     }
   }
 }
