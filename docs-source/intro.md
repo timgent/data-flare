@@ -30,7 +30,7 @@ greater flexibility and extensibility by:
 * Flare allows metrics-based checks to do comparisons between different metrics and datasets, so that you are able to do
 relative comparisons rather than just absolute comparisons.
 * Flare allows the definition of custom checks as part of your ChecksSuite. While not as performant as the checks based on
-metrics, having the flexibility to include these we feel gives more power and choice.
+metrics, having the flexibility to include these we feel it gives more power and choice.
 * All of Flare's storage methods are extensible, giving users the ability to store results and metrics wherever they 
 choose, and making it easy to use open source tools like ElasticSearch and Kibana to graph metrics over time.
 
