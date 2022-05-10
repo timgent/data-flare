@@ -19,27 +19,28 @@ lazy val root = (project in file("."))
         "2.11.11"
     },
     crossScalaVersions := {
-      if (sparkVersion.value >= "2.4.0")
+      if (sparkVersion.value >= "3.0.0")
+        Seq("2.12.10")
+      else if (sparkVersion.value >= "2.4.0")
         Seq("2.12.10", "2.11.11")
       else
         Seq("2.11.11")
     },
     version := s"${sparkVersion.value}_$currVersion",
-    libraryDependencies ++= sparkDependencies(sparkVersion.value) ++ List(
-      scalaTest,
-      scalaMock,
-      elastic4s,
-      elastic4sTestKit,
-      elastic4sCirceJson,
-      enumeratum,
-      enumeratumCirce,
-      cats,
-      spire,
-      scalacheck,
-      scalacheckToolboxDatetime,
-      scalacheckToolboxMagic,
-      scalacheckToolboxCombinators
-    ),
+    libraryDependencies ++= sparkDependencies(sparkVersion.value) ++
+      elastic4sDependencies(scalaVersion.value) ++
+      List(
+        scalaTest,
+        scalaMock,
+        enumeratum,
+        enumeratumCirce,
+        cats,
+        spire,
+        scalacheck,
+        scalacheckToolboxDatetime,
+        scalacheckToolboxMagic,
+        scalacheckToolboxCombinators
+      ),
     fork in Test := true,
     parallelExecution in Test := false,
     javaOptions ++= Seq("-Xms512M", "-Xmx2048M", "-XX:MaxPermSize=2048M", "-XX:+CMSClassUnloadingEnabled"),
