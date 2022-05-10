@@ -75,7 +75,8 @@ object ArbDualDsCheck {
           case (joinExpr, (c, cRenamed)) => joinExpr && col(c) === col(cRenamed)
         }
         val joined = dsRowCounts.join(dsToCompareRowCounts, joinExpr, "fullouter")
-        val diffRows = joined.filter(col(cols.head).isNull || col(renamedCols.head).isNull)
+        val diffRows =
+          joined.filter(col(cols.head).isNull || col(renamedCols.head).isNull).orderBy(joined.columns.head, joined.columns.tail: _*)
         val firstBadRow = diffRows.limit(1).collect.toList.headOption
         firstBadRow match {
           case Some(badRow) =>
