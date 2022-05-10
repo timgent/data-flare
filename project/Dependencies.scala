@@ -7,10 +7,10 @@ object Dependencies {
     Seq(
       "org.apache.spark" %% "spark-core" % sparkVersion,
       "org.apache.spark" %% "spark-sql" % sparkVersion,
-      "com.holdenkarau" %% "spark-testing-base" % s"${sparkVersion}_0.14.0" % Test
+      "com.holdenkarau" %% "spark-testing-base" % s"${sparkVersion}_1.1.1" % Test
     )
 
-  private val elastic4sVersion = "7.1.0"
+  private val elastic4sVersion = "7.16.0"
   lazy val elastic4s = "com.sksamuel.elastic4s" %% "elastic4s-client-esjava" % elastic4sVersion
   lazy val elastic4sTestKit = "com.sksamuel.elastic4s" %% "elastic4s-testkit" % elastic4sVersion % "test"
   lazy val elastic4sCirceJson = "com.sksamuel.elastic4s" %% "elastic4s-json-circe" % elastic4sVersion

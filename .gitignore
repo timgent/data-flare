@@ -1,5 +1,9 @@
 target/
 .idea
+.bloop
+.metals
+project/.bloop
+metals.sbt
 
 Temp.scala
 
@@ -17,3 +21,4 @@ website/node_modules
 website/i18n/*
 website/static/api
 /.bsp/sbt.json
+

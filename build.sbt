@@ -11,7 +11,7 @@ ThisBuild / organizationName := "timgent"
 lazy val root = (project in file("."))
   .settings(
     name := "data-flare",
-    sparkVersion := System.getProperty("sparkVersion", "2.4.5"),
+    sparkVersion := System.getProperty("sparkVersion", "3.2.0"),
     scalaVersion := {
       if (sparkVersion.value >= "2.4.0")
         "2.12.10"

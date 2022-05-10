@@ -146,7 +146,9 @@ class ArbDualDsCheckTest extends AnyWordSpec with DatasetSuiteBase with Matchers
       val checkResult = ArbDualDsCheck.dfsMatchUnordered.applyCheck(dsPair)
       checkResult.qcType shouldBe QcType.ArbDualDsCheck
       checkResult.status shouldBe CheckStatus.Error
-      checkResult.resultDescription should include("First mismatch was in ds where 2 row(s) had content: a=dupe, b=dupe, c=dupe, d=1")
+      checkResult.resultDescription should include(
+        "First mismatch was in dsToCompare where 1 row(s) had content: a=dupe, b=dupe, c=dupe, d=1"
+      )
       checkResult.checkDescription shouldBe SimpleCheckDescription("Unordered dataset content matches")
       checkResult.datasourceDescription shouldBe Some(DualDsDescription("df1", "df2"))
     }
