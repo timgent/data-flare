@@ -3,17 +3,25 @@ import sbt._
 object Dependencies {
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.1.1" % Test
   lazy val scalaMock = "org.scalamock" %% "scalamock" % "4.4.0" % Test
-  def sparkDependencies(sparkVersion: String) =
+  def sparkDependencies(sparkVersion: String): Seq[ModuleID] =
     Seq(
       "org.apache.spark" %% "spark-core" % sparkVersion,
       "org.apache.spark" %% "spark-sql" % sparkVersion,
       "com.holdenkarau" %% "spark-testing-base" % s"${sparkVersion}_1.1.1" % Test
     )
 
-  private val elastic4sVersion = "7.16.0"
-  lazy val elastic4s = "com.sksamuel.elastic4s" %% "elastic4s-client-esjava" % elastic4sVersion
-  lazy val elastic4sTestKit = "com.sksamuel.elastic4s" %% "elastic4s-testkit" % elastic4sVersion % "test"
-  lazy val elastic4sCirceJson = "com.sksamuel.elastic4s" %% "elastic4s-json-circe" % elastic4sVersion
+  def elastic4sDependencies(scalaVersion: String): Seq[ModuleID] = {
+    val elastic4sVersion =
+      if (scalaVersion == "2.11.11")
+        "7.1.0"
+      else "7.16.0"
+    Seq(
+      "com.sksamuel.elastic4s" %% "elastic4s-client-esjava" % elastic4sVersion,
+      "com.sksamuel.elastic4s" %% "elastic4s-testkit" % elastic4sVersion % "test",
+      "com.sksamuel.elastic4s" %% "elastic4s-json-circe" % elastic4sVersion
+    )
+  }
+
   lazy val enumeratum = "com.beachape" %% "enumeratum" % "1.5.15"
   lazy val enumeratumCirce = "com.beachape" %% "enumeratum-circe" % "1.5.15"
   lazy val cats = "org.typelevel" %% "cats-core" % "2.0.0"
