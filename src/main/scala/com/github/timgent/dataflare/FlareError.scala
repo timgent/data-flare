@@ -38,4 +38,23 @@ object FlareError {
        |err: ${err.map(_.getMessage)}
        |msg: $msg""".stripMargin
   }
+
+  sealed trait MetricLookupError extends FlareError
+
+  case object MetricMissing extends MetricLookupError {
+    override def datasourceDescription: Option[DatasourceDescription] = None
+
+    override def msg: String = "Unexpected failure - Metric lookup failed - no metric found - please raise an Issue on Github"
+
+    override def err: Option[Throwable] = None
+  }
+
+  case object LookedUpMetricOfWrongType extends MetricLookupError {
+    override def datasourceDescription: Option[DatasourceDescription] = None
+
+    override def msg: String =
+      "Unexpected failure - Metric lookup failed - metric found was of wrong type - please raise an Issue on Github"
+
+    override def err: Option[Throwable] = None
+  }
 }

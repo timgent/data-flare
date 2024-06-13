@@ -1,11 +1,29 @@
 package com.github.timgent.dataflare.checks.metrics
 
-import com.github.timgent.dataflare.FlareError.MetricCalculationError
+import com.github.timgent.dataflare.FlareError
+import com.github.timgent.dataflare.FlareError.{LookedUpMetricOfWrongType, MetricCalculationError, MetricLookupError, MetricMissing}
 import com.github.timgent.dataflare.checks.{CheckResult, CheckStatus, DatasourceDescription, QCCheck, QcType}
+import com.github.timgent.dataflare.metrics.{MetricDescriptor, MetricValue}
+
+import scala.reflect.ClassTag
 
 private[dataflare] trait MetricsBasedCheck extends QCCheck {
 
-  override def qcType: QcType = QcType.SingleMetricCheck
+  // typeTag required here to enable match of metric on type MV. Without class tag this type check would be fruitless
+  protected def getMetric[MV <: MetricValue](metricDescriptor: MetricDescriptor.Aux[MV], metrics: Map[MetricDescriptor, MetricValue])(
+      implicit classTag: ClassTag[MV]
+  ): Either[MetricLookupError, MV] = {
+    val metricOfInterestOpt: Option[MetricValue] =
+      metrics.get(metricDescriptor).map(metricValue => metricValue)
+    metricOfInterestOpt match {
+      case Some(metric) =>
+        metric match { // TODO: Look into heterogenous maps to avoid this type test - https://github.com/milessabin/shapeless/wiki/Feature-overview:-shapeless-1.2.4#heterogenous-maps
+          case metric: MV => Right(metric)
+          case _          => Left(LookedUpMetricOfWrongType)
+        }
+      case None => Left(MetricMissing)
+    }
+  }
 
   private[dataflare] def getMetricErrorCheckResult(datasourceDescription: DatasourceDescription, err: MetricCalculationError*) =
     CheckResult(
