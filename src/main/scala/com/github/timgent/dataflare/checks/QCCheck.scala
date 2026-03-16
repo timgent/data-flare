@@ -73,5 +73,6 @@ object QcType extends Enum[QcType] {
   case object ArbDualDsCheck extends QcType
   case object ArbitraryCheck extends QcType
   case object SingleMetricCheck extends QcType
+  case object SingleMetricAnomalyCheck extends QcType
   case object DualMetricCheck extends QcType
 }
